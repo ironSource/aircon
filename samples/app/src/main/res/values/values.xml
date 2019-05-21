@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="some_int">5</integer>
+    <bool name="some_bool">true</bool>
+    <item name="some_float" type="dimen">5.5</item>
+
+</resources>

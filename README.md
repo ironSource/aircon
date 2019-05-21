@@ -1,7 +1,7 @@
 AirCon
 ============
 
-Remote config management Android library which uses annotation processing and code generation.
+Remote config management Android library powered by annotation processing and code generation.
 
  * Mange your app remote configs using simple annotations, use generated providers classes to obtain config values.
  * Supports adding any config source (FireBase support included in library).
@@ -103,6 +103,10 @@ Each config is a assigned a source using the `@Source` annotation:
 @StringConfig(defaultValue = "Hello world")
 String MESSAGE = "msg";
 ```
+
+All configs are read-only by default.
+If the custom source supports overriding local values (e.g the built-in Firebase config source) use the `@Mutable` annotation
+on a config field to generate a setter for that config.
 
 Default value
 --------

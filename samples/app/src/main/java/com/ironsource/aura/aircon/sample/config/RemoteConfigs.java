@@ -39,74 +39,61 @@ import com.ironsource.aura.aircon.source.FireBaseConfigSource;
 @SuppressLint("MissingAnnotation")
 public interface RemoteConfigs {
 
+	@Source(FireBaseConfigSource.class)
 	@FeatureRemoteConfig(createGroup = true)
 	interface SomeCoolFeature {
 
-		@Source(FireBaseConfigSource.class)
 		@DefaultRes(R.bool.some_bool)
 		@BooleanConfig
 		String ENABLED = "enabled";
 
-		@Source(FireBaseConfigSource.class)
 		@DefaultConfig(ENABLED)
 		@BooleanConfig
 		String SOME_FLAG = "someFlag";
 
-		@Source(FireBaseConfigSource.class)
 		@Mutable
 		@DefaultRes(R.string.app_name)
 		@TextConfig(enforceNonEmpty = true)
 		String LABEL = "label";
 
-		@Source(FireBaseConfigSource.class)
 		@DefaultRes(R.integer.some_int)
 		@IntConfig(minValue = 5)
 		String SOME_INT = "someInt";
 
-		@Source(FireBaseConfigSource.class)
 		@DefaultRes(R.integer.some_int)
 		@LongConfig(minValue = 0, minValueFallbackPolicy = RangeFallbackPolicy.RANGE_VALUE)
 		String SOME_LONG = "someLong";
 
-		@Source(FireBaseConfigSource.class)
 		@FloatConfig(defaultValue = 1.5f, maxValue = 2.5f, maxValueFallbackPolicy = RangeFallbackPolicy.RANGE_VALUE)
 		String SOME_FLOAT = "someFloat";
 
-		@Source(FireBaseConfigSource.class)
 		@TimeConfig(defaultValue = 0, minValue = 36000, maxValue = 360000000, minValueFallbackPolicy = RangeFallbackPolicy.DEFAULT, maxValueFallbackPolicy = RangeFallbackPolicy.RANGE_VALUE)
 		String SOME_DURATION = "someDuration";
 
-		@Source(FireBaseConfigSource.class)
 		@StringConfig(defaultValue = "test")
 		String SOME_STRING = "someString";
 
-		@Source(FireBaseConfigSource.class)
 		@Mutable
 		@IntEnumConfig(defaultValue = 2, randomizerValue = 3, enumClass = TextLocation.class)
 		String TEXT_LOCATION = "textLocation";
 
-		@Source(FireBaseConfigSource.class)
 		@Mutable
 		@StringEnumConfig(defaultValue = "top", enumClass = ImageLocation.class)
 		String IMAGE_LOCATION = "imageLocation";
 
-		@Source(FireBaseConfigSource.class)
 		@Mutable
 		@JsonConfig(defaultValue = "{\"int\":2, \"str\":\"test\"}", type = RemoteObject.class)
 		String SOME_JSON = "someJson";
 
-		@Source(FireBaseConfigSource.class)
 		@Mutable
 		@DefaultRes(R.color.colorAccent)
 		@ColorConfig
 		String SOME_COLOR = "someColor";
 
-		@Source(FireBaseConfigSource.class)
 		@Mutable
 		@UrlConfig(defaultValue = "")
 		String SOME_URL = "someUrl";
 
-		@Source(FireBaseConfigSource.class)
 		@StringSetConfig(defaultValue = {"1", "2"})
 		String SOME_STRING_SET = "someStringSet";
 

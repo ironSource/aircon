@@ -25,6 +25,7 @@ import java.lang.annotation.Annotation;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
@@ -89,8 +90,13 @@ public class ConfigFieldParser {
 		return mElement.getAnnotation(Mutable.class) != null;
 	}
 
-	public TypeMirror getSourceTypeMirror() {
-		final Source annotation = mElement.getAnnotation(Source.class);
+	public TypeMirror getSourceTypeMirror(Element configClass) {
+		final TypeMirror typeMirror = getTypeMirror(mElement);
+		return typeMirror != null ? typeMirror : getTypeMirror(configClass);
+	}
+
+	private TypeMirror getTypeMirror(final Element element) {
+		final Source annotation = element.getAnnotation(Source.class);
 		if (annotation != null) {
 			try {
 				annotation.value();
@@ -101,6 +107,7 @@ public class ConfigFieldParser {
 
 		return null;
 	}
+
 
 	@SuppressWarnings("ConstantConditions")
 	public boolean isEnforceNonEmpty() {

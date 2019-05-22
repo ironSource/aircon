@@ -9,6 +9,7 @@ import com.intellij.psi.PsiConstantEvaluationHelper;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.PsiParameter;
 import com.intellij.psi.impl.source.PsiImmediateClassType;
 import com.intellij.psi.impl.source.tree.java.PsiClassObjectAccessExpressionImpl;
@@ -63,7 +64,7 @@ public class ConfigElementsUtils {
 	private static final String ATTRIBUTE_ENUM_CLASS    = "enumClass";
 
 	public static boolean isConfigAttributeAnnotation(UAnnotation annotation) {
-		return isDefaultResAnnotation(annotation) || isDefaultConfigAnnotation(annotation) || ElementUtils.isOfType(annotation.getJavaPsi(), Source.class) || ElementUtils.isOfType(annotation.getJavaPsi(), Mutable.class);
+		return isDefaultResAnnotation(annotation) || isDefaultConfigAnnotation(annotation) || ElementUtils.isOfType(annotation.getJavaPsi(), Mutable.class);
 	}
 
 	public static boolean hasConfigAnnotation(PsiField psiField) {
@@ -178,7 +179,7 @@ public class ConfigElementsUtils {
 		return ElementUtils.hasAnnotation(field, DefaultRes.class);
 	}
 
-	public static boolean hasSourceAnnotation(final PsiField field) {
+	public static boolean hasSourceAnnotation(final PsiModifierListOwner field) {
 		return ElementUtils.hasAnnotation(field, Source.class);
 	}
 

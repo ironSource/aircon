@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  * configs associated with this source.
  */
 @Retention(RetentionPolicy.CLASS)
-@Target(ElementType.FIELD)
+@Target({ElementType.TYPE, ElementType.FIELD})
 public @interface Source {
 
 	/**

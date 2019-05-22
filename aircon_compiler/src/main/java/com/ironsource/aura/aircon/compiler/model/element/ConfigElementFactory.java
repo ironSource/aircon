@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
@@ -29,7 +30,7 @@ import javax.lang.model.util.Types;
  */
 public class ConfigElementFactory {
 
-	public static ConfigElement create(final ClassName providerClassName, VariableElement element, Elements elementsUtils, final Types types, final Map<String, ExecutableElement> defaultValueProviders, final Map<String, ExecutableElement> adapters, final Map<String, ExecutableElement> validators, final Map<String, ExecutableElement> mocks) {
+	public static ConfigElement create(final ClassName providerClassName, Element configClass, VariableElement element, Elements elementsUtils, final Types types, final Map<String, ExecutableElement> defaultValueProviders, final Map<String, ExecutableElement> adapters, final Map<String, ExecutableElement> validators, final Map<String, ExecutableElement> mocks) {
 		final ConfigFieldParser parser = new ConfigFieldParser(element);
 
 		if (!parser.isConfigField()) {
@@ -50,7 +51,7 @@ public class ConfigElementFactory {
 		final TypeName type = getType(parser, false);
 
 		Object defaultValue = parser.getDefaultValue();
-		final TypeMirror sourceTypeMirror = parser.getSourceTypeMirror();
+		final TypeMirror sourceTypeMirror = parser.getSourceTypeMirror(configClass);
 		final TypeMirror sourceIdentifierTypeMirror = getSourceIdentifierTypeMirror(sourceTypeMirror, elementsUtils, types);
 		final boolean mutable = parser.isMutable();
 
@@ -70,7 +71,7 @@ public class ConfigElementFactory {
 			return new TimeConfigElement(properties, minValue, maxValue, minValueFallbackPolicy, maxValueFallbackPolicy, parser.getDefaultValueTimeUnit());
 		}
 		else if (parser.isEnum()) {
-			return new EnumConfigElement(properties, parser.getEnumClass(),parser.getRandomizerValue());
+			return new EnumConfigElement(properties, parser.getEnumClass(), parser.getRandomizerValue());
 		}
 		else if (parser.isJson()) {
 			return new JsonConfigElement(properties, parser.getJsonType());

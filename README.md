@@ -11,24 +11,19 @@ Remote config management Android library which uses annotation processing and co
 Usage
 ---
 ```java
-interface RemoteConfigs {
-	
-    @FeatureRemoteConfig(createGroup = true)
-    interface CoolFeature {
+@Source(FireBaseConfigSource.class) // Can use any custom source instead of Firebase
+@FeatureRemoteConfig(createGroup = true)
+interface CoolFeature {
     	
-    	@Source(FireBaseConfigSource.class) // Can use any custom source instead of Firebase
-    	@BooleanConfig(defaultValue = false)
-    	String ENABLED = "enabled";
+    @BooleanConfig(defaultValue = false)
+    String ENABLED = "enabled";
     	
-    	@Source(FireBaseConfigSource.class)
-	@Mutable
-    	@IntConfig(defaultValue = 1, maxValue = 3)
-    	String MAX_TIMES_TO_SHOW = "maxTimeToShow";
+    @Mutable
+    @IntConfig(defaultValue = 1, maxValue = 3)
+    String MAX_TIMES_TO_SHOW = "maxTimeToShow";
     	
-    	@Source(FireBaseConfigSource.class)
-    	@StringConfig(defaultValue = "Hello world")
-    	String MESSAGE = "msg";
-    }
+    @StringConfig(defaultValue = "Hello world")
+    String MESSAGE = "msg";
 }
 ```
 
@@ -57,25 +52,33 @@ public class App extends Application {
 
 Supported config types
 --------
+Primitives
 ```java
-// Primitives
 @BooleanConfig
 @IntConfig
 @LongConfig
 @FloatConfig
 @StringConfig
+```
 
-// Collection
+Collection
+```java
 @StringSetConfig
+```
 
-// Json
+Json
+```java
 @JsonConfig
+```
 
-// Enums
+Enums
+```java
 @StringEnumConfig
 @IntEnumConfig
+```
 
-// Special
+Special
+```java
 @ColorConfig
 @TimeConfig
 @TextConfig
@@ -97,12 +100,25 @@ AirCon.get().getConfigSourceRepository().addSource(new FireBaseConfigSource(this
 
 Multiple remote config sources for the same app are supported.
 
-Each config is a assigned a source using the `@Source` annotation:
+Each config is a assigned a source using the `@Source` annotation.
+Either define a source for the entire feature:
+```java	
+@Source(FireBaseConfigSource.class)
+@FeatureRemoteConfig(createGroup = true)
+interface CoolFeature {
+    	
+    @BooleanConfig(defaultValue = false)
+    String ENABLED = "enabled";
+```
+
+Or define a specific source for each config:
 ```java
 @Source(FireBaseConfigSource.class)
 @StringConfig(defaultValue = "Hello world")
 String MESSAGE = "msg";
 ```
+
+If a source is defined on both the feature interface and the config field, the config field source will be used.
 
 Default value
 --------
@@ -110,31 +126,26 @@ A default value for a config can be defined in several ways (only one way can be
 
 * Define the `defaultValue` attribute of the config annotation:
    ```java
-    @Source(FireBaseConfigSource.class)
     @BooleanConfig(defaultValue = false)
     String ENABLED = "enabled";
 	```
 * Define a resource as the default value:
    ```java
-    @Source(FireBaseConfigSource.class)
 	@DefaultRes(R.string.title)
     @StringConfig
     String TITLE = "title";
 	```	
 * Define another config value as a default value:
   ```java
-    @Source(FireBaseConfigSource.class)
     @BooleanConfig(defaultValue = false)
     String ENABLED = "enabled";
 	
 	@DefaultConfig(ENABLED) // If "flag" is not configured, the provider will fallback to the configured value of "enabled".
-    @Source(FireBaseConfigSource.class)
     @BooleanConfig
     String ANOTHER_FLAG = "flag";
 	```
 * Define a custom default value provider method:
    ```java
-   @Source(FireBaseConfigSource.class)
    @BooleanConfig
    String ENABLED = "enabled";
 	
@@ -187,7 +198,6 @@ public enum TextLocation {
 }
 ```
 ```java
-@Source(FireBaseConfigSource.class)
 @IntEnumConfig(defaultValue = 2, enumClass = TextLocation.class)
 String TEXT_LOCATION = "textLocation";
 ```
@@ -205,26 +215,21 @@ Multiple configs can be groups together.
 A POJO class containing all the config values will be generated and can be passed around to methods.
 
 Groups can be created in 2 ways:
-1. Creating a group containing all the configs on a feature
+1. Creating a group containing all the configs on a feature by setting the `createGroup` attribute to `true`:
 ```java
-interface RemoteConfigs {
-	
-    @FeatureRemoteConfig(createGroup = true)
-    interface CoolFeature {
+@Source(FireBaseConfigSource.class)
+@FeatureRemoteConfig(createGroup = true)
+interface CoolFeature {
     	
-    	@Source(FireBaseConfigSource.class) // Can use any custom source instead of Firebase
-    	@BooleanConfig(defaultValue = false)
-    	String ENABLED = "enabled";
+    @BooleanConfig(defaultValue = false)
+    String ENABLED = "enabled";
     	
-    	@Source(FireBaseConfigSource.class)
-	@Mutable
-    	@IntConfig(defaultValue = 1, maxValue = 3)
-    	String MAX_TIMES_TO_SHOW = "maxTimeToShow";
+    @Mutable
+    @IntConfig(defaultValue = 1, maxValue = 3)
+    String MAX_TIMES_TO_SHOW = "maxTimeToShow";
     	
-    	@Source(FireBaseConfigSource.class)
-    	@StringConfig(defaultValue = "Hello world")
-    	String MESSAGE = "msg";
-    }
+    @StringConfig(defaultValue = "Hello world")
+    String MESSAGE = "msg";
 }
 ```
 Usage:

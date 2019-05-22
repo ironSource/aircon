@@ -53,33 +53,27 @@ public class App extends Application {
 Supported config types
 --------
 #### Primitives
-```java
-@BooleanConfig
-@IntConfig
-@LongConfig
-@FloatConfig
-@StringConfig
-```
+* `@BooleanConfig`
+* `@IntConfig`
+* `@LongConfig`
+* `@FloatConfig`
+* `@StringConfig`
+
 #### Collection
-```java
-@StringSetConfig
-```
+* `@StringSetConfig`
+
 #### Json
-```java
-@JsonConfig
-```
+* `@JsonConfig`
+
 #### Enums
-```java
-@StringEnumConfig
-@IntEnumConfig
-```
+* `@StringEnumConfig`
+* `@IntEnumConfig`
+
 #### Special
-```java
-@ColorConfig
-@TimeConfig
-@TextConfig
-@UrlConfig
-```
+* `@ColorConfig`
+* `@TimeConfig`
+* `@TextConfig`
+* `@UrlConfig`
 
 Mutable configs
 --------

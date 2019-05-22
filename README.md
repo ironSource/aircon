@@ -52,7 +52,7 @@ public class App extends Application {
 
 Supported config types
 --------
-Primitives
+#### Primitives
 ```java
 @BooleanConfig
 @IntConfig
@@ -60,24 +60,20 @@ Primitives
 @FloatConfig
 @StringConfig
 ```
-
-Collection
+#### Collection
 ```java
 @StringSetConfig
 ```
-
-Json
+#### Json
 ```java
 @JsonConfig
 ```
-
-Enums
+#### Enums
 ```java
 @StringEnumConfig
 @IntEnumConfig
 ```
-
-Special
+#### Special
 ```java
 @ColorConfig
 @TimeConfig

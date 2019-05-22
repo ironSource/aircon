@@ -110,7 +110,7 @@ public class AirConProcessor
 
 		// Create config elements
 		for (VariableElement variableElement : variableElements) {
-			final ConfigElement configElement = ConfigElementFactory.create(providerClassName, variableElement, mProcessingUtils.getElementUtils(), mProcessingEnvironment.getTypeUtils(), defaultValueProviders, adapters, validators, mocks);
+			final ConfigElement configElement = ConfigElementFactory.create(providerClassName, configClass, variableElement, mProcessingUtils.getElementUtils(), mProcessingEnvironment.getTypeUtils(), defaultValueProviders, adapters, validators, mocks);
 			if (configElement != null) {
 				mProcessingEnvironment.addConfigElement(configClass, configElement);
 			}

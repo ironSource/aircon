@@ -20,7 +20,7 @@ public class MissingSourceDetector
 
 	@Override
 	protected void visitConfigField(final UField node) {
-		if (!ConfigElementsUtils.hasSourceAnnotation(node)) {
+		if (!ConfigElementsUtils.hasSourceAnnotation(node) && !ConfigElementsUtils.hasSourceAnnotation(node.getContainingClass())) {
 			report(node);
 		}
 	}

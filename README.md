@@ -247,8 +247,8 @@ CoolFeatureConfigProvider.getMyGroup().getMessage();
 
 Mock values
 --------
-Mocking remotley configured values is supported.
-To mock a config value a mock method should defined:
+Mocking remotley configured values is useful for testing purposes.
+To mock a config value a mock method should be defined:
 ```java
 @ConfigMock(RemoteConfigs.CoolFeature.ENABLED)
 public static boolean mockEnabled() {

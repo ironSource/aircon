@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  * In order to use this config a JsonConverter should be supplied in the SDK configuration.
  * Since annotation attributes do not support generic values,
  * this config doesn't support generic types (e.g List<Integer>), for that case either:
- * 1.
+ * 1. Create a concrete class (e.g IntegerList extends List<Integer>)
  * 2. Use a {@link ConfigAdapter}.
  */
 @Retention(RetentionPolicy.CLASS)

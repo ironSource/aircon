@@ -5,7 +5,7 @@ Control over the air
 ---
 Remote config management Android library powered by annotation processing and code generation.
 
- * Mange your app remote configs using simple annotations, use generated providers classes to obtain config values.
+ * Manage your app's remote configs using simple annotations, use generated providers classes to obtain config values.
  * Supports adding any config source (FireBase support included in library).
  * Supports custom validation and adaptation of config values.
  * Inject remotely configured colors/Strings directly to XML layouts.
@@ -156,7 +156,7 @@ A default value for a config can be defined in several ways (only one way can be
 Custom value validation
 --------
 Some config types provide inherit validation.
-For example, the `@UrlConfig` verifies that the configured URL is a valid URL, otherwise fallsback to default. 
+For example, the `@UrlConfig` verifies that the configured URL is a valid URL, otherwise the default value is returned. 
 If custom validation is needed for a config the then a validation predicate method can be defined:
 ```java
 @ConfigValidator(TITLE)
@@ -168,7 +168,7 @@ public static boolean isTitleValid(String title) {
 Custom adapters
 --------
 Some config types provide implementation for common adaptation needs.
-For example, the `@JsonConfig` converts a remotley configured json string to an object.
+For example, the `@JsonConfig` converts a remotely configured json string to an object.
 In some cases extra processing is needed on the returned config value, which can be achieved be defining an adapter method:
 ```java
 @ConfigAdapter(ENABLED)
@@ -187,7 +187,7 @@ public static Label processTitle(String title) {
 
 Enum configs
 --------
-A common usecase is converting a remotley configured int/String to an Enum:
+A common use case is converting a remotely configured int/String to an Enum:
 ```java
 public enum TextLocation {
    @RemoteIntValue(0) BOTTOM,
@@ -220,7 +220,7 @@ final CoolFeatureConfig config = CoolFeatureConfigProvider.getAll();
 ```
 
 2. Creating a custom group and defining the contained configs.
-The value of the const defines the group name.
+The value of the field defines the group name.
 ```java
 @ConfigGroup({MAX_TIMES_TO_SHOW, MESSAGE}) 
 String MY_GROUP = "myGroup";
@@ -232,7 +232,7 @@ MyGroupConfig myGroupConfig = CoolFeatureConfigProvider.getMyGroup();
 
 Mock values
 --------
-Mocking remotley configured values is useful for testing purposes.
+Mocking remotely configured values is useful for testing purposes.
 To mock a config value a mock method should be defined:
 ```java
 @ConfigMock(RemoteConfigs.CoolFeature.ENABLED)
@@ -241,12 +241,12 @@ public static boolean mockEnabled() {
 }
 ```
 
-A good practice for prevnting mocks in release builds is defining all the config mock methods in the same class and ignore it in git.
+A good practice for preventing mocks in release builds is defining all the config mock methods in the same class and ignore it in git.
 In addition, a custom lint check will throw an error if a config mock is defined in a release build.
 
-Xml injection
+XML injection
 --------
-Aircon is also equipped with XMl injection capabilities.
+Aircon is also equipped with XML injection capabilities.
 Injection for attributes of type String, color and color state list are supported.
 To use XML injection:
 1. Enable XML injection by providing the app R.attr class and a config source:

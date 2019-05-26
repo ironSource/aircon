@@ -13,11 +13,4 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
-public @interface FeatureRemoteConfig {
-
-	/**
-	 * Whether to create a group containing all the configs defined in the annotated interface.
-	 * @see com.ironsource.aura.aircon.common.annotations.config.ConfigGroup
-	 */
-	boolean createGroup() default false;
-}
+public @interface FeatureRemoteConfig {}

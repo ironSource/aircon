@@ -116,11 +116,9 @@ public class AirConProcessor
 			}
 		}
 
-		// Create config group
-		final FeatureRemoteConfig featureRemoteConfig = configClass.getAnnotation(FeatureRemoteConfig.class);
-		if (featureRemoteConfig.createGroup()) {
-			createFeatureConfigGroupElement(configClass, providerClassName);
-		}
+		// Create config groups
+		createFeatureConfigGroupElement(configClass, providerClassName);
+
 		for (VariableElement variableElement : variableElements) {
 			final ConfigGroup configGroupAnnotation = variableElement.getAnnotation(ConfigGroup.class);
 			if (configGroupAnnotation != null) {

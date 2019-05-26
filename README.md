@@ -14,7 +14,7 @@ Usage
 ---
 ```java
 @Source(FireBaseConfigSource.class) // Can use any custom source instead of Firebase
-@FeatureRemoteConfig(createGroup = true)
+@FeatureRemoteConfig
 interface CoolFeature {
     	
     @BooleanConfig(defaultValue = false)
@@ -102,7 +102,7 @@ Each config is a assigned a source using the `@Source` annotation.
 Either define a source for the entire feature:
 ```java	
 @Source(FireBaseConfigSource.class)
-@FeatureRemoteConfig(createGroup = true)
+@FeatureRemoteConfig
 interface CoolFeature {
     	
     @BooleanConfig(defaultValue = false)
@@ -212,37 +212,22 @@ Config groups
 Multiple configs can be groups together.
 A POJO class containing all the config values will be generated and can be passed around to methods.
 
-Groups can be created in 2 ways:
-1. Creating a group containing all the configs on a feature by setting the `createGroup` attribute to `true`:
-```java
-@Source(FireBaseConfigSource.class)
-@FeatureRemoteConfig(createGroup = true)
-interface CoolFeature {
-    	
-    @BooleanConfig(defaultValue = false)
-    String ENABLED = "enabled";
-    	
-    @Mutable
-    @IntConfig(defaultValue = 1, maxValue = 3)
-    String MAX_TIMES_TO_SHOW = "maxTimeToShow";
-    	
-    @StringConfig(defaultValue = "Hello world")
-    String MESSAGE = "msg";
-}
-```
+Groups can be used in 2 ways:
+1. For every feature annotated with `@FeatureRemoteConfig` a group containing all configs is generated.
 Usage:
 ```java
-CoolFeatureConfigProvider.getAll().isEnabled();
+final CoolFeatureConfig config = CoolFeatureConfigProvider.getAll();
 ```
 
-2. Creating a custom group and defining the contained configs
+2. Creating a custom group and defining the contained configs.
+The value of the const defines the group name.
 ```java
 @ConfigGroup({MAX_TIMES_TO_SHOW, MESSAGE}) 
 String MY_GROUP = "myGroup";
 ```
 Usage:
 ```java
-CoolFeatureConfigProvider.getMyGroup().getMessage();
+MyGroupConfig myGroupConfig = CoolFeatureConfigProvider.getMyGroup();
 ```
 
 Mock values

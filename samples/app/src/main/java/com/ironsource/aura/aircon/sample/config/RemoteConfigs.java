@@ -40,7 +40,7 @@ import com.ironsource.aura.aircon.source.FireBaseConfigSource;
 public interface RemoteConfigs {
 
 	@Source(FireBaseConfigSource.class)
-	@FeatureRemoteConfig(createGroup = true)
+	@FeatureRemoteConfig
 	interface SomeCoolFeature {
 
 		@DefaultRes(R.bool.some_bool)

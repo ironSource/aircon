@@ -109,6 +109,7 @@ public class AirConConfiguration {
 		 * Set a logger to be used by the SDK.
 		 * If a logger is not supplied {@link com.ironsource.aura.aircon.logging.AndroidLogger} is used.
 		 *
+		 * @param logger logger
 		 * @return this {@link Builder} instance.
 		 * @see #setLoggingEnabled(boolean)
 		 */
@@ -120,6 +121,7 @@ public class AirConConfiguration {
 		/**
 		 * Set whether SDK logging is enabled (true by default).
 		 *
+		 * @param loggingEnabled whether logging should be enabled
 		 * @return this {@link Builder} instance.
 		 * @see #setLogger(Logger)
 		 */
@@ -207,6 +209,8 @@ public class AirConConfiguration {
 		 *
 		 * @param configSourceClass the factory config source class.
 		 * @param factory           config source factory.
+		 * @param <T> config source id type
+		 * @param <S> config source type
 		 * @return this {@link Builder} instance.
 		 * @see #addIdentifiableSource(IdentifiableConfigSource)
 		 */

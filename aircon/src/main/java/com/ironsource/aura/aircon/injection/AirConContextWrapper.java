@@ -81,7 +81,6 @@ public final class AirConContextWrapper
 	/**
 	 * Call this method from {@link Activity#onCreateView(View, String, Context, AttributeSet)}
 	 * so that custom views (i.e. android.support.v7.widget.Toolbar) can have their properties overridden
-	 * <p></p>
 	 * Example:
 	 * <pre>
 	 * {@code
@@ -95,6 +94,11 @@ public final class AirConContextWrapper
 	 * }
 	 * }
 	 * </pre>
+	 *
+	 * @param activity the activity
+	 * @param name name received in Activity.onCreateView()
+	 * @param attrSet attrSet received in Activity.onCreateView()
+	 * @return view
 	 */
 	@Nullable
 	public static View onActivityCreateView(Activity activity, String name, AttributeSet attrSet) {
@@ -129,6 +133,10 @@ public final class AirConContextWrapper
 	 * Call this method from {@link android.app.Activity#attachBaseContext(Context)}.
 	 * Wrap a context to intercept {@link #getSystemService(String)} calls for {@link Context#LAYOUT_INFLATER_SERVICE}
 	 * so that we can provide our own {@link LayoutInflater} that will override view attributes with values from {@link AttributeResolver}
+	 * @param context context
+	 * @param attrClass R.attr.class
+	 * @param attributeResolver attribute resolver
+	 * @return an AirCon context wrapper
 	 */
 	@NonNull
 	public static AirConContextWrapper wrap(@NonNull Context context, final Class attrClass, @NonNull AttributeResolver attributeResolver) {

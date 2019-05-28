@@ -29,7 +29,7 @@ dependencies {
     implementation project(':firebase-source')
     implementation project(':gson-converter')
 
-    annotationProcessor project(':aircon_compiler')
+    annotationProcessor project(':aircon-compiler')
 }
 
 apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin

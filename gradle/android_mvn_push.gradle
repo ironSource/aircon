@@ -19,8 +19,8 @@ install {
                 // Set your license
                 licenses {
                     license {
-                        name 'MIT License'
-                        url 'https://opensource.org/licenses/MIT'
+                        name POM_LICENCE_NAME
+                        url POM_LICENCE_URL
                     }
                 }
                 developers {
@@ -84,7 +84,7 @@ bintray {
         userOrg = properties.getProperty("bintray.org")
         websiteUrl = SITE_URL
         vcsUrl = GIT_URL
-        licenses = ["MIT"]
+        licenses = [POM_LICENCE]
         publish = true
     }
 }

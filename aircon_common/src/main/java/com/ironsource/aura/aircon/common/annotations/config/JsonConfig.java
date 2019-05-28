@@ -10,8 +10,12 @@ import java.lang.annotation.Target;
 
 /**
  * A config of type String.
- * The config is converted to an object of the type supplied in {@link #type()} using Gson.
- * This doesn't support generic types (List<Integer>), for that use {@link ConfigAdapter}
+ * The config is converted to an object of the type supplied in {@link #type()}.
+ * In order to use this config a JsonConverter should be supplied in the SDK configuration.
+ * Since annotation attributes do not support generic values,
+ * this config doesn't support generic types (e.g List<Integer>), for that case either:
+ * 1. Create a concrete class (e.g IntegerList extends List<Integer>)
+ * 2. Use a {@link ConfigAdapter}.
  */
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.FIELD)

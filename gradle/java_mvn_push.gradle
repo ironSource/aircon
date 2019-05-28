@@ -37,7 +37,7 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 bintray {
     user = properties.getProperty('bintray.user')
     key = properties.getProperty('bintray.apikey')
-    publications = [REP]
+    publications = ["MyPublication"]
     publish = true
     pkg {
         repo = REP

@@ -26,6 +26,8 @@ android {
     }
 }
 
+apply from: rootProject.file('gradle/android_mvn_push.gradle')
+
 dependencies {
     implementation project(':aircon')
     implementation 'com.google.code.gson:gson:2.8.5'

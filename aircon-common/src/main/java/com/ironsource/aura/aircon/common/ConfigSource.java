@@ -27,7 +27,7 @@ public interface ConfigSource {
 
 	/**
 	 * Override the mapping to the provided key with the provided value.
-	 * Any subsequent calls to {@link #getInteger(String, Integer) should return this value.
+	 * Any subsequent calls to {@link #getInteger(String, Integer)} should return this value.
 	 * @param key config key.
 	 * @param value override value.
 	 */

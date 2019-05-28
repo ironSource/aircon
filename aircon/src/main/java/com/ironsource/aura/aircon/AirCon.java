@@ -10,8 +10,8 @@ import com.ironsource.aura.aircon.logging.Logger;
 import com.ironsource.aura.aircon.source.ConfigSourceRepository;
 
 /**
- * AirCon SDK entry point.<br/>
- * Use {@link #get()} in order to get an instance.<br/>
+ * AirCon SDK entry point.
+ * Use {@link #get()} in order to get an instance.
  */
 public class AirCon {
 
@@ -78,7 +78,6 @@ public class AirCon {
 	 *
 	 * @return SDK context.
 	 * @throws IllegalStateException if SDK is not initialized.
-	 * @see AirConConfiguration.Builder(Context)
 	 */
 	@NonNull
 	public Context getContext() {

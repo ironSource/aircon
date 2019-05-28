@@ -92,22 +92,18 @@ public class ConfigSourceRepository {
 	 *
 	 * @param configSourceClass the factory config source class.
 	 * @param factory           config source factory.
+	 * @param <T> config source id type
+	 * @param <S> config source type
 	 * @see #addIdentifiableSource(IdentifiableConfigSource)
 	 */
 	public synchronized <T, S extends IdentifiableConfigSource<T>> void addIdentifiableSourceFactory(Class<S> configSourceClass, IdentifiableConfigSourceFactory<T> factory) {
 		mIdentifiableConfigSourceFactories.put(configSourceClass, factory);
 	}
 
-	/**
-	 * Internal method, should not be used outside the SDK.
-	 */
 	public synchronized ConfigSource getSource(Class<? extends ConfigSource> configSourceClass) {
 		return getSource(configSourceClass, configSourceClass);
 	}
 
-	/**
-	 * Internal method, should not be used outside the SDK.
-	 */
 	public synchronized ConfigSource getSource(Class<? extends ConfigSource> configSourceClass, Object sourceId) {
 		ConfigSource configSource = mConfigSources.get(sourceId);
 

@@ -1,4 +1,4 @@
-include ':aircon_compiler', ':aircon_common', ':aircon_lint', ':app', ':aircon', ':firebase-source', ':gson-converter'
+include ':aircon-compiler', ':aircon-common', ':aircon-lint', ':app', ':aircon', ':firebase-source', ':gson-converter'
 project(':firebase-source').projectDir = file('/aircon-sources/firebase')
 project(':gson-converter').projectDir = file('/aircon-converters/gson')
 project(':app').projectDir = file('/samples/app')

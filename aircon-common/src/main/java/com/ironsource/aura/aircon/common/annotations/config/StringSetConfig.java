@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A config of type Set<String>
+ * A config of type Set&lt;String&gt;
  */
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.FIELD)

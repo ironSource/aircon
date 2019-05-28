@@ -6,7 +6,7 @@ targetCompatibility = JavaVersion.VERSION_1_7
 sourceSets {
     main {
         java {
-            srcDir '../aircon_common/src/main/java'
+            srcDir '../aircon-common/src/main/java'
         }
     }
 }

@@ -30,6 +30,12 @@ dependencies {
     implementation project(':gson-converter')
 
     annotationProcessor project(':aircon-compiler')
+
+//    implementation 'com.ironsource.aura.aircon:aircon:1.4.0'
+//    implementation 'com.ironsource.aura.aircon:firebase-source:1.4.0'
+//    implementation 'com.ironsource.aura.aircon:gson-converter:1.4.0'
+//
+//    annotationProcessor 'com.ironsource.aura.aircon:aircon-compiler:1.4.0'
 }
 
 apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin

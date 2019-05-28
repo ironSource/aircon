@@ -37,13 +37,13 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 bintray {
     user = properties.getProperty('bintray.user')
     key = properties.getProperty('bintray.apikey')
-    publications = ['MyPublication']
+    publications = [REP]
     publish = true
     pkg {
         repo = REP
         name = POM_ARTIFACT_ID
-        userOrg = properties.getProperty("bintray.org")
-        licenses = ['MIT']
+        userOrg = properties.getProperty('bintray.org')
+        licenses = [POM_LICENCE]
         vcsUrl = GIT_URL
         version {
             name = VERSION_NAME

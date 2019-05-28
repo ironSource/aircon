@@ -38,5 +38,5 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$SUPPORT_VERSION"
 
     api project(':aircon-common')
-    lintPublish project(':aircon-lint')
+    lintChecks project(':aircon-lint')
 }

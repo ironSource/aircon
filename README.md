@@ -1,3 +1,5 @@
+[ ![Download](https://api.bintray.com/packages/ironsource-aura/AirCon/aircon/images/download.svg) ](https://bintray.com/ironsource-aura/AirCon/aircon/_latestVersion)
+
 AirCon
 ============
 
@@ -312,8 +314,27 @@ No extra integration is needed from the app side.
 Download
 --------
 ```groovy
-// WORK IN PROGRESS
+dependencies {
+    implementation 'com.ironsource.aura.aircon:aircon:1.4.0'
+    annotationProcessor 'com.ironsource.aura.aircon:aircon-compiler:1.4.0'
+}
 ```
+
+For using Firebase config source:
+```groovy
+dependencies {
+    implementation 'com.ironsource.aura.aircon:firebase-source:1.4.0'	
+}
+```
+
+For using `Gson` to parse `@JsonConfig`:
+```groovy
+dependencies {
+    implementation 'com.ironsource.aura.aircon:gson-converter:1.4.0'	
+}
+```
+
+If you are using Kotlin, replace `annotationProcessor` with `kapt`.
 
 License
 -------

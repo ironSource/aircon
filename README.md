@@ -6,6 +6,7 @@ AirCon
 Control over the air
 ---
 Remote config management Android library powered by annotation processing and code generation.
+https://medium.com/@hanan_rofe_haim/remote-config-in-android-one-release-to-rule-them-all-5ffa7750dec9
 
  * Manage your app's remote configs using simple annotations, use generated providers classes to obtain config values.
  * Supports adding any config source (FireBase support included in library).

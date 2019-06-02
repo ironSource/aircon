@@ -1,9 +1,6 @@
 ![Logo](images/logo.png)
 [ ![Download](https://api.bintray.com/packages/ironsource-aura/AirCon/aircon/images/download.svg) ](https://bintray.com/ironsource-aura/AirCon/aircon/_latestVersion)
 
-AirCon
-============
-
 Control over the air
 ---
 Remote config management Android library powered by annotation processing and code generation.

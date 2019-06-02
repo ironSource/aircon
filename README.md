@@ -1,8 +1,13 @@
 ![Logo](images/logo.png)
+[ ![Download](https://api.bintray.com/packages/ironsource-aura/AirCon/aircon/images/download.svg) ](https://bintray.com/ironsource-aura/AirCon/aircon/_latestVersion)
+
+AirCon
+============
 
 Control over the air
 ---
 Remote config management Android library powered by annotation processing and code generation.
+https://medium.com/@hanan_rofe_haim/remote-config-in-android-one-release-to-rule-them-all-5ffa7750dec9
 
  * Manage your app's remote configs using simple annotations, use generated providers classes to obtain config values.
  * Supports adding any config source (FireBase support included in library).
@@ -311,8 +316,27 @@ No extra integration is needed from the app side.
 Download
 --------
 ```groovy
-// WORK IN PROGRESS
+dependencies {
+    implementation 'com.ironsource.aura.aircon:aircon:1.4.0'
+    annotationProcessor 'com.ironsource.aura.aircon:aircon-compiler:1.4.0'
+}
 ```
+
+For using Firebase config source:
+```groovy
+dependencies {
+    implementation 'com.ironsource.aura.aircon:firebase-source:1.4.0'	
+}
+```
+
+For using `Gson` to parse `@JsonConfig`:
+```groovy
+dependencies {
+    implementation 'com.ironsource.aura.aircon:gson-converter:1.4.0'	
+}
+```
+
+If you are using Kotlin, replace `annotationProcessor` with `kapt`.
 
 License
 -------

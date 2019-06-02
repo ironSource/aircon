@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.lang.model.element.Modifier;
-import javax.lang.model.type.TypeMirror;
 
 
 /**
@@ -56,7 +55,8 @@ abstract class DefaultConfigProviderGenerator <T extends ConfigElement>
 		                                             .returns(mElement.getRawType());
 
 		if (hasDefaultConfigWithIdentifiableSource()) {
-			builder.addParameter(getConfigSourceIdentifierParamSpec());
+			builder.addParameter(getConfigSourceIdentifierParamSpec(mElement.getDefaultConfigValueElement()
+			                                                                .getSourceIdentifierTypeMirror()));
 		}
 
 		final CodeBlockBuilder codeBlockBuilder = new CodeBlockBuilder().addReturn(getDefaultValueEvaluationCodeBlock());
@@ -93,7 +93,7 @@ abstract class DefaultConfigProviderGenerator <T extends ConfigElement>
 		                                     .build());
 
 		if (mElement.hasIdentifiableSource()) {
-			codeBlocks.add(CodeBlock.of(PARAM_CONFIG_SOURCE_ID));
+			codeBlocks.add(CodeBlock.of(getSourceIdentifierParamName(mElement.getSourceIdentifierTypeMirror())));
 		}
 		return codeBlocks.toArray(new CodeBlock[0]);
 	}
@@ -184,17 +184,16 @@ abstract class DefaultConfigProviderGenerator <T extends ConfigElement>
 	protected Set<ParameterSpec> getConfigMethodParameters() {
 		final Set<ParameterSpec> parameterSpecs = new HashSet<>();
 
-		if (mElement.hasIdentifiableSource() || hasDefaultConfigWithIdentifiableSource()) {
-			parameterSpecs.add(getConfigSourceIdentifierParamSpec());
+		if (mElement.hasIdentifiableSource()) {
+			parameterSpecs.add(getConfigSourceIdentifierParamSpec(mElement.getSourceIdentifierTypeMirror()));
+		}
+
+		if (hasDefaultConfigWithIdentifiableSource()) {
+			parameterSpecs.add(getConfigSourceIdentifierParamSpec(mElement.getDefaultConfigValueElement()
+			                                                              .getSourceIdentifierTypeMirror()));
 		}
 
 		return parameterSpecs;
-	}
-
-	private ParameterSpec getConfigSourceIdentifierParamSpec() {
-		final TypeMirror sourceIdentifierTypeMirror = mElement.hasIdentifiableSource() ? mElement.getSourceIdentifierTypeMirror() : hasDefaultConfigWithIdentifiableSource() ? mElement.getDefaultConfigValueElement()
-		                                                                                                                                                                               .getSourceIdentifierTypeMirror() : null;
-		return sourceIdentifierTypeMirror != null ? getConfigSourceIdentifierParamSpec(sourceIdentifierTypeMirror) : null;
 	}
 
 	private boolean hasDefaultConfigWithIdentifiableSource() {
@@ -291,7 +290,7 @@ abstract class DefaultConfigProviderGenerator <T extends ConfigElement>
 	private CodeBlock createConfigAuxMethodCall(ConfigAuxMethod configAuxMethod, boolean addSourceIdParam, Object... params) {
 		final ArrayList<Object> paramList = new ArrayList<>(Arrays.asList(params));
 		if (addSourceIdParam && mElement.hasIdentifiableSource()) {
-			paramList.add(0, PARAM_CONFIG_SOURCE_ID);
+			paramList.add(0, getSourceIdentifierParamName(mElement.getSourceIdentifierTypeMirror()));
 		}
 		return new CodeBlockBuilder().addStaticMethodCall(configAuxMethod.getContainingClass(), configAuxMethod.getName(), paramList.toArray())
 		                             .build();

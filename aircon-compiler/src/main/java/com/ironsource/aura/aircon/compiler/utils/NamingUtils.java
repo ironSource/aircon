@@ -15,10 +15,6 @@ public class NamingUtils
 	public static final  String ENUMS_PROVIDER_REMOTE_VALUE_GETTER_METHOD = "getRemoteValue";
 	private static final String FEATURE_CONFIG_GROUP_CLASS_SUFFIX         = "Config";
 
-	public static final String PARAMETER_PRODUCT_FEED = "productFeed";
-	public static final String PARAMETER_APP_FEED     = "appFeed";
-
-
 	public static String getProviderClassName(TypeElement featureConfigInterface) {
 		return getProviderClassName(featureConfigInterface.getSimpleName()
 		                                                  .toString());

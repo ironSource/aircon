@@ -26,8 +26,6 @@ public abstract class AbstractConfigProviderGenerator <T extends AbstractConfigE
 
 	private static final String CONFIGURED_PREDICATE_SUFFIX = "Configured";
 
-	protected static final String PARAM_CONFIG_SOURCE_ID = "configSourceId";
-
 	protected final T mElement;
 
 	protected GeneratedMethod mPredicateGeneratedMethod;
@@ -107,13 +105,18 @@ public abstract class AbstractConfigProviderGenerator <T extends AbstractConfigE
 	protected abstract Set<ParameterSpec> getConfigMethodParameters();
 
 	protected ParameterSpec getConfigSourceIdentifierParamSpec(TypeMirror type) {
-		return ParameterSpec.builder(TypeName.get(type), PARAM_CONFIG_SOURCE_ID)
+		return ParameterSpec.builder(TypeName.get(type), getSourceIdentifierParamName(type))
 		                    .build();
 	}
 
 	//endregion
 
 	//region Util methods
+
+	protected String getSourceIdentifierParamName(TypeMirror typeMirror) {
+		return NamingUtils.getSimpleName(TypeName.get(typeMirror))
+		                  .toLowerCase();
+	}
 
 	protected GeneratedMethod createGeneratedMethod(final ClassName className, final String methodName, final Set<ParameterSpec> parameterSpecs) {
 		final List<GeneratedMethod.Parameter> parameters = new ArrayList<>();

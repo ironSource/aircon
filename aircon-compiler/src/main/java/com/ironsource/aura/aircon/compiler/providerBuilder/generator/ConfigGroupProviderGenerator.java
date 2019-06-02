@@ -82,29 +82,21 @@ public class ConfigGroupProviderGenerator
 
 	@Override
 	protected Set<ParameterSpec> getConfigMethodParameters() {
-		final HashSet<ParameterSpec> parameterSpecs = new HashSet<>();
-		final TypeMirror sourceIdentifierTypeMirror = getSourceIdentifierTypeMirror(mElement);
-		if (sourceIdentifierTypeMirror != null) {
-			parameterSpecs.add(getConfigSourceIdentifierParamSpec(sourceIdentifierTypeMirror));
-		}
-		return parameterSpecs;
+		final ArrayList<ParameterSpec> parameterSpecs = new ArrayList<>();
+		getSourceIdentifierParamSpecs(mElement, parameterSpecs);
+		return new HashSet<>(parameterSpecs);
 	}
 
-	// PENDING - More than one source
-	private TypeMirror getSourceIdentifierTypeMirror(ConfigGroupElement configGroupElement) {
+	private void getSourceIdentifierParamSpecs(ConfigGroupElement configGroupElement, List<ParameterSpec> parameterSpecs) {
 		for (AbstractConfigElement configElement : configGroupElement.getConfigElements()) {
 			if (configElement instanceof ConfigElement && ((ConfigElement) configElement).hasIdentifiableSource()) {
-				return ((ConfigElement) configElement).getSourceIdentifierTypeMirror();
+				final TypeMirror typeMirror = ((ConfigElement) configElement).getSourceIdentifierTypeMirror();
+				parameterSpecs.add(getConfigSourceIdentifierParamSpec(typeMirror));
 			}
 			else if (configElement instanceof ConfigGroupElement) {
-				final TypeMirror sourceIdentifierTypeMirror = getSourceIdentifierTypeMirror((ConfigGroupElement) configElement);
-				if (sourceIdentifierTypeMirror != null) {
-					return sourceIdentifierTypeMirror;
-				}
+				getSourceIdentifierParamSpecs((ConfigGroupElement) configElement, parameterSpecs);
 			}
 		}
-
-		return null;
 	}
 
 	@Override

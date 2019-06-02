@@ -1,5 +1,4 @@
-AirCon
-============
+![Logo](images/logo.png)
 
 Control over the air
 ---

@@ -32,3 +32,12 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+task publishSdk {
+    dependsOn 'clean'
+    dependsOn 'aircon-common:bintrayUpload'
+    dependsOn 'aircon-compiler:bintrayUpload'
+    dependsOn 'aircon:bintrayUpload'
+    dependsOn 'firebase-source:bintrayUpload'
+    dependsOn 'gson-converter:bintrayUpload'
+}

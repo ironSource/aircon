@@ -15,31 +15,37 @@ public abstract class AirConAppCompatActivity
 
 	@Override
 	protected void attachBaseContext(Context newBase) {
-		if (AirCon.get()
-		          .isXmlInjectionEnabled()) {
-			final AttributeResolver attributeResolver = getAttributeResolver();
-			if (attributeResolver != null) {
-				super.attachBaseContext(AirConContextWrapper.wrap(newBase, AirCon.get()
-				                                                                 .getAttrClass(), attributeResolver));
-			}
+		if (isXmlInjectionEnabled()) {
+			super.attachBaseContext(AirConContextWrapper.wrap(newBase, AirCon.get()
+			                                                                 .getAttrClass(), getAttributeResolver()));
 		}
 		else {
 			super.attachBaseContext(newBase);
 		}
 	}
 
+	@Override
+	public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+		if (isXmlInjectionEnabled()) {
+			View view = AirConContextWrapper.onActivityCreateView(this, name, attrs);
+			if (view == null) {
+				view = super.onCreateView(parent, name, context, attrs);
+			}
+			return view;
+		}
+		else {
+			return super.onCreateView(parent, name, context, attrs);
+		}
+	}
+
+	private boolean isXmlInjectionEnabled() {
+		return AirCon.get()
+		             .isXmlInjectionEnabled() && getAttributeResolver() != null;
+	}
+
 
 	protected AttributeResolver getAttributeResolver() {
 		return AirCon.get()
 		             .getAttributeResolver();
-	}
-
-	@Override
-	public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
-		View view = AirConContextWrapper.onActivityCreateView(this, name, attrs);
-		if (view == null) {
-			view = super.onCreateView(parent, name, context, attrs);
-		}
-		return view;
 	}
 }

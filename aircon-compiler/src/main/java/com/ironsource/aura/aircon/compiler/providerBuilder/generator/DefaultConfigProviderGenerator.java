@@ -220,7 +220,7 @@ abstract class DefaultConfigProviderGenerator <T extends ConfigElement>
 			return getConversionToRawTypeExpression(createConfigGetterMethodCall(mElement.getDefaultConfigValueElement()));
 		}
 		else if (mElement.hasDefaultValueProvider()) {
-			return createConfigAuxMethodCall(mElement.getDefaultValueProvider(), false, new Object[0]);
+			return createConfigAuxMethodCall(mElement.getDefaultValueProvider());
 		}
 		else {
 			return getDefaultValueExpression();

@@ -5,6 +5,7 @@ import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
 
 import com.ironsource.aura.aircon.common.ConfigSource;
+import com.ironsource.aura.aircon.common.ConfigTypeResolver;
 import com.ironsource.aura.aircon.common.IdentifiableConfigSource;
 import com.ironsource.aura.aircon.common.annotations.Source;
 import com.ironsource.aura.aircon.injection.AttributeResolver;
@@ -13,6 +14,7 @@ import com.ironsource.aura.aircon.logging.Logger;
 import com.ironsource.aura.aircon.logging.LoggerWrapper;
 import com.ironsource.aura.aircon.source.IdentifiableConfigSourceFactory;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,16 +27,17 @@ import java.util.Map;
  */
 public class AirConConfiguration {
 
-	private final Context                                     mContext;
-	private final Logger                                      mLogger;
-	private final Class                                       mAttrClass;
-	private final AttributeResolver                           mAttributeResolver;
-	private final JsonConverter                               mJsonConverter;
-	private final List<ConfigSource> mConfigSources;
-	private final List<IdentifiableConfigSource>              mIdentifiableConfigSources;
-	private final Map<Class, IdentifiableConfigSourceFactory> mIdentifiableConfigSourceFactories;
+	private final Context                                                  mContext;
+	private final Logger                                                   mLogger;
+	private final Class                                                    mAttrClass;
+	private final AttributeResolver                                        mAttributeResolver;
+	private final JsonConverter                                            mJsonConverter;
+	private final List<ConfigSource>                                       mConfigSources;
+	private final List<IdentifiableConfigSource>                           mIdentifiableConfigSources;
+	private final Map<Class, IdentifiableConfigSourceFactory>              mIdentifiableConfigSourceFactories;
+	private final HashMap<Class<? extends Annotation>, ConfigTypeResolver> mConfigTypes;
 
-	private AirConConfiguration(final Context context, final Logger logger, final Class attrClass, final AttributeResolver attributeResolver, final JsonConverter jsonConverter, final List<ConfigSource> configSources, final List<IdentifiableConfigSource> identifiableConfigSources, final Map<Class, IdentifiableConfigSourceFactory> identifiableConfigSourceFactories) {
+	private AirConConfiguration(final Context context, final Logger logger, final Class attrClass, final AttributeResolver attributeResolver, final JsonConverter jsonConverter, final List<ConfigSource> configSources, final List<IdentifiableConfigSource> identifiableConfigSources, final Map<Class, IdentifiableConfigSourceFactory> identifiableConfigSourceFactories, final HashMap<Class<? extends Annotation>, ConfigTypeResolver> configTypes) {
 		mContext = context;
 		mLogger = logger;
 		mAttrClass = attrClass;
@@ -43,6 +46,7 @@ public class AirConConfiguration {
 		mConfigSources = configSources;
 		mIdentifiableConfigSources = identifiableConfigSources;
 		mIdentifiableConfigSourceFactories = identifiableConfigSourceFactories;
+		mConfigTypes = configTypes;
 	}
 
 	Context getContext() {
@@ -77,6 +81,10 @@ public class AirConConfiguration {
 		return mIdentifiableConfigSourceFactories;
 	}
 
+	HashMap<Class<? extends Annotation>, ConfigTypeResolver> getConfigTypes() {
+		return mConfigTypes;
+	}
+
 	public static class Builder {
 
 		private final Context mContext;
@@ -87,9 +95,10 @@ public class AirConConfiguration {
 		private AttributeResolver mAttributeResolver;
 		private JsonConverter     mJsonConverter;
 
-		private final List<ConfigSource>                          mConfigSources;
-		private final List<IdentifiableConfigSource>              mIdentifiableConfigSources;
-		private final Map<Class, IdentifiableConfigSourceFactory> mIdentifiableConfigSourceFactories;
+		private final List<ConfigSource>                                       mConfigSources;
+		private final List<IdentifiableConfigSource>                           mIdentifiableConfigSources;
+		private final Map<Class, IdentifiableConfigSourceFactory>              mIdentifiableConfigSourceFactories;
+		private final HashMap<Class<? extends Annotation>, ConfigTypeResolver> mConfigTypes;
 
 		/**
 		 * Constructs a Builder with the application context retrieved from the supplied context.
@@ -103,6 +112,7 @@ public class AirConConfiguration {
 			mConfigSources = new ArrayList<>();
 			mIdentifiableConfigSources = new ArrayList<>();
 			mIdentifiableConfigSourceFactories = new HashMap<>();
+			mConfigTypes = new HashMap<>();
 		}
 
 		/**
@@ -209,13 +219,18 @@ public class AirConConfiguration {
 		 *
 		 * @param configSourceClass the factory config source class.
 		 * @param factory           config source factory.
-		 * @param <T> config source id type
-		 * @param <S> config source type
+		 * @param <T>               config source id type
+		 * @param <S>               config source type
 		 * @return this {@link Builder} instance.
 		 * @see #addIdentifiableSource(IdentifiableConfigSource)
 		 */
 		public <T, S extends IdentifiableConfigSource<T>> Builder addIdentifiableSourceFactory(Class<S> configSourceClass, IdentifiableConfigSourceFactory<T> factory) {
 			mIdentifiableConfigSourceFactories.put(configSourceClass, factory);
+			return this;
+		}
+
+		public Builder registerConfigType(Class<? extends Annotation> configTypeAnnotation, ConfigTypeResolver<?, ?> resolver) {
+			mConfigTypes.put(configTypeAnnotation, resolver);
 			return this;
 		}
 
@@ -225,7 +240,7 @@ public class AirConConfiguration {
 		 * @return an {@link AirConConfiguration} object.
 		 */
 		public AirConConfiguration build() {
-			return new AirConConfiguration(mContext, new LoggerWrapper(mLogger, mLoggingEnabled), mAttrClass, mAttributeResolver, mJsonConverter, mConfigSources, mIdentifiableConfigSources, mIdentifiableConfigSourceFactories);
+			return new AirConConfiguration(mContext, new LoggerWrapper(mLogger, mLoggingEnabled), mAttrClass, mAttributeResolver, mJsonConverter, mConfigSources, mIdentifiableConfigSources, mIdentifiableConfigSourceFactories, mConfigTypes);
 		}
 	}
 

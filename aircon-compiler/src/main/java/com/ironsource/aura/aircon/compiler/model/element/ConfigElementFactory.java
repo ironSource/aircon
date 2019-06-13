@@ -32,7 +32,7 @@ import javax.lang.model.util.Types;
 public class ConfigElementFactory {
 
 	public static ConfigElement create(final ClassName providerClassName, Element configClass, VariableElement element, Elements elementsUtils, final Types types, final Map<String, ExecutableElement> defaultValueProviders, final Map<String, ExecutableElement> adapters, final Map<String, ExecutableElement> validators, final Map<String, ExecutableElement> mocks) {
-		final ConfigFieldParser parser = new ConfigFieldParser(element);
+		final ConfigFieldParser parser = new ConfigFieldParser(element, types);
 
 		if (!parser.isConfigField()) {
 			return null;
@@ -94,6 +94,9 @@ public class ConfigElementFactory {
 		}
 		else if (parser.isNumber()) {
 			return new NumberConfigElement(properties, minValue, maxValue, minValueFallbackPolicy, maxValueFallbackPolicy);
+		}
+		else if (parser.isCustomType()) {
+			return new CustomConfigElement(properties, parser.getCustomConfigAnnotationMirror());
 		}
 		else {
 			return new PrimitiveConfigElement(properties);
@@ -167,6 +170,9 @@ public class ConfigElementFactory {
 			}
 			else if (configFieldParser.isColor()) {
 				return ColorIntClassDescriptor.CLASS_NAME;
+			}
+			else if (configFieldParser.isCustomType()) {
+				return configFieldParser.getCustomType();
 			}
 		}
 

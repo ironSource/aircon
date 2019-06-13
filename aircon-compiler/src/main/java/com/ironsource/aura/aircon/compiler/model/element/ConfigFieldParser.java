@@ -1,5 +1,6 @@
 package com.ironsource.aura.aircon.compiler.model.element;
 
+import com.ironsource.aura.aircon.common.ConfigType;
 import com.ironsource.aura.aircon.common.RangeFallbackPolicy;
 import com.ironsource.aura.aircon.common.annotations.DefaultConfig;
 import com.ironsource.aura.aircon.common.annotations.DefaultRes;
@@ -19,6 +20,7 @@ import com.ironsource.aura.aircon.common.annotations.config.TextConfig;
 import com.ironsource.aura.aircon.common.annotations.config.TimeConfig;
 import com.ironsource.aura.aircon.common.annotations.config.UrlConfig;
 import com.ironsource.aura.aircon.common.utils.Consts;
+import com.ironsource.aura.aircon.compiler.utils.Utils;
 import com.squareup.javapoet.TypeName;
 
 import java.lang.annotation.Annotation;
@@ -26,11 +28,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Types;
 
 /**
  * Created on 11/4/2018.
@@ -43,30 +48,60 @@ public class ConfigFieldParser {
 	private static final String METHOD_MAX_VALUE                 = "maxValue";
 	private static final String METHOD_MIN_VALUE_FALLBACK_POLICY = "minValueFallbackPolicy";
 	private static final String METHOD_MAX_VALUE_FALLBACK_POLICY = "maxValueFallbackPolicy";
-	private static final String RANDOMIZER_VALUE                 = "randomizerValue";
 
 	private static final int NO_RANDOMIZER_VALUE = Integer.MAX_VALUE;
 
-	private       Annotation      mConfigAnnotation;
+	private Annotation       mConfigAnnotation;
+	private AnnotationMirror mCustomConfigAnnotationMirror;
+
 	private final VariableElement mElement;
 
-	public ConfigFieldParser(final Annotation configAnnotation, final VariableElement element) {
-		mConfigAnnotation = configAnnotation;
+	private final Types mTypes;
+
+	ConfigFieldParser(VariableElement element, final Types types) {
 		mElement = element;
+		mTypes = types;
+
+		extractConfigAnnotation(element);
 	}
 
-	public ConfigFieldParser(VariableElement element) {
-		mElement = element;
-
+	private void extractConfigAnnotation(final VariableElement element) {
 		for (Class<? extends Annotation> configAnnotationClass : Configs.ALL) {
 			if ((mConfigAnnotation = element.getAnnotation(configAnnotationClass)) != null) {
-				break;
+				return;
+			}
+		}
+
+		extractCustomConfigTypeAnnotation(element);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void extractCustomConfigTypeAnnotation(final VariableElement element) {
+		final List<? extends AnnotationMirror> elementAnnotations = element.getAnnotationMirrors();
+		for (AnnotationMirror annotationMirror : elementAnnotations) {
+			if (hasConfigTypeAnnotation(annotationMirror)) {
+				mCustomConfigAnnotationMirror = annotationMirror;
+				//TODO - extract attributes from config
 			}
 		}
 	}
 
+	public AnnotationMirror getCustomConfigAnnotationMirror() {
+		return mCustomConfigAnnotationMirror;
+	}
+
+	private boolean hasConfigTypeAnnotation(final AnnotationMirror mirror) {
+		return getConfigTypeAnnotation(mirror) != null;
+	}
+
+	private ConfigType getConfigTypeAnnotation(final AnnotationMirror mirror) {
+		return mirror.getAnnotationType()
+		             .asElement()
+		             .getAnnotation(ConfigType.class);
+	}
+
 	public boolean isConfigField() {
-		return mConfigAnnotation != null;
+		return mConfigAnnotation != null || mCustomConfigAnnotationMirror != null;
 	}
 
 	public Object getDefaultValue() {
@@ -134,8 +169,35 @@ public class ConfigFieldParser {
 	}
 
 	public TypeName getType() {
-		return TypeName.get(Objects.requireNonNull(getAttribute(METHOD_DEFAULT_VALUE))
-		                           .getClass());
+		if (mConfigAnnotation != null) {
+			return TypeName.get(Objects.requireNonNull(getAttribute(METHOD_DEFAULT_VALUE))
+			                           .getClass());
+		}
+		else {
+			return TypeName.get(getCustomConfigTypeResolverGenerics().get(0));
+		}
+	}
+
+	private List<TypeMirror> getCustomConfigTypeResolverGenerics() {
+		final ConfigType configTypeAnnotation = getConfigTypeAnnotation(mCustomConfigAnnotationMirror);
+		final TypeMirror configTypeResolverTypeMirror = getConfigTypeResolverTypeMirror(configTypeAnnotation);
+		final List<? extends TypeMirror> typeMirrors = ((TypeElement) mTypes.asElement(configTypeResolverTypeMirror)).getInterfaces();
+		final TypeMirror resolverInterfaceTypeMirror = typeMirrors.get(0);
+		return Utils.getGenericTypes(resolverInterfaceTypeMirror);
+	}
+
+	private TypeMirror getConfigTypeResolverTypeMirror(final ConfigType configTypeAnnotation) {
+		try {
+			configTypeAnnotation.value();
+		} catch (MirroredTypeException e) {
+			return e.getTypeMirror();
+		}
+		// Should never happen
+		return null;
+	}
+
+	public TypeName getCustomType() {
+		return TypeName.get(getCustomConfigTypeResolverGenerics().get(1));
 	}
 
 	public boolean isTime() {
@@ -231,6 +293,10 @@ public class ConfigFieldParser {
 
 	public boolean isNumber() {
 		return mConfigAnnotation instanceof LongConfig || mConfigAnnotation instanceof IntConfig || mConfigAnnotation instanceof FloatConfig;
+	}
+
+	public boolean isCustomType() {
+		return mCustomConfigAnnotationMirror != null;
 	}
 
 	@SuppressWarnings("unchecked")

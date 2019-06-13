@@ -21,6 +21,7 @@ import com.ironsource.aura.aircon.sample.config.model.RemoteObject;
 import com.ironsource.aura.aircon.sample.config.model.TextLocation;
 import com.ironsource.aura.aircon.utils.ColorInt;
 
+import java.util.Map;
 import java.util.Set;
 
 public class MainActivity
@@ -34,6 +35,8 @@ public class MainActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		final Map<String, String> someCustomMap = SomeCoolFeatureConfigProvider.getSomeCustomMap();
 
 		loadFireBaseConfig();
 	}

@@ -18,8 +18,6 @@ public class CodeBlockBuilder {
 
 	public static final String NULL = "null";
 
-	public static final String CLASS = "class";
-
 	public static final String OPERATOR_GREATER_THAN           = ">";
 	public static final String OPERATOR_GREATER_THAN_OR_EQUALS = ">=";
 	public static final String OPERATOR_MINUS                  = "-";

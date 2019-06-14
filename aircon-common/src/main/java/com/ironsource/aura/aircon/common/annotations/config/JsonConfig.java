@@ -1,6 +1,5 @@
 package com.ironsource.aura.aircon.common.annotations.config;
 
-import com.ironsource.aura.aircon.common.annotations.ConfigAdapter;
 import com.ironsource.aura.aircon.common.utils.Consts;
 
 import java.lang.annotation.ElementType;
@@ -11,11 +10,8 @@ import java.lang.annotation.Target;
 /**
  * A config of type String.
  * The config is converted to an object of the type supplied in {@link #type()}.
+ * If the type is generic (e.g Map) then all of the generic type arguments should be supplied in {@link #genericTypes()}.
  * In order to use this config a JsonConverter should be supplied in the SDK configuration.
- * Since annotation attributes do not support generic values,
- * this config doesn't support generic types (e.g List&lt;Integer&gt;), for that case either:
- * 1. Create a concrete class (e.g IntegerList extends List&lt;Integer&gt;)
- * 2. Use a {@link ConfigAdapter}.
  */
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.FIELD)
@@ -33,5 +29,12 @@ public @interface JsonConfig {
 	 *
 	 * @return json class.
 	 */
-	Class<?> type();
+	Class type();
+
+	/**
+	 * List of generic types if {@link #type()} requires any.
+	 *
+	 * @return list of generic types
+	 */
+	Class[] genericTypes() default {};
 }

@@ -22,12 +22,14 @@ import com.ironsource.aura.aircon.common.utils.Consts;
 import com.squareup.javapoet.TypeName;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.MirroredTypeException;
+import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeMirror;
 
 /**
@@ -180,6 +182,16 @@ public class ConfigFieldParser {
 			((JsonConfig) mConfigAnnotation).type();
 		} catch (MirroredTypeException e) {
 			return e.getTypeMirror();
+		}
+
+		return null;
+	}
+
+	public List<? extends TypeMirror> getJsonGenericTypes() {
+		try {
+			((JsonConfig) mConfigAnnotation).genericTypes();
+		} catch (MirroredTypesException e) {
+			return e.getTypeMirrors();
 		}
 
 		return null;

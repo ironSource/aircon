@@ -9,6 +9,7 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeVariableName;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,7 +75,7 @@ public class ConfigElementFactory {
 			return new EnumConfigElement(properties, parser.getEnumClass(), parser.getRandomizerValue());
 		}
 		else if (parser.isJson()) {
-			return new JsonConfigElement(properties, parser.getJsonType());
+			return new JsonConfigElement(properties);
 		}
 		else if (parser.isColor()) {
 			return new ColorConfigElement(properties);
@@ -162,7 +163,7 @@ public class ConfigElementFactory {
 				return TypeName.get(configFieldParser.getEnumClass());
 			}
 			else if (configFieldParser.isJson()) {
-				return TypeName.get(configFieldParser.getJsonType());
+				return getJsonType(configFieldParser.getJsonType(), configFieldParser.getJsonGenericTypes());
 			}
 			else if (configFieldParser.isColor()) {
 				return ColorIntClassDescriptor.CLASS_NAME;
@@ -170,5 +171,22 @@ public class ConfigElementFactory {
 		}
 
 		return configFieldParser.getType();
+	}
+
+	private static TypeName getJsonType(final TypeMirror jsonType, final List<? extends TypeMirror> jsonGenericTypes) {
+		if (jsonGenericTypes != null && !jsonGenericTypes.isEmpty()) {
+			return ParameterizedTypeName.get(ClassName.bestGuess(jsonType.toString()), getGenericTypeNames(jsonGenericTypes));
+		}
+		else {
+			return TypeName.get(jsonType);
+		}
+	}
+
+	private static TypeName[] getGenericTypeNames(final List<? extends TypeMirror> genericTypes) {
+		final List<TypeName> genericTypeNames = new ArrayList<>();
+		for (TypeMirror genericType : genericTypes) {
+			genericTypeNames.add(TypeName.get(genericType));
+		}
+		return genericTypeNames.toArray(new TypeName[0]);
 	}
 }

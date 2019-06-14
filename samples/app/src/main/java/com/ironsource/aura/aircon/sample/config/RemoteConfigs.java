@@ -100,7 +100,7 @@ public interface RemoteConfigs {
 		String SOME_STRING_SET = "someStringSet";
 
 		@JsonConfig(defaultValue = "", type = Map.class, genericTypes = {String.class, Integer.class})
-		String SOME_GENERIC_JSON= "someGenericJson";
+		String SOME_GENERIC_JSON = "someGenericJson";
 
 		@ConfigGroup(value = {SOME_INT, SOME_STRING})
 		String COOL_GROUP = "coolGroup";

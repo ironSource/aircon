@@ -88,9 +88,8 @@ abstract class DefaultConfigProviderGenerator <T extends ConfigElement>
 
 	protected final CodeBlock[] getSourceGetterParameters() {
 		final List<CodeBlock> codeBlocks = new ArrayList<>();
-		codeBlocks.add(new CodeBlockBuilder().addClassQualifier(TypeName.get(mElement.getSourceTypeMirror()))
-		                                     .add(CodeBlockBuilder.CLASS)
-		                                     .build());
+		codeBlocks.add(ClassDescriptor.clazz(TypeName.get(mElement.getSourceTypeMirror()))
+		                              .build());
 
 		if (mElement.hasIdentifiableSource()) {
 			codeBlocks.add(CodeBlock.of(getSourceIdentifierParamName(mElement.getSourceIdentifierTypeMirror())));

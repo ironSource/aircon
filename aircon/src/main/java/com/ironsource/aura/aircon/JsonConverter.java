@@ -12,7 +12,6 @@ public interface JsonConverter {
 	<T> T fromJson(String json, Type type) throws
 			JsonException;
 
-
 	class JsonException
 			extends Exception {
 

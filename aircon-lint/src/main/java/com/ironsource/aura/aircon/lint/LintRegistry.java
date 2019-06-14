@@ -15,6 +15,7 @@ import com.ironsource.aura.aircon.lint.detector.annotation.config.enums.InvalidE
 import com.ironsource.aura.aircon.lint.detector.annotation.config.group.CyclicConfigGroupValuesDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.config.group.EmptyConfigGroupValuesDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.config.group.InvalidConfigGroupValuesDetector;
+import com.ironsource.aura.aircon.lint.detector.annotation.config.json.InvalidJsonGenericTypesDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.defaultConfig.CyclicDefaultValueConfigDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.defaultConfig.NonConfigDefaultValueConfigDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.defaultConfig.WrongTypeDefaultValueConfigDetector;
@@ -53,6 +54,10 @@ public class LintRegistry
 		issues.add(InconsistentRemoteValueAnnotationsDetector.ISSUE);
 		issues.add(InvalidEnumClassDetector.ISSUE);
 		issues.add(InvalidEnumDefaultValueDetector.ISSUE);
+		//endregion
+
+		// region @JsonConfig
+		issues.add(InvalidJsonGenericTypesDetector.ISSUE);
 		//endregion
 
 		// region @ConfigGroup

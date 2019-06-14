@@ -2,6 +2,7 @@ package com.ironsource.aura.aircon.compiler.providerBuilder.generator;
 
 import com.ironsource.aura.aircon.compiler.consts.Consts;
 import com.ironsource.aura.aircon.compiler.descriptors.AirConUtilsClassDescriptor;
+import com.ironsource.aura.aircon.compiler.descriptors.ClassDescriptor;
 import com.ironsource.aura.aircon.compiler.model.element.EnumConfigElement;
 import com.ironsource.aura.aircon.compiler.utils.CodeBlockBuilder;
 import com.ironsource.aura.aircon.compiler.utils.NamingUtils;
@@ -29,9 +30,8 @@ class EnumConfigProviderGenerator
 			final CodeBlock condition = new CodeBlockBuilder().addBinaryOperator(CodeBlockBuilder.OPERATOR_EQUALITY, varValue, mElement.getRandomizerValue())
 			                                                  .build();
 
-			final CodeBlock enumClass = new CodeBlockBuilder().addClassQualifier(TypeName.get(mElement.getEnumClass()))
-			                                                  .add(CodeBlockBuilder.CLASS)
-			                                                  .build();
+			final CodeBlock enumClass = ClassDescriptor.clazz(TypeName.get(mElement.getEnumClass()))
+			                                           .build();
 			final CodeBlock randomEnumValue = AirConUtilsClassDescriptor.getRandomEnumValue(getKeyParam(), enumClass)
 			                                                            .build();
 

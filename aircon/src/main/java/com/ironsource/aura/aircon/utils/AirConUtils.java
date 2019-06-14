@@ -10,6 +10,7 @@ import com.ironsource.aura.aircon.AirCon;
 import com.ironsource.aura.aircon.JsonConverter;
 import com.ironsource.aura.aircon.logging.Logger;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -61,6 +62,17 @@ public class AirConUtils {
 			log().e("Failed to parse json: " + json);
 			log().logException(e);
 			return defaultValue != null && !TextUtils.equals(json, defaultValue) ? fromJson(defaultValue, clazz, defaultValue, converter) : null;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T fromJson(String json, Type type, String defaultValue, @NonNull JsonConverter converter) {
+		try {
+			return converter.fromJson(json, type);
+		} catch (JsonConverter.JsonException e) {
+			log().e("Failed to parse json: " + json);
+			log().logException(e);
+			return defaultValue != null && !TextUtils.equals(json, defaultValue) ? (T) fromJson(defaultValue, type, defaultValue, converter) : null;
 		}
 	}
 

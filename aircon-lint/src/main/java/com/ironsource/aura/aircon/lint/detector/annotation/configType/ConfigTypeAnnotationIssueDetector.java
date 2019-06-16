@@ -25,5 +25,5 @@ abstract class ConfigTypeAnnotationIssueDetector
 		visitConfigTypeAnnotation(node, (UClass) node.getUastParent());
 	}
 
-	protected abstract void visitConfigTypeAnnotation(final UAnnotation node, UClass target);
+	protected abstract void visitConfigTypeAnnotation(final UAnnotation node, UClass owner);
 }

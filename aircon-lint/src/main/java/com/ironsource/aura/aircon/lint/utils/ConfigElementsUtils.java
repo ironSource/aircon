@@ -92,7 +92,7 @@ public class ConfigElementsUtils {
 		return isGroupAnnotation(annotation) || isCustomConfigAnnotation(annotation);
 	}
 
-	private static boolean isCustomConfigAnnotation(final PsiAnnotation annotation) {
+	public static boolean isCustomConfigAnnotation(final PsiAnnotation annotation) {
 		final PsiClass annotationClass = ElementUtils.getAnnotationDeclarationClass(annotation);
 		for (final PsiAnnotation annotationClassAnnotation : annotationClass.getAnnotations()) {
 			if (ElementUtils.isOfType(annotationClassAnnotation, ConfigType.class)) {

@@ -56,8 +56,6 @@ import java.util.List;
  */
 public class ConfigElementsUtils {
 
-	private static final String R_CLASS = "R";
-
 	public static final String ATTRIBUTE_VALUE = "value";
 
 	private static final String ATTRIBUTE_DEFAULT_VALUE = "defaultValue";
@@ -428,31 +426,6 @@ public class ConfigElementsUtils {
 			}
 		}
 		return false;
-	}
-
-	public static boolean isStringResource(PsiField field) {
-		return ElementUtils.getInnerClassName(field)
-		                   .equals(R_CLASS + ".string");
-	}
-
-	public static boolean isIntegerResource(PsiField field) {
-		return ElementUtils.getInnerClassName(field)
-		                   .equals(R_CLASS + ".integer");
-	}
-
-	public static boolean isDimenResource(PsiField field) {
-		return ElementUtils.getInnerClassName(field)
-		                   .equals(R_CLASS + ".dimen");
-	}
-
-	public static boolean isBooleanResource(PsiField field) {
-		return ElementUtils.getInnerClassName(field)
-		                   .equals(R_CLASS + ".bool");
-	}
-
-	public static boolean isColorResource(PsiField field) {
-		return ElementUtils.getInnerClassName(field)
-		                   .equals(R_CLASS + ".color");
 	}
 
 	public static UAnnotation getDefaultValueProviderAnnotation(UMethod method) {

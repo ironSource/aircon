@@ -24,8 +24,6 @@ public class MissingDefaultValueAttributeDetector
 	@Override
 	protected void visitConfigTypeAnnotation(final UAnnotation node, final UClass target) {
 		for (final UMethod method : target.getMethods()) {
-			log("Shit = " + method.getName());
-
 			if (method.getName()
 			          .equals(ATTRIBUTE_DEFAULT_VALUE)) {
 				return;

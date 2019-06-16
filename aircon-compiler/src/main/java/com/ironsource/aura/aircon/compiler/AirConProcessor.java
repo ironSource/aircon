@@ -42,6 +42,8 @@ import static com.ironsource.aura.aircon.compiler.utils.Utils.toAnnotationSet;
 public class AirConProcessor
 		extends SimpleProcessor {
 
+	private static final String ATTRIBUTE_AUX_TARGET = "value";
+
 	private ProcessingEnvironment mProcessingEnvironment;
 
 	@Override
@@ -97,10 +99,10 @@ public class AirConProcessor
 		final ClassName providerClassName = ClassName.get(packageName, NamingUtils.getProviderClassName(configClass.getSimpleName()
 		                                                                                                           .toString()));
 
-		final Map<String, ExecutableElement> defaultValueProviders = getDefaultValueProviders(roundEnv);
-		final Map<String, ExecutableElement> adapters = getAdapters(roundEnv);
-		final Map<String, ExecutableElement> validators = getValidators(roundEnv);
-		final Map<String, ExecutableElement> mocks = getMocks(roundEnv);
+		final Map<String, ExecutableElement> defaultValueProviders = getAuxMethods(roundEnv, ConfigDefaultValueProvider.class);
+		final Map<String, ExecutableElement> adapters = getAuxMethods(roundEnv, ConfigAdapter.class);
+		final Map<String, ExecutableElement> validators = getAuxMethods(roundEnv, ConfigValidator.class);
+		final Map<String, ExecutableElement> mocks = getAuxMethods(roundEnv, ConfigMock.class);
 
 		// Create config elements
 		for (VariableElement variableElement : variableElements) {
@@ -122,44 +124,23 @@ public class AirConProcessor
 		}
 	}
 
-	private Map<String, ExecutableElement> getDefaultValueProviders(final RoundEnvironment roundEnv) {
-		final Map<String, ExecutableElement> defaultProvidersMap = new HashMap<>();
-		final Set<? extends Element> defaultValueProviders = roundEnv.getElementsAnnotatedWith(ConfigDefaultValueProvider.class);
-		for (Element defaultValueProvider : defaultValueProviders) {
-			final ConfigDefaultValueProvider annotation = defaultValueProvider.getAnnotation(ConfigDefaultValueProvider.class);
-			defaultProvidersMap.put(annotation.value(), (ExecutableElement) defaultValueProvider);
+	private <A extends Annotation> Map<String, ExecutableElement> getAuxMethods(final RoundEnvironment roundEnv, Class<A> annotationClass) {
+		final Map<String, ExecutableElement> map = new HashMap<>();
+		final Set<? extends Element> auxMethods = roundEnv.getElementsAnnotatedWith(annotationClass);
+		for (Element method : auxMethods) {
+			final String auxMethodTarget = getAuxMethodTarget(method, annotationClass);
+			map.put(auxMethodTarget, (ExecutableElement) method);
 		}
-		return defaultProvidersMap;
+		return map;
 	}
 
-	private Map<String, ExecutableElement> getAdapters(final RoundEnvironment roundEnv) {
-		final Map<String, ExecutableElement> configAdaptersMap = new HashMap<>();
-		final Set<? extends Element> defaultValueProviders = roundEnv.getElementsAnnotatedWith(ConfigAdapter.class);
-		for (Element defaultValueProvider : defaultValueProviders) {
-			final ConfigAdapter annotation = defaultValueProvider.getAnnotation(ConfigAdapter.class);
-			configAdaptersMap.put(annotation.value(), (ExecutableElement) defaultValueProvider);
+	private String getAuxMethodTarget(Element auxMethod, Class<? extends Annotation> annotationClass) {
+		try {
+			return (String) annotationClass.getMethod(ATTRIBUTE_AUX_TARGET)
+			                               .invoke(auxMethod.getAnnotation(annotationClass));
+		} catch (Exception e) {
+			return null;
 		}
-		return configAdaptersMap;
-	}
-
-	private Map<String, ExecutableElement> getValidators(final RoundEnvironment roundEnv) {
-		final Map<String, ExecutableElement> validatorsMap = new HashMap<>();
-		final Set<? extends Element> validators = roundEnv.getElementsAnnotatedWith(ConfigValidator.class);
-		for (Element validator : validators) {
-			final ConfigValidator annotation = validator.getAnnotation(ConfigValidator.class);
-			validatorsMap.put(annotation.value(), (ExecutableElement) validator);
-		}
-		return validatorsMap;
-	}
-
-	private Map<String, ExecutableElement> getMocks(final RoundEnvironment roundEnv) {
-		final Map<String, ExecutableElement> mocksMap = new HashMap<>();
-		final Set<? extends Element> mocks = roundEnv.getElementsAnnotatedWith(ConfigMock.class);
-		for (Element mock : mocks) {
-			final ConfigMock annotation = mock.getAnnotation(ConfigMock.class);
-			mocksMap.put(annotation.value(), (ExecutableElement) mock);
-		}
-		return mocksMap;
 	}
 
 	private void createFeatureConfigGroupElement(final TypeElement configClass, final ClassName providerClassName) {

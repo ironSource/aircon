@@ -15,6 +15,7 @@ import com.ironsource.aura.aircon.lint.detector.annotation.config.group.CyclicCo
 import com.ironsource.aura.aircon.lint.detector.annotation.config.group.EmptyConfigGroupValuesDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.config.group.InvalidConfigGroupValuesDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.config.json.InvalidJsonGenericTypesDetector;
+import com.ironsource.aura.aircon.lint.detector.annotation.configType.MissingDefaultValueAttributeDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.defaultConfig.CyclicDefaultValueConfigDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.defaultConfig.NonConfigDefaultValueConfigDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.defaultConfig.WrongTypeDefaultValueConfigDetector;
@@ -78,6 +79,10 @@ public class AirConUsageDetector
 		visitor.registerIssueDetector(new CyclicConfigGroupValuesDetector(context));
 		visitor.registerIssueDetector(new EmptyConfigGroupValuesDetector(context));
 		visitor.registerIssueDetector(new InvalidConfigGroupValuesDetector(context));
+		//endregion
+
+		// region @ConfigType
+		visitor.registerIssueDetector(new MissingDefaultValueAttributeDetector(context));
 		//endregion
 
 		// region @DefaultConfig

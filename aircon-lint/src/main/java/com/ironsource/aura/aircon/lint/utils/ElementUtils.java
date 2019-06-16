@@ -69,8 +69,8 @@ public class ElementUtils {
 	}
 
 	public static boolean isOfType(final PsiAnnotation annotation, final Class<? extends Annotation> configClass) {
-		return configClass.getCanonicalName()
-		                  .equals(annotation.getQualifiedName());
+		return annotation != null && configClass.getCanonicalName()
+		                                        .equals(annotation.getQualifiedName());
 	}
 
 	public static boolean isOneOfTypes(final PsiAnnotation annotation, final Class<? extends Annotation>... configClasses) {

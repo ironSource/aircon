@@ -34,6 +34,8 @@ import com.ironsource.aura.aircon.sample.config.model.RemoteObject;
 import com.ironsource.aura.aircon.sample.config.model.TextLocation;
 import com.ironsource.aura.aircon.source.FireBaseConfigSource;
 
+import java.util.Map;
+
 /**
  * Created on 10/20/2018.
  */
@@ -98,7 +100,11 @@ public interface RemoteConfigs {
 		@StringSetConfig(defaultValue = {"1", "2"})
 		String SOME_STRING_SET = "someStringSet";
 
-		@ConfigGroup(value = {SOME_INT, SOME_STRING}) String COOL_GROUP = "coolGroup";
+		@JsonConfig(defaultValue = "", type = Map.class, genericTypes = {String.class, Integer.class})
+		String SOME_GENERIC_JSON = "someGenericJson";
+
+		@ConfigGroup(value = {SOME_INT, SOME_STRING})
+		String COOL_GROUP = "coolGroup";
 
 		@MapConfig(defaultValue = "")
 		String SOME_CUSTOM_MAP = "someCustomMap";

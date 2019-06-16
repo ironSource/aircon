@@ -33,6 +33,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.MirroredTypeException;
+import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 
@@ -243,6 +244,16 @@ public class ConfigFieldParser {
 			((JsonConfig) mConfigAnnotation).type();
 		} catch (MirroredTypeException e) {
 			return e.getTypeMirror();
+		}
+
+		return null;
+	}
+
+	public List<? extends TypeMirror> getJsonGenericTypes() {
+		try {
+			((JsonConfig) mConfigAnnotation).genericTypes();
+		} catch (MirroredTypesException e) {
+			return e.getTypeMirrors();
 		}
 
 		return null;

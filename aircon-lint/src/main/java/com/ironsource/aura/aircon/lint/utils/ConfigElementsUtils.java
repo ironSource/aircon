@@ -62,6 +62,8 @@ public class ConfigElementsUtils {
 	private static final String ATTRIBUTE_DEFAULT_VALUE = "defaultValue";
 	private static final String ATTRIBUTE_TYPE          = "type";
 	private static final String ATTRIBUTE_ENUM_CLASS    = "enumClass";
+	private static final String ATTRIBUTE_JSON_TYPE     = "type";
+	private static final String ATTRIBUTE_GENERIC_TYPES = "genericTypes";
 
 	public static boolean isConfigAttributeAnnotation(UAnnotation annotation) {
 		return isDefaultResAnnotation(annotation) || isDefaultConfigAnnotation(annotation) || ElementUtils.isOfType(annotation.getJavaPsi(), Mutable.class);
@@ -324,10 +326,36 @@ public class ConfigElementsUtils {
 	}
 
 	public static PsiClass getEnumClassAttribute(final PsiAnnotation annotation) {
-		final PsiClassObjectAccessExpressionImpl attributeValue = (PsiClassObjectAccessExpressionImpl) annotation.findAttributeValue(ATTRIBUTE_ENUM_CLASS);
-		return (PsiClass) attributeValue.getOperand()
-		                                .getInnermostComponentReferenceElement()
-		                                .resolve();
+		return getClassAttribute(annotation, ATTRIBUTE_ENUM_CLASS);
+	}
+
+	public static PsiClass getJsonTypeAttribute(final PsiAnnotation annotation) {
+		return getClassAttribute(annotation, ATTRIBUTE_JSON_TYPE);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static PsiClass getClassAttribute(final PsiAnnotation annotation, String attribute) {
+		final PsiClassObjectAccessExpressionImpl attributeValue = (PsiClassObjectAccessExpressionImpl) annotation.findAttributeValue(attribute);
+		return resolveClass(attributeValue);
+	}
+
+	public static PsiClass[] getGenericTypesAttribute(final PsiAnnotation annotation) {
+		final PsiArrayInitializerMemberValue attributeValue = (PsiArrayInitializerMemberValue) annotation.findAttributeValue(ATTRIBUTE_GENERIC_TYPES);
+
+		List<PsiClass> psiClasses = new ArrayList<>();
+
+		final PsiAnnotationMemberValue[] initializerList = attributeValue.getInitializers();
+		for (PsiAnnotationMemberValue initializer : initializerList) {
+			psiClasses.add(resolveClass((PsiClassObjectAccessExpressionImpl) initializer));
+		}
+
+		return psiClasses.toArray(new PsiClass[0]);
+	}
+
+	private static PsiClass resolveClass(final PsiClassObjectAccessExpressionImpl expression) {
+		return (PsiClass) expression.getOperand()
+		                            .getInnermostComponentReferenceElement()
+		                            .resolve();
 	}
 
 	private static String getConfigGroupImplClass(final PsiField configField) {

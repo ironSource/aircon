@@ -11,13 +11,13 @@ public class ConfigTypeResolverClassDescriptor
 		String PROCESS  = "process";
 	}
 
-	public StubClassDescriptor isValid(Object value) {
-		addMethodCall(Methods.IS_VALID, value);
+	public StubClassDescriptor isValid(Object annotation, Object value) {
+		addMethodCall(Methods.IS_VALID, annotation, value);
 		return new StubClassDescriptor(mBuilder);
 	}
 
-	public StubClassDescriptor process(Object value) {
-		addMethodCall(Methods.PROCESS, value);
+	public StubClassDescriptor process(Object annotation, Object value) {
+		addMethodCall(Methods.PROCESS, annotation, value);
 		return new StubClassDescriptor(mBuilder);
 	}
 

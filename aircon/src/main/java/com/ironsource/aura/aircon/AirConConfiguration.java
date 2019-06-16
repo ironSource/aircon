@@ -229,8 +229,8 @@ public class AirConConfiguration {
 			return this;
 		}
 
-		public Builder registerConfigType(Class<? extends Annotation> configTypeAnnotation, ConfigTypeResolver<?, ?> resolver) {
-			mConfigTypes.put(configTypeAnnotation, resolver);
+		public Builder registerConfigType(@NonNull ConfigTypeResolver<? extends Annotation, ?, ?> resolver) {
+			mConfigTypes.put(resolver.getAnnotationClass(), resolver);
 			return this;
 		}
 

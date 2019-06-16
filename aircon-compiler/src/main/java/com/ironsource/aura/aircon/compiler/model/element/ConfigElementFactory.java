@@ -53,7 +53,7 @@ public class ConfigElementFactory {
 		final ConfigAuxMethod validator = ConfigAuxMethod.from(validators.get(key));
 		final ConfigAuxMethod mock = ConfigAuxMethod.from(mocks.get(key));
 
-		final ConfigElement.Properties properties = new ConfigElement.Properties(name, key, providerClassName, javadoc, sourceTypeMirror, sourceIdentifierTypeMirror, type, rawType, defaultValue, parser.getDefaultValueConfig(), parser.getDefaultValueResId(), defaultValueProvider, mutable, adapter, validator, mock);
+		final ConfigElement.Properties properties = new ConfigElement.Properties(name, key, providerClassName, TypeName.get(configClass.asType()), javadoc, sourceTypeMirror, sourceIdentifierTypeMirror, type, rawType, defaultValue, parser.getDefaultValueConfig(), parser.getDefaultValueResId(), defaultValueProvider, mutable, adapter, validator, mock);
 
 		switch (configKind) {
 			case TIME:

@@ -31,8 +31,8 @@ public class ConfigGroupElement
 	static class Properties
 			extends AbstractConfigElement.Properties {
 
-		public Properties(final String name, final String key, final TypeName type, final ClassName providerClass) {
-			super(name, key, type, providerClass);
+		public Properties(final String name, final String key, final TypeName type, final ClassName providerClass, final TypeName configClass) {
+			super(name, key, type, providerClass, configClass);
 		}
 	}
 }

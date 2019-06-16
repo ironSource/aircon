@@ -48,8 +48,8 @@ public class AirConClassDescriptor
 		return new ConfigSourceRepositoryClassDescriptor(mBuilder);
 	}
 
-	public ConfigTypeResolverClassDescriptor getConfigTypeResolver(TypeName rawType, TypeName type, Object configTypeClass) {
-		addGenericMethodCall(Methods.GET_CONFIG_TYPE_RESOLVER, Arrays.asList(rawType, type), configTypeClass);
+	public ConfigTypeResolverClassDescriptor getConfigTypeResolver(final TypeName annotationType, TypeName rawType, TypeName type, Object configTypeClass) {
+		addGenericMethodCall(Methods.GET_CONFIG_TYPE_RESOLVER, Arrays.asList(annotationType, rawType, type), configTypeClass);
 		return new ConfigTypeResolverClassDescriptor(mBuilder);
 	}
 

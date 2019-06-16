@@ -122,7 +122,7 @@ public class AirConProcessor
 		for (VariableElement variableElement : variableElements) {
 			final ConfigGroup configGroupAnnotation = variableElement.getAnnotation(ConfigGroup.class);
 			if (configGroupAnnotation != null) {
-				final ConfigGroupElement configGroupElement = ConfigGroupElementFactory.createConfigGroupElement(providerClassName, variableElement, configGroupAnnotation, mProcessingEnvironment.getConfigElements(), mProcessingEnvironment.getConfigGroupElements());
+				final ConfigGroupElement configGroupElement = ConfigGroupElementFactory.createConfigGroupElement(providerClassName, configClass, variableElement, configGroupAnnotation, mProcessingEnvironment.getConfigElements(), mProcessingEnvironment.getConfigGroupElements());
 				mProcessingEnvironment.addConfigGroupElement(configClass, configGroupElement);
 			}
 		}

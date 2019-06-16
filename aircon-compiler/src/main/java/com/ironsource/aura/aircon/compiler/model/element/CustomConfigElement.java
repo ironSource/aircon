@@ -1,6 +1,6 @@
 package com.ironsource.aura.aircon.compiler.model.element;
 
-import javax.lang.model.element.AnnotationMirror;
+import com.squareup.javapoet.TypeName;
 
 /**
  * Created on 11/3/2018.
@@ -8,15 +8,15 @@ import javax.lang.model.element.AnnotationMirror;
 public class CustomConfigElement
 		extends ConfigElement {
 
-	private final AnnotationMirror mAnnotationTypeMirror;
+	private final TypeName mAnnotation;
 
-	CustomConfigElement(Properties properties, AnnotationMirror annotationTypeMirror) {
+	CustomConfigElement(Properties properties, TypeName annotation) {
 		super(properties);
-		mAnnotationTypeMirror = annotationTypeMirror;
+		mAnnotation = annotation;
 	}
 
-	public AnnotationMirror getAnnotationTypeMirror() {
-		return mAnnotationTypeMirror;
+	public TypeName getAnnotation() {
+		return mAnnotation;
 	}
 
 	@Override

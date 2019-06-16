@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.ErrorType;
@@ -14,6 +15,7 @@ import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.SimpleTypeVisitor6;
+import javax.lang.model.util.Types;
 
 /**
  * Created by Hanan on 2/13/2017.
@@ -66,5 +68,18 @@ public class Utils {
 		}, null);
 
 		return result;
+	}
+
+	public static TypeMirror findSuperInterface(final Types types, TypeMirror root, Class superTypeClass) {
+		final List<? extends TypeMirror> interfaces = ((TypeElement) types.asElement(root)).getInterfaces();
+		for (TypeMirror anInterface : interfaces) {
+			if (((TypeElement) types.asElement(anInterface)).getQualifiedName()
+			                                                .toString()
+			                                                .equals(superTypeClass.getCanonicalName())) {
+				return anInterface;
+			}
+		}
+		// PENDING - This method only supports direct inheritance
+		return null;
 	}
 }

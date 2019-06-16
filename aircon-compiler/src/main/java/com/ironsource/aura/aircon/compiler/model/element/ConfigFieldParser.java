@@ -1,60 +1,57 @@
 package com.ironsource.aura.aircon.compiler.model.element;
 
 import com.ironsource.aura.aircon.common.ConfigType;
+import com.ironsource.aura.aircon.common.IdentifiableConfigSource;
 import com.ironsource.aura.aircon.common.RangeFallbackPolicy;
 import com.ironsource.aura.aircon.common.annotations.DefaultConfig;
 import com.ironsource.aura.aircon.common.annotations.DefaultRes;
 import com.ironsource.aura.aircon.common.annotations.Mutable;
 import com.ironsource.aura.aircon.common.annotations.Source;
-import com.ironsource.aura.aircon.common.annotations.config.ColorConfig;
 import com.ironsource.aura.aircon.common.annotations.config.Configs;
-import com.ironsource.aura.aircon.common.annotations.config.FloatConfig;
-import com.ironsource.aura.aircon.common.annotations.config.IntConfig;
-import com.ironsource.aura.aircon.common.annotations.config.IntEnumConfig;
-import com.ironsource.aura.aircon.common.annotations.config.JsonConfig;
-import com.ironsource.aura.aircon.common.annotations.config.LongConfig;
-import com.ironsource.aura.aircon.common.annotations.config.StringConfig;
-import com.ironsource.aura.aircon.common.annotations.config.StringEnumConfig;
-import com.ironsource.aura.aircon.common.annotations.config.StringSetConfig;
-import com.ironsource.aura.aircon.common.annotations.config.TextConfig;
-import com.ironsource.aura.aircon.common.annotations.config.TimeConfig;
-import com.ironsource.aura.aircon.common.annotations.config.UrlConfig;
 import com.ironsource.aura.aircon.common.utils.Consts;
-import com.ironsource.aura.aircon.compiler.utils.Utils;
+import com.ironsource.aura.aircon.compiler.model.annotation.ConfigAnnotationParser;
+import com.ironsource.aura.aircon.compiler.model.annotation.ConfigKind;
+import com.ironsource.aura.aircon.compiler.model.annotation.CustomConfigAnnotationParser;
+import com.ironsource.aura.aircon.compiler.model.annotation.LibraryConfigAnnotationParser;
 import com.squareup.javapoet.TypeName;
 
 import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypeException;
-import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 /**
  * Created on 11/4/2018.
  */
-public class ConfigFieldParser {
+class ConfigFieldParser {
 
-	private static final String METHOD_DEFAULT_VALUE             = "defaultValue";
-	private static final String METHOD_ENFORCE_NON_EMPTY         = "enforceNonEmpty";
-	private static final String METHOD_MIN_VALUE                 = "minValue";
-	private static final String METHOD_MAX_VALUE                 = "maxValue";
-	private static final String METHOD_MIN_VALUE_FALLBACK_POLICY = "minValueFallbackPolicy";
-	private static final String METHOD_MAX_VALUE_FALLBACK_POLICY = "maxValueFallbackPolicy";
+	private static final String ATTRIBUTE_DEFAULT_VALUE             = "defaultValue";
+	private static final String ATTRIBUTE_ENFORCE_NON_EMPTY         = "enforceNonEmpty";
+	private static final String ATTRIBUTE_MIN_VALUE                 = "minValue";
+	private static final String ATTRIBUTE_MAX_VALUE                 = "maxValue";
+	private static final String ATTRIBUTE_MIN_VALUE_FALLBACK_POLICY = "minValueFallbackPolicy";
+	private static final String ATTRIBUTE_VALUE_FALLBACK_POLICY     = "maxValueFallbackPolicy";
+	private static final String ATTRIBUTE_DEFAULT_VALUE_TIME_UNIT   = "defaultValueTimeUnit";
+	private static final String ATTRIBUTE_RANDOMIZER_VALUE          = "randomizerValue";
 
 	private static final int NO_RANDOMIZER_VALUE = Integer.MAX_VALUE;
 
-	private Annotation       mConfigAnnotation;
-	private AnnotationMirror mCustomConfigAnnotationMirror;
 
 	private final VariableElement mElement;
+	private final ConfigKind      mConfigKind;
+
+	private ConfigAnnotationParser mConfigAnnotation;
 
 	private final Types mTypes;
 
@@ -63,11 +60,19 @@ public class ConfigFieldParser {
 		mTypes = types;
 
 		extractConfigAnnotation(element);
+
+		mConfigKind = mConfigAnnotation != null ? mConfigAnnotation.getKind() : null;
+	}
+
+	ConfigKind getConfigKind() {
+		return mConfigKind;
 	}
 
 	private void extractConfigAnnotation(final VariableElement element) {
 		for (Class<? extends Annotation> configAnnotationClass : Configs.ALL) {
-			if ((mConfigAnnotation = element.getAnnotation(configAnnotationClass)) != null) {
+			final Annotation annotation = element.getAnnotation(configAnnotationClass);
+			if (annotation != null) {
+				mConfigAnnotation = new LibraryConfigAnnotationParser(annotation);
 				return;
 			}
 		}
@@ -75,19 +80,17 @@ public class ConfigFieldParser {
 		extractCustomConfigTypeAnnotation(element);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void extractCustomConfigTypeAnnotation(final VariableElement element) {
 		final List<? extends AnnotationMirror> elementAnnotations = element.getAnnotationMirrors();
 		for (AnnotationMirror annotationMirror : elementAnnotations) {
 			if (hasConfigTypeAnnotation(annotationMirror)) {
-				mCustomConfigAnnotationMirror = annotationMirror;
-				//TODO - extract attributes from config
+				mConfigAnnotation = new CustomConfigAnnotationParser(mTypes, annotationMirror);
 			}
 		}
 	}
 
-	public AnnotationMirror getCustomConfigAnnotationMirror() {
-		return mCustomConfigAnnotationMirror;
+	TypeName getAnnotationType() {
+		return mConfigAnnotation.getAnnotationType();
 	}
 
 	private boolean hasConfigTypeAnnotation(final AnnotationMirror mirror) {
@@ -100,34 +103,35 @@ public class ConfigFieldParser {
 		             .getAnnotation(ConfigType.class);
 	}
 
-	public boolean isConfigField() {
-		return mConfigAnnotation != null || mCustomConfigAnnotationMirror != null;
+	boolean isConfigField() {
+		return mConfigAnnotation != null && mElement.getConstantValue() instanceof String;
 	}
 
-	public Object getDefaultValue() {
-		Object defaultValue = getAttribute(METHOD_DEFAULT_VALUE);
+	Object getDefaultValue() {
+		Object defaultValue = mConfigAnnotation.getAttribute(ATTRIBUTE_DEFAULT_VALUE);
 		if (defaultValue instanceof String && isNullString((String) defaultValue)) {
 			defaultValue = null;
 		}
+
 		return defaultValue;
 	}
 
-	public String getDefaultValueConfig() {
+	String getDefaultValueConfig() {
 		final DefaultConfig annotation = mElement.getAnnotation(DefaultConfig.class);
 		return annotation != null ? annotation.value() : null;
 	}
 
-	public int getDefaultValueResId() {
+	int getDefaultValueResId() {
 		final DefaultRes annotation = mElement.getAnnotation(DefaultRes.class);
 		return annotation != null ? annotation.value() : 0;
 	}
 
 	@SuppressWarnings("ConstantConditions")
-	public boolean isMutable() {
+	boolean isMutable() {
 		return mElement.getAnnotation(Mutable.class) != null;
 	}
 
-	public TypeMirror getSourceTypeMirror(Element configClass) {
+	TypeMirror getSourceTypeMirror(Element configClass) {
 		final TypeMirror typeMirror = getTypeMirror(mElement);
 		return typeMirror != null ? typeMirror : getTypeMirror(configClass);
 	}
@@ -145,171 +149,90 @@ public class ConfigFieldParser {
 		return null;
 	}
 
+	TypeName getType() {
+		return mConfigAnnotation.getType();
+	}
+
+	TypeName getRawType() {
+		return mConfigAnnotation.getRawType();
+	}
 
 	@SuppressWarnings("ConstantConditions")
-	public boolean isEnforceNonEmpty() {
-		final Boolean attribute = getAttribute(METHOD_ENFORCE_NON_EMPTY);
+	boolean isEnforceNonEmpty() {
+		final Boolean attribute = mConfigAnnotation.getAttribute(ATTRIBUTE_ENFORCE_NON_EMPTY);
 		return attribute != null && attribute;
 	}
 
-	public Number getMinValue() {
-		return getAttribute(METHOD_MIN_VALUE);
+	TypeMirror getEnumClass() {
+		return mConfigAnnotation instanceof LibraryConfigAnnotationParser ? ((LibraryConfigAnnotationParser) mConfigAnnotation).getEnumClass() : null;
 	}
 
-	public RangeFallbackPolicy getMinValueFallbackPolicy() {
-		return getAttribute(METHOD_MIN_VALUE_FALLBACK_POLICY);
+	Number getMinValue() {
+		final Number minValue = mConfigAnnotation.getAttribute(ATTRIBUTE_MIN_VALUE);
+		return isValidLimitValue(minValue) ? minValue : null;
 	}
 
-	public RangeFallbackPolicy getMaxValueFallbackPolicy() {
-		return getAttribute(METHOD_MAX_VALUE_FALLBACK_POLICY);
+	RangeFallbackPolicy getMinValueFallbackPolicy() {
+		return mConfigAnnotation.getAttribute(ATTRIBUTE_MIN_VALUE_FALLBACK_POLICY);
 	}
 
-	public Number getMaxValue() {
-		return getAttribute(METHOD_MAX_VALUE);
+	RangeFallbackPolicy getMaxValueFallbackPolicy() {
+		return mConfigAnnotation.getAttribute(ATTRIBUTE_VALUE_FALLBACK_POLICY);
 	}
 
-	public TypeName getType() {
-		if (mConfigAnnotation != null) {
-			return TypeName.get(Objects.requireNonNull(getAttribute(METHOD_DEFAULT_VALUE))
-			                           .getClass());
-		}
-		else {
-			return TypeName.get(getCustomConfigTypeResolverGenerics().get(0));
-		}
+	Number getMaxValue() {
+		final Number maxValue = mConfigAnnotation.getAttribute(ATTRIBUTE_MAX_VALUE);
+		return isValidLimitValue(maxValue) ? maxValue : null;
 	}
 
-	private List<TypeMirror> getCustomConfigTypeResolverGenerics() {
-		final ConfigType configTypeAnnotation = getConfigTypeAnnotation(mCustomConfigAnnotationMirror);
-		final TypeMirror configTypeResolverTypeMirror = getConfigTypeResolverTypeMirror(configTypeAnnotation);
-		final List<? extends TypeMirror> typeMirrors = ((TypeElement) mTypes.asElement(configTypeResolverTypeMirror)).getInterfaces();
-		final TypeMirror resolverInterfaceTypeMirror = typeMirrors.get(0);
-		return Utils.getGenericTypes(resolverInterfaceTypeMirror);
+	TimeUnit getDefaultValueTimeUnit() {
+		return mConfigAnnotation.getAttribute(ATTRIBUTE_DEFAULT_VALUE_TIME_UNIT);
 	}
 
-	private TypeMirror getConfigTypeResolverTypeMirror(final ConfigType configTypeAnnotation) {
-		try {
-			configTypeAnnotation.value();
-		} catch (MirroredTypeException e) {
-			return e.getTypeMirror();
-		}
-		// Should never happen
-		return null;
-	}
-
-	public TypeName getCustomType() {
-		return TypeName.get(getCustomConfigTypeResolverGenerics().get(1));
-	}
-
-	public boolean isTime() {
-		return mConfigAnnotation instanceof TimeConfig;
-	}
-
-	public TimeUnit getDefaultValueTimeUnit() {
-		return ((TimeConfig) Objects.requireNonNull(mConfigAnnotation)).defaultValueTimeUnit();
-	}
-
-	public boolean isEnum() {
-		return isIntEnum() || isStringEnum();
-	}
-
-	public boolean isIntEnum() {
-		return mConfigAnnotation instanceof IntEnumConfig;
-	}
-
-	public boolean isStringEnum() {
-		return mConfigAnnotation instanceof StringEnumConfig;
-	}
-
-	public TypeMirror getEnumClass() {
-		try {
-			if (isIntEnum()) {
-				((IntEnumConfig) mConfigAnnotation).enumClass();
-			}
-			else {
-				((StringEnumConfig) mConfigAnnotation).enumClass();
-			}
-		} catch (MirroredTypeException e) {
-			return e.getTypeMirror();
-		}
-		// Should never happen
-		return null;
-	}
-
-	public boolean isJson() {
-		return mConfigAnnotation instanceof JsonConfig;
-	}
-
-	public TypeMirror getJsonType() {
-		try {
-			((JsonConfig) mConfigAnnotation).type();
-		} catch (MirroredTypeException e) {
-			return e.getTypeMirror();
-		}
-
-		return null;
-	}
-
-	public List<? extends TypeMirror> getJsonGenericTypes() {
-		try {
-			((JsonConfig) mConfigAnnotation).genericTypes();
-		} catch (MirroredTypesException e) {
-			return e.getTypeMirrors();
-		}
-
-		return null;
-	}
-
-	public Integer getRandomizerValue() {
-		Integer randomizerValue = null;
-		if (isIntEnum()) {
-			randomizerValue = ((IntEnumConfig) mConfigAnnotation).randomizerValue();
-		}
-		else if (isStringEnum()) {
-			randomizerValue = ((StringEnumConfig) mConfigAnnotation).randomizerValue();
-		}
-
+	Integer getRandomizerValue() {
+		final Integer randomizerValue = mConfigAnnotation.getAttribute(ATTRIBUTE_RANDOMIZER_VALUE);
 		return randomizerValue != null && randomizerValue != NO_RANDOMIZER_VALUE ? randomizerValue : null;
 	}
 
-	public boolean isColor() {
-		return mConfigAnnotation instanceof ColorConfig;
-	}
-
-	public boolean isString() {
-		return mConfigAnnotation instanceof StringConfig;
-	}
-
-	public boolean isUrl() {
-		return mConfigAnnotation instanceof UrlConfig;
-	}
-
-	public boolean isText() {
-		return mConfigAnnotation instanceof TextConfig;
-	}
-
-	public boolean isStringSet() {
-		return mConfigAnnotation instanceof StringSetConfig;
-	}
-
-	public boolean isNumber() {
-		return mConfigAnnotation instanceof LongConfig || mConfigAnnotation instanceof IntConfig || mConfigAnnotation instanceof FloatConfig;
-	}
-
-	public boolean isCustomType() {
-		return mCustomConfigAnnotationMirror != null;
-	}
-
-	@SuppressWarnings("unchecked")
-	private <T> T getAttribute(String attributeName) {
-		try {
-			return (T) Objects.requireNonNull(mConfigAnnotation)
-			                  .annotationType()
-			                  .getMethod(attributeName)
-			                  .invoke(mConfigAnnotation);
-		} catch (Exception e) {
+	TypeMirror getSourceIdentifierTypeMirror(final TypeMirror sourceTypeMirror, final Elements elementsUtils, final Types types) {
+		final TypeMirror identifiableConfigSourceTypeMirror = getIdentifiableConfigSourceTypeMirror(types, sourceTypeMirror);
+		if (identifiableConfigSourceTypeMirror != null) {
+			final List<? extends TypeMirror> typeArguments = ((DeclaredType) identifiableConfigSourceTypeMirror).getTypeArguments();
+			return !typeArguments.isEmpty() ? typeArguments.get(0) : elementsUtils.getTypeElement(Object.class.getCanonicalName())
+			                                                                      .asType();
 		}
 
 		return null;
+	}
+
+	private TypeMirror getIdentifiableConfigSourceTypeMirror(Types types, TypeMirror typeMirror) {
+		final Queue<TypeMirror> typeMirrors = new LinkedList<>(Collections.singleton(typeMirror));
+		while (!typeMirrors.isEmpty()) {
+			final TypeMirror item = typeMirrors.remove();
+			if (isIdentifiableConfigSource(item)) {
+				return item;
+			}
+			typeMirrors.addAll(types.directSupertypes(item));
+		}
+
+		return null;
+	}
+
+	private boolean isIdentifiableConfigSource(final TypeMirror typeMirror) {
+		final String superTypeName = typeMirror.toString();
+		return superTypeName.startsWith(IdentifiableConfigSource.class.getName());
+	}
+
+	private boolean isValidLimitValue(final Number minValue) {
+		if (minValue instanceof Long && (minValue.longValue() == Long.MAX_VALUE || minValue.longValue() == Long.MIN_VALUE)) {
+			return false;
+		}
+
+		if (minValue instanceof Integer && (minValue.intValue() == Integer.MAX_VALUE || minValue.intValue() == Integer.MIN_VALUE)) {
+			return false;
+		}
+
+		return !(minValue instanceof Float) || (minValue.floatValue() != Float.MAX_VALUE && minValue.floatValue() != Float.MIN_VALUE);
 	}
 
 	private boolean isNullString(final String str) {

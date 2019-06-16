@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
-import com.google.gson.Gson;
 import com.ironsource.aura.aircon.AirCon;
 import com.ironsource.aura.aircon.AirConConfiguration;
 import com.ironsource.aura.aircon.converter.gson.GsonConverter;
@@ -37,7 +36,7 @@ public class App
 		                                                 .setLogger(getLogger())
 		                                                 .setLoggingEnabled(BuildConfig.DEBUG)
 		                                                 .addConfigSource(configSource)
-		                                                 .registerConfigType(MapConfig.class, new MapConfigTypeResolver(new Gson()))
+		                                                 .registerConfigType(LabelConfig.class, new LabelConfigResolver())
 		                                                 .build());
 	}
 

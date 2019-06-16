@@ -26,7 +26,7 @@ import com.ironsource.aura.aircon.common.annotations.config.TextConfig;
 import com.ironsource.aura.aircon.common.annotations.config.TimeConfig;
 import com.ironsource.aura.aircon.common.annotations.config.UrlConfig;
 import com.ironsource.aura.aircon.sample.BuildConfig;
-import com.ironsource.aura.aircon.sample.MapConfig;
+import com.ironsource.aura.aircon.sample.LabelConfig;
 import com.ironsource.aura.aircon.sample.R;
 import com.ironsource.aura.aircon.sample.config.model.ImageLocation;
 import com.ironsource.aura.aircon.sample.config.model.Label;
@@ -106,8 +106,8 @@ public interface RemoteConfigs {
 		@ConfigGroup(value = {SOME_INT, SOME_STRING})
 		String COOL_GROUP = "coolGroup";
 
-		@MapConfig(defaultValue = "")
-		String SOME_CUSTOM_MAP = "someCustomMap";
+		@LabelConfig(defaultValue = "default label")
+		String SOME_CUSTOM_LABEL = "someCustomLabel";
 
 		class Validators {
 

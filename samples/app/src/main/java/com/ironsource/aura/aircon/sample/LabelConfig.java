@@ -6,8 +6,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
-@ConfigType(MapConfigTypeResolver.class)
-public @interface MapConfig {
+@ConfigType(LabelConfigResolver.class)
+public @interface LabelConfig {
 
 	String defaultValue() default "";
 }

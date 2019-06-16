@@ -1,6 +1,5 @@
 package com.ironsource.aura.aircon.sample;
 
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -11,7 +10,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.ironsource.aura.aircon.injection.AirConAppCompatActivity;
-import com.ironsource.aura.aircon.injection.AttributeResolver;
 import com.ironsource.aura.aircon.sample.config.CoolGroup;
 import com.ironsource.aura.aircon.sample.config.SomeCoolFeatureConfig;
 import com.ironsource.aura.aircon.sample.config.SomeCoolFeatureConfigProvider;
@@ -21,7 +19,6 @@ import com.ironsource.aura.aircon.sample.config.model.RemoteObject;
 import com.ironsource.aura.aircon.sample.config.model.TextLocation;
 import com.ironsource.aura.aircon.utils.ColorInt;
 
-import java.util.Map;
 import java.util.Set;
 
 public class MainActivity
@@ -35,8 +32,6 @@ public class MainActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		final Map<String, String> someCustomMap = SomeCoolFeatureConfigProvider.getSomeCustomMap();
 
 		loadFireBaseConfig();
 	}
@@ -86,6 +81,7 @@ public class MainActivity
 		final String someUrl = SomeCoolFeatureConfigProvider.getSomeUrl();
 		final long someDuration = SomeCoolFeatureConfigProvider.getSomeDuration();
 		final Set<String> someStringSet = SomeCoolFeatureConfigProvider.getSomeStringSet();
+		final Label customLabel = SomeCoolFeatureConfigProvider.getSomeCustomLabel();
 
 		final CoolGroup coolGroup = SomeCoolFeatureConfigProvider.getCoolGroup();
 		final int coolGroupInt = coolGroup.getSomeInt();

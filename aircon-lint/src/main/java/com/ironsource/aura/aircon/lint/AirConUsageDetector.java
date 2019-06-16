@@ -27,8 +27,6 @@ import com.ironsource.aura.aircon.lint.detector.configField.MultipleConfigAnnota
 import com.ironsource.aura.aircon.lint.detector.configField.MultipleConfigsForSameKeyDetector;
 import com.ironsource.aura.aircon.lint.detector.configField.MultipleDefaultValueAttributesDetector;
 import com.ironsource.aura.aircon.lint.detector.configField.NonConstFieldDetector;
-import com.ironsource.aura.aircon.lint.detector.remote.RemoteMethodCallDetector;
-import com.ironsource.aura.aircon.lint.detector.remote.WrongConfigTypeDetector;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.UAnnotation;
@@ -101,11 +99,6 @@ public class AirConUsageDetector
 		visitor.registerIssueDetector(new MultipleConfigsForSameKeyDetector(context));
 		visitor.registerIssueDetector(new MultipleDefaultValueAttributesDetector(context));
 		visitor.registerIssueDetector(new NonConstFieldDetector(context));
-		//endregion
-
-		// region @Remote
-		visitor.registerIssueDetector(new RemoteMethodCallDetector(context));
-		visitor.registerIssueDetector(new WrongConfigTypeDetector(context));
 		//endregion
 
 		// region Aux methods

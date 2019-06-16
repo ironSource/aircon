@@ -9,9 +9,6 @@ import com.ironsource.aura.aircon.common.annotations.FeatureRemoteConfig;
 import com.ironsource.aura.aircon.common.annotations.config.ConfigGroup;
 import com.ironsource.aura.aircon.common.annotations.config.value.RemoteIntValue;
 import com.ironsource.aura.aircon.common.annotations.config.value.RemoteStringValue;
-import com.ironsource.aura.aircon.common.annotations.injection.RemoteApiMethod;
-import com.ironsource.aura.aircon.common.annotations.injection.RemoteFlag;
-import com.ironsource.aura.aircon.common.annotations.injection.RemoteParam;
 import com.ironsource.aura.aircon.compiler.consts.Consts;
 import com.ironsource.aura.aircon.compiler.enumsProvider.EnumsProviderClassBuilder;
 import com.ironsource.aura.aircon.compiler.model.element.AbstractConfigElement;
@@ -20,7 +17,6 @@ import com.ironsource.aura.aircon.compiler.model.element.ConfigElementFactory;
 import com.ironsource.aura.aircon.compiler.model.element.ConfigGroupElement;
 import com.ironsource.aura.aircon.compiler.model.element.ConfigGroupElementFactory;
 import com.ironsource.aura.aircon.compiler.providerBuilder.RemoteConfigProviderClassBuilder;
-import com.ironsource.aura.aircon.compiler.proxyBuilder.ConfigProxyClassBuilder;
 import com.ironsource.aura.aircon.compiler.utils.NamingUtils;
 import com.ironsource.aura.aircon.compiler.utils.SimpleProcessor;
 import com.squareup.javapoet.ClassName;
@@ -57,7 +53,7 @@ public class AirConProcessor
 	@SuppressWarnings("unchecked")
 	@Override
 	public Set<String> getSupportedAnnotationTypes() {
-		return toAnnotationSet(FeatureRemoteConfig.class, RemoteFlag.class, RemoteParam.class, RemoteApiMethod.class, RemoteIntValue.class, RemoteStringValue.class, ConfigDefaultValueProvider.class, ConfigAdapter.class, ConfigValidator.class);
+		return toAnnotationSet(FeatureRemoteConfig.class, RemoteIntValue.class, RemoteStringValue.class, ConfigDefaultValueProvider.class, ConfigAdapter.class, ConfigValidator.class);
 	}
 
 	@Override
@@ -71,8 +67,6 @@ public class AirConProcessor
 
 			generateRemoteConfigProviders(featureRemoteConfigClassElements);
 
-			// PENDING - Need to rethink this feature
-			//			generateConfigProxyClasses(roundEnv);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -198,30 +192,6 @@ public class AirConProcessor
 		for (TypeSpec typeSpec : typeSpecs) {
 			writeClassToFile(configClassElement, packageName, typeSpec);
 		}
-	}
-
-	private void generateConfigProxyClasses(final RoundEnvironment roundEnv) {
-		final Map<TypeElement, List<ExecutableElement>> classToRemoteMethods = mapClassElements(roundEnv, RemoteFlag.class, RemoteParam.class);
-		for (TypeElement clazz : classToRemoteMethods.keySet()) {
-			final List<ExecutableElement> remoteMethods = extractNonConstructorMethods(classToRemoteMethods.get(clazz));
-			if (!remoteMethods.isEmpty()) {
-				final TypeSpec configProxyClass = new ConfigProxyClassBuilder(mProcessingEnvironment).build(clazz, remoteMethods);
-				writeClassToFile(clazz, getPackage(clazz), configProxyClass);
-			}
-		}
-	}
-
-	private List<ExecutableElement> extractNonConstructorMethods(final List<ExecutableElement> remoteMethods) {
-		final List<ExecutableElement> methods = new ArrayList<>();
-		for (ExecutableElement remoteMethod : remoteMethods) {
-			final boolean constructor = remoteMethod.getSimpleName()
-			                                        .toString()
-			                                        .equals(Consts.CONSTRUCTOR_METHOD_NAME);
-			if (!constructor) {
-				methods.add(remoteMethod);
-			}
-		}
-		return methods;
 	}
 
 	private <T extends Element> Map<TypeElement, List<T>> mapClassElements(final RoundEnvironment roundEnv, Class<? extends Annotation>... annotations) {

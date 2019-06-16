@@ -21,13 +21,3 @@ jar {
     attributes 'Lint-Registry-v2': 'com.ironsource.aura.aircon.lint.LintRegistry'
   }
 }
-
-task copyLintJar(type: Copy) {
-  from '../aircon_lint/build/libs'
-  into System.properties['user.home']+ '/.android/lint'
-  rename 'aircon_lint.jar', 'lint.jar'
-}
-
-gradle.projectsEvaluated {
-  jar.finalizedBy(copyLintJar)
-}

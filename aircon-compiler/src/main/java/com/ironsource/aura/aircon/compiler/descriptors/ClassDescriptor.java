@@ -22,13 +22,13 @@ public abstract class ClassDescriptor {
 		mBuilder.addMethodCall(methodName, params);
 	}
 
-	protected void addGenericMethodCall(final String methodName, final List<?> genericParams, final Object... params) {
+	protected void addGenericMethodCall(final String methodName, final List<TypeName> genericParams, final Object... params) {
 		mBuilder.add(".");
 		mBuilder.add("<");
-		for (Object genericParam : genericParams) {
-			mBuilder.add(genericParam);
+		for (TypeName genericParam : genericParams) {
+			mBuilder.add("$T", genericParam);
 			if (genericParams.indexOf(genericParam) < genericParams.size() - 1) {
-				mBuilder.add(",");
+				mBuilder.add(", ");
 			}
 		}
 		mBuilder.add(">");

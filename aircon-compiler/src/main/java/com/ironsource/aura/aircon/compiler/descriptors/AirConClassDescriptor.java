@@ -2,6 +2,7 @@ package com.ironsource.aura.aircon.compiler.descriptors;
 
 import com.ironsource.aura.aircon.compiler.utils.CodeBlockBuilder;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.TypeName;
 
 import java.util.Arrays;
 
@@ -47,7 +48,7 @@ public class AirConClassDescriptor
 		return new ConfigSourceRepositoryClassDescriptor(mBuilder);
 	}
 
-	public ConfigTypeResolverClassDescriptor getConfigTypeResolver(Object rawType, Object type, Object configTypeClass) {
+	public ConfigTypeResolverClassDescriptor getConfigTypeResolver(TypeName rawType, TypeName type, Object configTypeClass) {
 		addGenericMethodCall(Methods.GET_CONFIG_TYPE_RESOLVER, Arrays.asList(rawType, type), configTypeClass);
 		return new ConfigTypeResolverClassDescriptor(mBuilder);
 	}

@@ -8,9 +8,12 @@ import com.ironsource.aura.aircon.lint.utils.ElementUtils;
 
 import org.jetbrains.uast.UAnnotation;
 import org.jetbrains.uast.UClass;
+import org.jetbrains.uast.UMethod;
 
 abstract class ConfigTypeAnnotationIssueDetector
 		extends IssueDetector {
+
+	private static final String ATTRIBUTE_DEFAULT_VALUE = "defaultValue";
 
 	protected ConfigTypeAnnotationIssueDetector(final JavaContext context, final Issue issue) {
 		super(context, issue);
@@ -26,4 +29,14 @@ abstract class ConfigTypeAnnotationIssueDetector
 	}
 
 	protected abstract void visitConfigTypeAnnotation(final UAnnotation node, UClass owner);
+
+	protected UMethod getDefaultValueMethod(UClass owner) {
+		for (final UMethod method : owner.getMethods()) {
+			if (method.getName()
+			          .equals(ATTRIBUTE_DEFAULT_VALUE)) {
+				return method;
+			}
+		}
+		return null;
+	}
 }

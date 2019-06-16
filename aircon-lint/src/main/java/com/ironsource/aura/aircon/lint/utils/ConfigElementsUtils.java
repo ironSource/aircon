@@ -13,6 +13,7 @@ import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.PsiParameter;
 import com.intellij.psi.impl.source.PsiImmediateClassType;
 import com.intellij.psi.impl.source.tree.java.PsiClassObjectAccessExpressionImpl;
+import com.ironsource.aura.aircon.common.ConfigType;
 import com.ironsource.aura.aircon.common.annotations.ConfigAdapter;
 import com.ironsource.aura.aircon.common.annotations.ConfigDefaultValueProvider;
 import com.ironsource.aura.aircon.common.annotations.ConfigMock;
@@ -86,14 +87,24 @@ public class ConfigElementsUtils {
 		return isConfigAnnotation(annotation.getJavaPsi());
 	}
 
-	public static boolean isConfigAnnotation(PsiAnnotation annotation) {
+	private static boolean isConfigAnnotation(PsiAnnotation annotation) {
 		for (Class<? extends Annotation> configClass : Configs.ALL) {
 			if (ElementUtils.isOfType(annotation, configClass)) {
 				return true;
 			}
 		}
 
-		return isGroupAnnotation(annotation);
+		return isGroupAnnotation(annotation) || isCustomConfigAnnotation(annotation);
+	}
+
+	private static boolean isCustomConfigAnnotation(final PsiAnnotation annotation) {
+		final PsiClass annotationClass = ElementUtils.getAnnotationDeclarationClass(annotation);
+		for (final PsiAnnotation annotationClassAnnotation : annotationClass.getAnnotations()) {
+			if (ElementUtils.isOfType(annotationClassAnnotation, ConfigType.class)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static boolean isGroupAnnotation(final PsiAnnotation annotation) {

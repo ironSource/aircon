@@ -1,20 +1,27 @@
 package com.ironsource.aura.aircon.sample;
 
-import android.text.TextUtils;
-
 import com.ironsource.aura.aircon.common.ConfigTypeResolver;
 import com.ironsource.aura.aircon.sample.config.model.Label;
 
+import java.util.Arrays;
+
 public class LabelConfigResolver
-		implements ConfigTypeResolver<String, Label> {
+		implements ConfigTypeResolver<LabelConfig, String, Label> {
 
 	@Override
-	public boolean isValid(final String value) {
-		return !TextUtils.isEmpty(value);
+	public Class<LabelConfig> getAnnotationClass() {
+		return LabelConfig.class;
 	}
 
 	@Override
-	public Label process(final String value) {
+	public boolean isValid(final LabelConfig annotation, final String value) {
+		final String[] invalidValues = annotation.invalidValues();
+		return !Arrays.asList(invalidValues)
+		              .contains(value);
+	}
+
+	@Override
+	public Label process(final LabelConfig annotation, final String value) {
 		return Label.from(value);
 	}
 }

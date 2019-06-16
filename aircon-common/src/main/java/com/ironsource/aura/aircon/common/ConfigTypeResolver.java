@@ -1,8 +1,12 @@
 package com.ironsource.aura.aircon.common;
 
-public interface ConfigTypeResolver <T, S> {
+import java.lang.annotation.Annotation;
 
-	boolean isValid(T value);
+public interface ConfigTypeResolver <A extends Annotation, T, S> {
 
-	S process(T value);
+	Class<A> getAnnotationClass();
+
+	boolean isValid(A annotation, T value);
+
+	S process(A annotation, T value);
 }

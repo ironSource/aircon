@@ -23,8 +23,8 @@ import javax.lang.model.util.Types;
 public class CustomConfigAnnotationParser
 		implements ConfigAnnotationParser {
 
-	private static final int GENERIC_INDEX_RAW_TYPE = 0;
-	private static final int GENERIC_INDEX_TYPE     = 1;
+	private static final int GENERIC_INDEX_RAW_TYPE = 1;
+	private static final int GENERIC_INDEX_TYPE     = 2;
 
 	private final Types mTypes;
 

@@ -106,7 +106,8 @@ public interface RemoteConfigs {
 		@ConfigGroup(value = {SOME_INT, SOME_STRING})
 		String COOL_GROUP = "coolGroup";
 
-		@LabelConfig(defaultValue = "default label")
+		@DefaultRes(R.string.app_name)
+		@LabelConfig(invalidValues = {"invalid1", "invalid2"})
 		String SOME_CUSTOM_LABEL = "someCustomLabel";
 
 		class Validators {

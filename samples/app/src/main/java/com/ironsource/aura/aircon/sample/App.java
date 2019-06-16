@@ -36,7 +36,7 @@ public class App
 		                                                 .setLogger(getLogger())
 		                                                 .setLoggingEnabled(BuildConfig.DEBUG)
 		                                                 .addConfigSource(configSource)
-		                                                 .registerConfigType(LabelConfig.class, new LabelConfigResolver())
+		                                                 .registerConfigType(new LabelConfigResolver())
 		                                                 .build());
 	}
 

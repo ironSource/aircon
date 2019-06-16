@@ -52,6 +52,7 @@ public class MainActivity
 			                    @Override
 			                    public void onFailure(@NonNull final Exception e) {
 				                    Log.e(App.TAG, "Failed to load firebase config: " + e);
+				                    onFireBaseConfigLoaded();
 			                    }
 		                    });
 	}

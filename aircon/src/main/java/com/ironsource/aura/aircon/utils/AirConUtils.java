@@ -10,6 +10,7 @@ import com.ironsource.aura.aircon.AirCon;
 import com.ironsource.aura.aircon.JsonConverter;
 import com.ironsource.aura.aircon.logging.Logger;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,6 +92,15 @@ public class AirConUtils {
 		RANDOMS_VALUES.put(configKey, randomEnumValue);
 
 		return randomEnumValue;
+	}
+
+	public static <T extends Annotation> T getCustomConfigAnnotation(Class featureClass, Class<T> annotationClass, String fieldName) {
+		try {
+			return featureClass.getDeclaredField(fieldName)
+			                   .getAnnotation(annotationClass);
+		} catch (NoSuchFieldException e) {
+			return null;
+		}
 	}
 
 	private static Logger log() {

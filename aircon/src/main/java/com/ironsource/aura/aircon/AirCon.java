@@ -173,7 +173,7 @@ public class AirCon {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T,S> ConfigTypeResolver<T, S> getConfigTypeResolver(Class<? extends Annotation> configTypeAnnotation) {
+	public <A extends Annotation, T, S> ConfigTypeResolver<A, T, S> getConfigTypeResolver(Class<A> configTypeAnnotation) {
 		assertInitialized();
 
 		final ConfigTypeResolver configTypeResolver = mConfigTypes.get(configTypeAnnotation);

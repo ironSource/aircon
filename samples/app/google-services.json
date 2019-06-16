@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "242191871023",
+    "firebase_url": "https://aircon-tester.firebaseio.com",
+    "project_id": "aircon-tester",
+    "storage_bucket": "aircon-tester.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242191871023:android:fcb431b036f3777e",
+        "android_client_info": {
+          "package_name": "com.ironsource.aura.aircon.sample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "242191871023-2e59uqo49icqocjhns8ailv6isqm537j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfcmG_1Kp867BmN8n15egmj6bqr4W1gCM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "242191871023-2e59uqo49icqocjhns8ailv6isqm537j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

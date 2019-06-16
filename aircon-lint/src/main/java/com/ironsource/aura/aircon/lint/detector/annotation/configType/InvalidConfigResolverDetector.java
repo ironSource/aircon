@@ -9,6 +9,7 @@ import com.intellij.psi.impl.source.PsiImmediateClassType;
 
 import org.jetbrains.uast.UAnnotation;
 import org.jetbrains.uast.UClass;
+import org.jetbrains.uast.UMethod;
 
 /**
  * Created on 21/1/19.
@@ -19,6 +20,7 @@ public class InvalidConfigResolverDetector
 	public static final Issue ISSUE = createErrorIssue("InvalidConfigResolverDetector", "Invalid config resolver", "config resolver generic type doesn't match this annotation");
 
 	private static final String CLASS_CONFIG_TYPE_RESOLVER = "ConfigTypeResolver";
+	private static final String ATTRIBUTE_DEFAULT_VALUE    = "defaultValue";
 
 	private static final int GENRIC_INDEX_ANNOTATION = 0;
 	private static final int GENRIC_INDEX_RAW_TYPE   = 1;
@@ -44,6 +46,16 @@ public class InvalidConfigResolverDetector
 
 		if (!annotationType.getCanonicalText()
 		                   .equals(owner.getQualifiedName())) {
+			report(node);
+			return;
+		}
+
+		final UMethod defaultValueMethod = getDefaultValueMethod(owner);
+		if (defaultValueMethod == null) {
+			return;
+		}
+
+		if (!rawType.equals(defaultValueMethod.getReturnType())) {
 			report(node);
 		}
 	}

@@ -14,5 +14,5 @@ public @interface LabelConfig {
 
 	String[] invalidValues() default {};
 
-	String defaultValue() default "";
+//	String defaultValue() default "";
 }

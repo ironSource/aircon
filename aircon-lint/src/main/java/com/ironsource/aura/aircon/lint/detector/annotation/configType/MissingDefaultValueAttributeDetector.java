@@ -22,14 +22,14 @@ public class MissingDefaultValueAttributeDetector
 	}
 
 	@Override
-	protected void visitConfigTypeAnnotation(final UAnnotation node, final UClass target) {
-		for (final UMethod method : target.getMethods()) {
+	protected void visitConfigTypeAnnotation(final UAnnotation node, final UClass owner) {
+		for (final UMethod method : owner.getMethods()) {
 			if (method.getName()
 			          .equals(ATTRIBUTE_DEFAULT_VALUE)) {
 				return;
 			}
 		}
 
-		reportPsi(target.getNameIdentifier());
+		reportPsi(owner.getNameIdentifier());
 	}
 }

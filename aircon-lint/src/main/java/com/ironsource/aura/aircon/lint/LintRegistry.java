@@ -28,8 +28,6 @@ import com.ironsource.aura.aircon.lint.detector.configField.MultipleConfigAnnota
 import com.ironsource.aura.aircon.lint.detector.configField.MultipleConfigsForSameKeyDetector;
 import com.ironsource.aura.aircon.lint.detector.configField.MultipleDefaultValueAttributesDetector;
 import com.ironsource.aura.aircon.lint.detector.configField.NonConstFieldDetector;
-import com.ironsource.aura.aircon.lint.detector.remote.RemoteMethodCallDetector;
-import com.ironsource.aura.aircon.lint.detector.remote.WrongConfigTypeDetector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,11 +83,6 @@ public class LintRegistry
 		issues.add(MultipleConfigsForSameKeyDetector.ISSUE);
 		issues.add(MultipleDefaultValueAttributesDetector.ISSUE);
 		issues.add(NonConstFieldDetector.ISSUE);
-		//endregion
-
-		// region @Remote
-		issues.add(RemoteMethodCallDetector.ISSUE);
-		issues.add(WrongConfigTypeDetector.ISSUE);
 		//endregion
 
 		// region Aux methods

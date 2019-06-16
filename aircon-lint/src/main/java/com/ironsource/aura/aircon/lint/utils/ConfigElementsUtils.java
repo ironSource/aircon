@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifierListOwner;
-import com.intellij.psi.PsiParameter;
 import com.intellij.psi.impl.source.PsiImmediateClassType;
 import com.intellij.psi.impl.source.tree.java.PsiClassObjectAccessExpressionImpl;
 import com.ironsource.aura.aircon.common.ConfigType;
@@ -34,8 +33,6 @@ import com.ironsource.aura.aircon.common.annotations.config.StringEnumConfig;
 import com.ironsource.aura.aircon.common.annotations.config.TextConfig;
 import com.ironsource.aura.aircon.common.annotations.config.value.RemoteIntValue;
 import com.ironsource.aura.aircon.common.annotations.config.value.RemoteStringValue;
-import com.ironsource.aura.aircon.common.annotations.injection.RemoteFlag;
-import com.ironsource.aura.aircon.common.annotations.injection.RemoteParam;
 import com.ironsource.aura.aircon.common.utils.CommonNamingUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -236,14 +233,6 @@ public class ConfigElementsUtils {
 		return ElementUtils.isAnnotationOfType(node, FloatConfig.class);
 	}
 
-	public static boolean isRemoteFlagAnnotation(final UAnnotation node) {
-		return ElementUtils.isAnnotationOfType(node.getJavaPsi(), RemoteFlag.class);
-	}
-
-	public static boolean isRemoteParamAnnotation(final UAnnotation node) {
-		return ElementUtils.isAnnotationOfType(node.getJavaPsi(), RemoteParam.class);
-	}
-
 	public static boolean isJsonConfigAnnotation(final PsiAnnotation node) {
 		return ElementUtils.isAnnotationOfType(node, JsonConfig.class);
 	}
@@ -266,14 +255,6 @@ public class ConfigElementsUtils {
 
 	public static boolean isDefaultResAnnotation(final UAnnotation node) {
 		return ElementUtils.isAnnotationOfType(node.getJavaPsi(), DefaultRes.class);
-	}
-
-	public static UExpression getRemoteAnnotationConfigValue(UAnnotation annotation) {
-		return annotation.findAttributeValue(ATTRIBUTE_VALUE);
-	}
-
-	public static String getRemoteAnnotationReferencedConfigAnnotationType(final UAnnotation annotation) {
-		return getConfigFieldType(getReferencedConfigField(annotation, ATTRIBUTE_VALUE));
 	}
 
 	public static String getConfigFieldType(final PsiField configField) {
@@ -385,48 +366,6 @@ public class ConfigElementsUtils {
 		return (PsiField) ((JavaUSimpleNameReferenceExpression) value).resolve();
 	}
 
-	public static boolean isRemoteMethod(final PsiMethod method) {
-		if (hasRemoteFlagAnnotation(method)) {
-			return true;
-		}
-
-		for (final PsiParameter psiParameter : method.getParameterList()
-		                                             .getParameters()) {
-			if (isRemoteParameter(psiParameter)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public static boolean hasRemoteFlagAnnotation(final PsiMethod method) {
-		for (final PsiAnnotation psiAnnotation : method.getAnnotations()) {
-			if (ElementUtils.isAnnotationOfType(psiAnnotation, RemoteFlag.class)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public static List<PsiParameter> getNonRemoteParameters(PsiMethod method) {
-		final List<PsiParameter> res = new ArrayList<>();
-		for (PsiParameter parameter : method.getParameterList()
-		                                    .getParameters()) {
-			if (!isRemoteParameter(parameter)) {
-				res.add(parameter);
-			}
-		}
-		return res;
-	}
-
-	public static boolean isRemoteParameter(final PsiParameter parameter) {
-		for (PsiAnnotation jvmAnnotation : parameter.getAnnotations()) {
-			if (ElementUtils.isAnnotationOfType(jvmAnnotation, RemoteParam.class)) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 	public static UAnnotation getDefaultValueProviderAnnotation(UMethod method) {
 		for (UAnnotation annotation : ((UAnnotated) method).getAnnotations()) {

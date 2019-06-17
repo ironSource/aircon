@@ -229,6 +229,14 @@ public class AirConConfiguration {
 			return this;
 		}
 
+		/**
+		 * Register a custom config type.
+		 * Any custom config type used in the remote config interface must be registered otherwise runtime exceptions
+		 * will be thrown.
+		 *
+		 * @param resolver custom config type resolver, the resolver is used for config fields annotated with the annotation returned by {@link ConfigTypeResolver#getAnnotationClass()}
+		 * @return this {@link Builder} instance.
+		 */
 		public Builder registerConfigType(@NonNull ConfigTypeResolver<? extends Annotation, ?, ?> resolver) {
 			mConfigTypes.put(resolver.getAnnotationClass(), resolver);
 			return this;

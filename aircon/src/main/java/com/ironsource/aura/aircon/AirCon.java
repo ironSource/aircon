@@ -178,7 +178,7 @@ public class AirCon {
 
 		final ConfigTypeResolver configTypeResolver = mConfigTypes.get(configTypeAnnotation);
 		if (configTypeResolver == null) {
-			throw new IllegalStateException("No config resolver found for " + configTypeAnnotation.getSimpleName() + ", any custom config type should be registered in the AirConConfiguration");
+			throw new IllegalStateException("No config resolver found for " + configTypeAnnotation.getSimpleName() + ", custom config types should be registered in the AirConConfiguration");
 		}
 
 		return configTypeResolver;

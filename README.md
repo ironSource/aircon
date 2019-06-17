@@ -248,6 +248,71 @@ public static boolean mockEnabled() {
 A good practice for preventing mocks in release builds is defining all the config mock methods in the same class and ignore it in git.
 In addition, a custom lint check will throw an error if a config mock is defined in a release build.
 
+Custom config types
+--------
+AirCon supports defining custom config type annotations in cases where the built-in types are not sufficient
+or when common validation and processing is used across multiple config keys.
+
+To define a custom config type:
+1. Define a config type resolver
+```java
+public class LabelConfigResolver implements ConfigTypeResolver<LabelConfig, String, Label> {
+
+   @Override
+   public Class<LabelConfig> getAnnotationClass() {
+      return LabelConfig.class;
+   }
+
+   @Override
+   public boolean isValid(final LabelConfig annotation, final String value) {
+      final String[] invalidValues = annotation.invalidValues();
+      return !Arrays.asList(invalidValues).contains(value);
+   }
+
+   @Override
+   public Label process(final LabelConfig annotation, final String value) {
+      return Label.from(value);
+   }
+}
+```
+The resolver defines:
+- The custom config annotation (defined in step 2) to which it defines the processing logic.
+- How a configured value is processed for the custom type.
+- The primitive type of the config (i.e the type that will be used remotely).
+- The processed type of the config, which can be whatever you like.
+
+2. Define a config type annotation and annotate it with `@ConfigType` and bind it to the resolver you've created via 
+   the parameter to the annotation
+```java
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+@ConfigType(LabelConfigResolver.class)
+public @interface LabelConfig {
+	
+   String[] invalidValues() default {};
+	
+   String defaultValue() default "";
+}
+```
+The annotation can contain any number of attributes but must contain a `defaultValue` attribute.
+
+Note that the annotation must be retained in runtime and be targeted only for fields.
+
+3. Register the custom config type when initializing the SDK
+```java
+new AirConConfiguration.Builder(this).registerConfigType(new LabelConfigResolver())
+```
+
+4. Use the custom config
+```java
+@DefaultRes(R.string.app_name)
+@LabelConfig(defaultValue = "", invalidValues = {"invalid1", "invalid2"})
+String SOME_CUSTOM_LABEL = "someCustomLabel";
+```
+
+The new config type acts exactly the same as the build-in config annotations and therefore
+can be used in conjunction with all other AirCon features such as mocks, custom adapters, custom validators and so on.
+
 XML injection
 --------
 Aircon is also equipped with XML injection capabilities.

@@ -15,9 +15,10 @@ import com.ironsource.aura.aircon.lint.detector.annotation.config.group.CyclicCo
 import com.ironsource.aura.aircon.lint.detector.annotation.config.group.EmptyConfigGroupValuesDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.config.group.InvalidConfigGroupValuesDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.config.json.InvalidJsonGenericTypesDetector;
-import com.ironsource.aura.aircon.lint.detector.annotation.configType.InvalidConfigResolverDetector;
+import com.ironsource.aura.aircon.lint.detector.annotation.configType.InvalidConfigTypeDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.configType.MissingDefaultValueAttributeDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.configType.NonFieldTargetDetector;
+import com.ironsource.aura.aircon.lint.detector.annotation.configType.NonMatchingConfigResolverDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.configType.WrongRetentionDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.defaultConfig.CyclicDefaultValueConfigDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.defaultConfig.NonConfigDefaultValueConfigDetector;
@@ -88,13 +89,14 @@ public class AirConUsageDetector
 		visitor.registerIssueDetector(new MissingDefaultValueAttributeDetector(context));
 		visitor.registerIssueDetector(new NonFieldTargetDetector(context));
 		visitor.registerIssueDetector(new WrongRetentionDetector(context));
+		visitor.registerIssueDetector(new NonMatchingConfigResolverDetector(context));
+		visitor.registerIssueDetector(new InvalidConfigTypeDetector(context));
 		//endregion
 
 		// region @DefaultConfig
 		visitor.registerIssueDetector(new CyclicDefaultValueConfigDetector(context));
 		visitor.registerIssueDetector(new NonConfigDefaultValueConfigDetector(context));
 		visitor.registerIssueDetector(new WrongTypeDefaultValueConfigDetector(context));
-		visitor.registerIssueDetector(new InvalidConfigResolverDetector(context));
 		//endregion
 
 		// region @DefaultRes

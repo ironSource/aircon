@@ -14,18 +14,17 @@ import org.jetbrains.uast.UMethod;
 /**
  * Created on 21/1/19.
  */
-public class InvalidConfigResolverDetector
+public class NonMatchingConfigResolverDetector
 		extends ConfigTypeAnnotationIssueDetector {
 
-	public static final Issue ISSUE = createErrorIssue("InvalidConfigResolverDetector", "Invalid config resolver", "config resolver generic type doesn't match this annotation");
+	public static final Issue ISSUE = createErrorIssue("NonMatchingConfigResolverDetector", "Non matching config resolver", "config resolver generic type doesn't match this annotation (annotation type must be the same as well as the type defined in the defaultValue attribute)");
 
 	private static final String CLASS_CONFIG_TYPE_RESOLVER = "ConfigTypeResolver";
-	private static final String ATTRIBUTE_DEFAULT_VALUE    = "defaultValue";
 
 	private static final int GENRIC_INDEX_ANNOTATION = 0;
 	private static final int GENRIC_INDEX_RAW_TYPE   = 1;
 
-	public InvalidConfigResolverDetector(final JavaContext context) {
+	public NonMatchingConfigResolverDetector(final JavaContext context) {
 		super(context, ISSUE);
 	}
 

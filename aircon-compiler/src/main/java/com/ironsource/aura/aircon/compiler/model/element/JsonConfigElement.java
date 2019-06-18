@@ -1,6 +1,7 @@
 package com.ironsource.aura.aircon.compiler.model.element;
 
-import javax.lang.model.type.TypeMirror;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 
 /**
  * Created on 11/3/2018.
@@ -8,15 +9,16 @@ import javax.lang.model.type.TypeMirror;
 public class JsonConfigElement
 		extends ConfigElement {
 
-	private final TypeMirror mJsonType;
-
-	JsonConfigElement(Properties properties, final TypeMirror jsonType) {
+	JsonConfigElement(Properties properties) {
 		super(properties);
-		mJsonType = jsonType;
 	}
 
-	public TypeMirror getJsonType() {
-		return mJsonType;
+	public TypeName getJsonType() {
+		return getType();
+	}
+
+	public boolean isGenericType() {
+		return getJsonType() instanceof ParameterizedTypeName;
 	}
 
 	@Override

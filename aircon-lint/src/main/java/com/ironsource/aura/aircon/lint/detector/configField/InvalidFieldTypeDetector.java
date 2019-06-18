@@ -23,8 +23,7 @@ public class InvalidFieldTypeDetector
 	@Override
 	public void visit(final UField node) {
 		if (ConfigElementsUtils.hasConfigAnnotation(node.getPsi()) && !ElementUtils.isString(node.getType())) {
-			report(
-					node);
+			report(node);
 		}
 	}
 }

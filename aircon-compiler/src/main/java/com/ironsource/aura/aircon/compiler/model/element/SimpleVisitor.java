@@ -55,6 +55,11 @@ public abstract class SimpleVisitor <T, S>
 	public S visit(final JsonConfigElement configElement, final T arg) {
 		return defaultVisit(configElement, arg);
 	}
-;
+
+	@Override
+	public S visit(final CustomConfigElement configElement, final T arg) {
+		return defaultVisit(configElement, arg);
+	}
+
 	protected abstract S defaultVisit(final ConfigElement configElement, final T arg);
 }

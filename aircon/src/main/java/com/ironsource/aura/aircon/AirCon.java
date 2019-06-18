@@ -5,9 +5,13 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.ironsource.aura.aircon.common.ConfigTypeResolver;
 import com.ironsource.aura.aircon.injection.AttributeResolver;
 import com.ironsource.aura.aircon.logging.Logger;
 import com.ironsource.aura.aircon.source.ConfigSourceRepository;
+
+import java.lang.annotation.Annotation;
+import java.util.Map;
 
 /**
  * AirCon SDK entry point.
@@ -25,6 +29,8 @@ public class AirCon {
 	private JsonConverter     mJsonConverter;
 
 	private ConfigSourceRepository mConfigSourceRepository;
+
+	private Map<Class<? extends Annotation>, ConfigTypeResolver> mConfigTypes;
 
 	/**
 	 * Returns a singleton instance of the AirCon SDK.
@@ -58,6 +64,7 @@ public class AirCon {
 		mAttrClass = airConConfiguration.getAttrClass();
 		mAttributeResolver = airConConfiguration.getAttributeResolver();
 		mJsonConverter = airConConfiguration.getJsonConverter();
+		mConfigTypes = airConConfiguration.getConfigTypes();
 
 		final SdkContext sdkContext = new SdkContext(airConConfiguration.getLogger());
 		mConfigSourceRepository = new ConfigSourceRepository(sdkContext, airConConfiguration.getConfigSources(), airConConfiguration.getIdentifiableConfigSources(), airConConfiguration.getIdentifiableConfigSourceFactories());
@@ -163,6 +170,18 @@ public class AirCon {
 	public ConfigSourceRepository getConfigSourceRepository() {
 		assertInitialized();
 		return mConfigSourceRepository;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <A extends Annotation, T, S> ConfigTypeResolver<A, T, S> getConfigTypeResolver(Class<A> configTypeAnnotation) {
+		assertInitialized();
+
+		final ConfigTypeResolver configTypeResolver = mConfigTypes.get(configTypeAnnotation);
+		if (configTypeResolver == null) {
+			throw new IllegalStateException("No config resolver found for " + configTypeAnnotation.getSimpleName() + ", custom config types should be registered in the AirConConfiguration");
+		}
+
+		return configTypeResolver;
 	}
 
 	private void assertInitialized() {

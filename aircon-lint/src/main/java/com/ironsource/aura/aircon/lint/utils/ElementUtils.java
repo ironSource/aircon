@@ -35,6 +35,9 @@ public class ElementUtils {
 
 	private static final String STRING_TYPE  = "String";
 	private static final String BOOLEAN_TYPE = "boolean";
+	private static final String FLOAT_TYPE   = "float";
+	private static final String INT_TYPE     = "int";
+	private static final String LONG_TYPE    = "long";
 
 	public static boolean isEnumConst(PsiField psiField) {
 		final String fieldType = psiField.getType()
@@ -66,8 +69,8 @@ public class ElementUtils {
 	}
 
 	public static boolean isOfType(final PsiAnnotation annotation, final Class<? extends Annotation> configClass) {
-		return configClass.getCanonicalName()
-		                  .equals(annotation.getQualifiedName());
+		return annotation != null && configClass.getCanonicalName()
+		                                        .equals(annotation.getQualifiedName());
 	}
 
 	public static boolean isOneOfTypes(final PsiAnnotation annotation, final Class<? extends Annotation>... configClasses) {
@@ -84,9 +87,24 @@ public class ElementUtils {
 		           .equals(STRING_TYPE);
 	}
 
-	public static boolean isSBoolean(final @NotNull PsiType type) {
+	public static boolean isBoolean(final @NotNull PsiType type) {
 		return type.getPresentableText()
 		           .equals(BOOLEAN_TYPE);
+	}
+
+	public static boolean isFloat(final @NotNull PsiType type) {
+		return type.getPresentableText()
+		           .equals(FLOAT_TYPE);
+	}
+
+	public static boolean isInt(final @NotNull PsiType type) {
+		return type.getPresentableText()
+		           .equals(INT_TYPE);
+	}
+
+	public static boolean isLong(final @NotNull PsiType type) {
+		return type.getPresentableText()
+		           .equals(LONG_TYPE);
 	}
 
 	public static boolean hasConstInitializer(final @NotNull UField node) {
@@ -142,7 +160,7 @@ public class ElementUtils {
 		return PsiUtil.getPackageName(configField.getContainingClass());
 	}
 
-	static PsiClass getAnnotationDeclarationClass(final PsiAnnotation configAnnotation) {
+	public static PsiClass getAnnotationDeclarationClass(final PsiAnnotation configAnnotation) {
 		return (PsiClass) configAnnotation.getNameReferenceElement()
 		                                  .resolve();
 	}

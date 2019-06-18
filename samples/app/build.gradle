@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+ext{
+    SUPPORT_VERSION =  "28.0.0"
+}
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -20,7 +24,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation "com.android.support:appcompat-v7:$SUPPORT_VERSION"
 
     implementation 'com.google.firebase:firebase-config:17.0.0'
     implementation "com.google.code.gson:gson:2.8.5"
@@ -36,6 +40,18 @@ dependencies {
 //    implementation 'com.ironsource.aura.aircon:gson-converter:1.4.0'
 //
 //    annotationProcessor 'com.ironsource.aura.aircon:aircon-compiler:1.4.0'
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion SUPPORT_VERSION
+            }
+        }
+
+    }
 }
 
 apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin

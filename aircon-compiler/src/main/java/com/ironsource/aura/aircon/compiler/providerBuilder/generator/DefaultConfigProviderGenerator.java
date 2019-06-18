@@ -88,9 +88,8 @@ abstract class DefaultConfigProviderGenerator <T extends ConfigElement>
 
 	protected final CodeBlock[] getSourceGetterParameters() {
 		final List<CodeBlock> codeBlocks = new ArrayList<>();
-		codeBlocks.add(new CodeBlockBuilder().addClassQualifier(TypeName.get(mElement.getSourceTypeMirror()))
-		                                     .add(CodeBlockBuilder.CLASS)
-		                                     .build());
+		codeBlocks.add(ClassDescriptor.clazz(TypeName.get(mElement.getSourceTypeMirror()))
+		                              .build());
 
 		if (mElement.hasIdentifiableSource()) {
 			codeBlocks.add(CodeBlock.of(getSourceIdentifierParamName(mElement.getSourceIdentifierTypeMirror())));
@@ -220,7 +219,7 @@ abstract class DefaultConfigProviderGenerator <T extends ConfigElement>
 			return getConversionToRawTypeExpression(createConfigGetterMethodCall(mElement.getDefaultConfigValueElement()));
 		}
 		else if (mElement.hasDefaultValueProvider()) {
-			return createConfigAuxMethodCall(mElement.getDefaultValueProvider(), false, new Object[0]);
+			return createConfigAuxMethodCall(mElement.getDefaultValueProvider());
 		}
 		else {
 			return getDefaultValueExpression();

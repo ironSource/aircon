@@ -9,9 +9,6 @@ import com.ironsource.aura.aircon.common.annotations.FeatureRemoteConfig;
 import com.ironsource.aura.aircon.common.annotations.config.ConfigGroup;
 import com.ironsource.aura.aircon.common.annotations.config.value.RemoteIntValue;
 import com.ironsource.aura.aircon.common.annotations.config.value.RemoteStringValue;
-import com.ironsource.aura.aircon.common.annotations.injection.RemoteApiMethod;
-import com.ironsource.aura.aircon.common.annotations.injection.RemoteFlag;
-import com.ironsource.aura.aircon.common.annotations.injection.RemoteParam;
 import com.ironsource.aura.aircon.compiler.consts.Consts;
 import com.ironsource.aura.aircon.compiler.enumsProvider.EnumsProviderClassBuilder;
 import com.ironsource.aura.aircon.compiler.model.element.AbstractConfigElement;
@@ -20,7 +17,6 @@ import com.ironsource.aura.aircon.compiler.model.element.ConfigElementFactory;
 import com.ironsource.aura.aircon.compiler.model.element.ConfigGroupElement;
 import com.ironsource.aura.aircon.compiler.model.element.ConfigGroupElementFactory;
 import com.ironsource.aura.aircon.compiler.providerBuilder.RemoteConfigProviderClassBuilder;
-import com.ironsource.aura.aircon.compiler.proxyBuilder.ConfigProxyClassBuilder;
 import com.ironsource.aura.aircon.compiler.utils.NamingUtils;
 import com.ironsource.aura.aircon.compiler.utils.SimpleProcessor;
 import com.squareup.javapoet.ClassName;
@@ -46,6 +42,8 @@ import static com.ironsource.aura.aircon.compiler.utils.Utils.toAnnotationSet;
 public class AirConProcessor
 		extends SimpleProcessor {
 
+	private static final String ATTRIBUTE_AUX_TARGET = "value";
+
 	private ProcessingEnvironment mProcessingEnvironment;
 
 	@Override
@@ -57,7 +55,7 @@ public class AirConProcessor
 	@SuppressWarnings("unchecked")
 	@Override
 	public Set<String> getSupportedAnnotationTypes() {
-		return toAnnotationSet(FeatureRemoteConfig.class, RemoteFlag.class, RemoteParam.class, RemoteApiMethod.class, RemoteIntValue.class, RemoteStringValue.class, ConfigDefaultValueProvider.class, ConfigAdapter.class, ConfigValidator.class);
+		return toAnnotationSet(FeatureRemoteConfig.class, RemoteIntValue.class, RemoteStringValue.class, ConfigDefaultValueProvider.class, ConfigAdapter.class, ConfigValidator.class);
 	}
 
 	@Override
@@ -71,8 +69,6 @@ public class AirConProcessor
 
 			generateRemoteConfigProviders(featureRemoteConfigClassElements);
 
-			// PENDING - Need to rethink this feature
-			//			generateConfigProxyClasses(roundEnv);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -103,10 +99,10 @@ public class AirConProcessor
 		final ClassName providerClassName = ClassName.get(packageName, NamingUtils.getProviderClassName(configClass.getSimpleName()
 		                                                                                                           .toString()));
 
-		final Map<String, ExecutableElement> defaultValueProviders = getDefaultValueProviders(roundEnv);
-		final Map<String, ExecutableElement> adapters = getAdapters(roundEnv);
-		final Map<String, ExecutableElement> validators = getValidators(roundEnv);
-		final Map<String, ExecutableElement> mocks = getMocks(roundEnv);
+		final Map<String, ExecutableElement> defaultValueProviders = getAuxMethods(roundEnv, ConfigDefaultValueProvider.class);
+		final Map<String, ExecutableElement> adapters = getAuxMethods(roundEnv, ConfigAdapter.class);
+		final Map<String, ExecutableElement> validators = getAuxMethods(roundEnv, ConfigValidator.class);
+		final Map<String, ExecutableElement> mocks = getAuxMethods(roundEnv, ConfigMock.class);
 
 		// Create config elements
 		for (VariableElement variableElement : variableElements) {
@@ -122,50 +118,29 @@ public class AirConProcessor
 		for (VariableElement variableElement : variableElements) {
 			final ConfigGroup configGroupAnnotation = variableElement.getAnnotation(ConfigGroup.class);
 			if (configGroupAnnotation != null) {
-				final ConfigGroupElement configGroupElement = ConfigGroupElementFactory.createConfigGroupElement(providerClassName, variableElement, configGroupAnnotation, mProcessingEnvironment.getConfigElements(), mProcessingEnvironment.getConfigGroupElements());
+				final ConfigGroupElement configGroupElement = ConfigGroupElementFactory.createConfigGroupElement(providerClassName, configClass, variableElement, configGroupAnnotation, mProcessingEnvironment.getConfigElements(), mProcessingEnvironment.getConfigGroupElements());
 				mProcessingEnvironment.addConfigGroupElement(configClass, configGroupElement);
 			}
 		}
 	}
 
-	private Map<String, ExecutableElement> getDefaultValueProviders(final RoundEnvironment roundEnv) {
-		final Map<String, ExecutableElement> defaultProvidersMap = new HashMap<>();
-		final Set<? extends Element> defaultValueProviders = roundEnv.getElementsAnnotatedWith(ConfigDefaultValueProvider.class);
-		for (Element defaultValueProvider : defaultValueProviders) {
-			final ConfigDefaultValueProvider annotation = defaultValueProvider.getAnnotation(ConfigDefaultValueProvider.class);
-			defaultProvidersMap.put(annotation.value(), (ExecutableElement) defaultValueProvider);
+	private <A extends Annotation> Map<String, ExecutableElement> getAuxMethods(final RoundEnvironment roundEnv, Class<A> annotationClass) {
+		final Map<String, ExecutableElement> map = new HashMap<>();
+		final Set<? extends Element> auxMethods = roundEnv.getElementsAnnotatedWith(annotationClass);
+		for (Element method : auxMethods) {
+			final String auxMethodTarget = getAuxMethodTarget(method, annotationClass);
+			map.put(auxMethodTarget, (ExecutableElement) method);
 		}
-		return defaultProvidersMap;
+		return map;
 	}
 
-	private Map<String, ExecutableElement> getAdapters(final RoundEnvironment roundEnv) {
-		final Map<String, ExecutableElement> configAdaptersMap = new HashMap<>();
-		final Set<? extends Element> defaultValueProviders = roundEnv.getElementsAnnotatedWith(ConfigAdapter.class);
-		for (Element defaultValueProvider : defaultValueProviders) {
-			final ConfigAdapter annotation = defaultValueProvider.getAnnotation(ConfigAdapter.class);
-			configAdaptersMap.put(annotation.value(), (ExecutableElement) defaultValueProvider);
+	private String getAuxMethodTarget(Element auxMethod, Class<? extends Annotation> annotationClass) {
+		try {
+			return (String) annotationClass.getMethod(ATTRIBUTE_AUX_TARGET)
+			                               .invoke(auxMethod.getAnnotation(annotationClass));
+		} catch (Exception e) {
+			return null;
 		}
-		return configAdaptersMap;
-	}
-
-	private Map<String, ExecutableElement> getValidators(final RoundEnvironment roundEnv) {
-		final Map<String, ExecutableElement> validatorsMap = new HashMap<>();
-		final Set<? extends Element> validators = roundEnv.getElementsAnnotatedWith(ConfigValidator.class);
-		for (Element validator : validators) {
-			final ConfigValidator annotation = validator.getAnnotation(ConfigValidator.class);
-			validatorsMap.put(annotation.value(), (ExecutableElement) validator);
-		}
-		return validatorsMap;
-	}
-
-	private Map<String, ExecutableElement> getMocks(final RoundEnvironment roundEnv) {
-		final Map<String, ExecutableElement> mocksMap = new HashMap<>();
-		final Set<? extends Element> mocks = roundEnv.getElementsAnnotatedWith(ConfigMock.class);
-		for (Element mock : mocks) {
-			final ConfigMock annotation = mock.getAnnotation(ConfigMock.class);
-			mocksMap.put(annotation.value(), (ExecutableElement) mock);
-		}
-		return mocksMap;
 	}
 
 	private void createFeatureConfigGroupElement(final TypeElement configClass, final ClassName providerClassName) {
@@ -198,30 +173,6 @@ public class AirConProcessor
 		for (TypeSpec typeSpec : typeSpecs) {
 			writeClassToFile(configClassElement, packageName, typeSpec);
 		}
-	}
-
-	private void generateConfigProxyClasses(final RoundEnvironment roundEnv) {
-		final Map<TypeElement, List<ExecutableElement>> classToRemoteMethods = mapClassElements(roundEnv, RemoteFlag.class, RemoteParam.class);
-		for (TypeElement clazz : classToRemoteMethods.keySet()) {
-			final List<ExecutableElement> remoteMethods = extractNonConstructorMethods(classToRemoteMethods.get(clazz));
-			if (!remoteMethods.isEmpty()) {
-				final TypeSpec configProxyClass = new ConfigProxyClassBuilder(mProcessingEnvironment).build(clazz, remoteMethods);
-				writeClassToFile(clazz, getPackage(clazz), configProxyClass);
-			}
-		}
-	}
-
-	private List<ExecutableElement> extractNonConstructorMethods(final List<ExecutableElement> remoteMethods) {
-		final List<ExecutableElement> methods = new ArrayList<>();
-		for (ExecutableElement remoteMethod : remoteMethods) {
-			final boolean constructor = remoteMethod.getSimpleName()
-			                                        .toString()
-			                                        .equals(Consts.CONSTRUCTOR_METHOD_NAME);
-			if (!constructor) {
-				methods.add(remoteMethod);
-			}
-		}
-		return methods;
 	}
 
 	private <T extends Element> Map<TypeElement, List<T>> mapClassElements(final RoundEnvironment roundEnv, Class<? extends Annotation>... annotations) {

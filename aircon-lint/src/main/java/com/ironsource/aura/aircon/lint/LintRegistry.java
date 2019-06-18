@@ -15,6 +15,12 @@ import com.ironsource.aura.aircon.lint.detector.annotation.config.enums.InvalidE
 import com.ironsource.aura.aircon.lint.detector.annotation.config.group.CyclicConfigGroupValuesDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.config.group.EmptyConfigGroupValuesDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.config.group.InvalidConfigGroupValuesDetector;
+import com.ironsource.aura.aircon.lint.detector.annotation.config.json.InvalidJsonGenericTypesDetector;
+import com.ironsource.aura.aircon.lint.detector.annotation.configType.InvalidConfigTypeDetector;
+import com.ironsource.aura.aircon.lint.detector.annotation.configType.MissingDefaultValueAttributeDetector;
+import com.ironsource.aura.aircon.lint.detector.annotation.configType.NonFieldTargetDetector;
+import com.ironsource.aura.aircon.lint.detector.annotation.configType.NonMatchingConfigResolverDetector;
+import com.ironsource.aura.aircon.lint.detector.annotation.configType.WrongRetentionDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.defaultConfig.CyclicDefaultValueConfigDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.defaultConfig.NonConfigDefaultValueConfigDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.defaultConfig.WrongTypeDefaultValueConfigDetector;
@@ -27,8 +33,6 @@ import com.ironsource.aura.aircon.lint.detector.configField.MultipleConfigAnnota
 import com.ironsource.aura.aircon.lint.detector.configField.MultipleConfigsForSameKeyDetector;
 import com.ironsource.aura.aircon.lint.detector.configField.MultipleDefaultValueAttributesDetector;
 import com.ironsource.aura.aircon.lint.detector.configField.NonConstFieldDetector;
-import com.ironsource.aura.aircon.lint.detector.remote.RemoteMethodCallDetector;
-import com.ironsource.aura.aircon.lint.detector.remote.WrongConfigTypeDetector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +59,22 @@ public class LintRegistry
 		issues.add(InvalidEnumDefaultValueDetector.ISSUE);
 		//endregion
 
+		// region @JsonConfig
+		issues.add(InvalidJsonGenericTypesDetector.ISSUE);
+		//endregion
+
 		// region @ConfigGroup
 		issues.add(CyclicConfigGroupValuesDetector.ISSUE);
 		issues.add(EmptyConfigGroupValuesDetector.ISSUE);
 		issues.add(InvalidConfigGroupValuesDetector.ISSUE);
+		//endregion
+
+		// region @ConfigType
+		issues.add(MissingDefaultValueAttributeDetector.ISSUE);
+		issues.add(NonFieldTargetDetector.ISSUE);
+		issues.add(WrongRetentionDetector.ISSUE);
+		issues.add(NonMatchingConfigResolverDetector.ISSUE);
+		issues.add(InvalidConfigTypeDetector.ISSUE);
 		//endregion
 
 		// region @DefaultConfig
@@ -80,11 +96,6 @@ public class LintRegistry
 		issues.add(MultipleConfigsForSameKeyDetector.ISSUE);
 		issues.add(MultipleDefaultValueAttributesDetector.ISSUE);
 		issues.add(NonConstFieldDetector.ISSUE);
-		//endregion
-
-		// region @Remote
-		issues.add(RemoteMethodCallDetector.ISSUE);
-		issues.add(WrongConfigTypeDetector.ISSUE);
 		//endregion
 
 		// region Aux methods

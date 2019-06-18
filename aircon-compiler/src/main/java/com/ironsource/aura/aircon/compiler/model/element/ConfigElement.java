@@ -144,8 +144,8 @@ public abstract class ConfigElement
 		private final ConfigAuxMethod mValidator;
 		private final ConfigAuxMethod mMock;
 
-		public Properties(final String name, final String key, final ClassName providerClass, final String javadoc, final TypeMirror sourceTypeMirror, final TypeMirror sourceIdentifierTypeMirror, final TypeName type, final TypeName rawType, final Object defaultValue, final String defaultConfigValue, final int defaultValueResId, final ConfigAuxMethod defaultValueProvider, final boolean mutable, final ConfigAuxMethod adapter, final ConfigAuxMethod validator, final ConfigAuxMethod mock) {
-			super(name, key, type, providerClass);
+		public Properties(final String name, final String key, final ClassName providerClass, final TypeName configClass, final String javadoc, final TypeMirror sourceTypeMirror, final TypeMirror sourceIdentifierTypeMirror, final TypeName type, final TypeName rawType, final Object defaultValue, final String defaultConfigValue, final int defaultValueResId, final ConfigAuxMethod defaultValueProvider, final boolean mutable, final ConfigAuxMethod adapter, final ConfigAuxMethod validator, final ConfigAuxMethod mock) {
+			super(name, key, type, providerClass, configClass);
 			mJavadoc = javadoc;
 			mSourceTypeMirror = sourceTypeMirror;
 			mSourceIdentifierTypeMirror = sourceIdentifierTypeMirror;

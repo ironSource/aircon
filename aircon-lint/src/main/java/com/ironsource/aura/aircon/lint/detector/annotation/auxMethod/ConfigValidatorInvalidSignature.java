@@ -22,7 +22,7 @@ public class ConfigValidatorInvalidSignature
 	@Override
 	protected void visitConfigValidatorMethod(final UMethod node) {
 		final PsiType returnType = node.getReturnType();
-		if (!ElementUtils.isSBoolean(returnType)) {
+		if (!ElementUtils.isBoolean(returnType)) {
 			report(node);
 		}
 	}

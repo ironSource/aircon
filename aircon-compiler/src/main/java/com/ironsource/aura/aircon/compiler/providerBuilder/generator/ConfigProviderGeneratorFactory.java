@@ -2,6 +2,7 @@ package com.ironsource.aura.aircon.compiler.providerBuilder.generator;
 
 import com.ironsource.aura.aircon.compiler.model.element.ColorConfigElement;
 import com.ironsource.aura.aircon.compiler.model.element.ConfigElement;
+import com.ironsource.aura.aircon.compiler.model.element.CustomConfigElement;
 import com.ironsource.aura.aircon.compiler.model.element.EnumConfigElement;
 import com.ironsource.aura.aircon.compiler.model.element.JsonConfigElement;
 import com.ironsource.aura.aircon.compiler.model.element.NumberConfigElement;
@@ -68,6 +69,11 @@ public class ConfigProviderGeneratorFactory {
 			@Override
 			public ConfigProviderGenerator visit(final JsonConfigElement configElement, final Void arg) {
 				return new JsonConfigProviderGenerator(configElement);
+			}
+
+			@Override
+			public ConfigProviderGenerator visit(final CustomConfigElement configElement, final Void arg) {
+				return new CustomConfigProviderGenerator(configElement);
 			}
 		}, null);
 	}

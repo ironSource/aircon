@@ -44,6 +44,10 @@ public abstract class AbstractConfigElement <T extends AbstractConfigElement.Pro
 		return unbox(getDeclaredType());
 	}
 
+	public TypeName getConfigClassTypeName() {
+		return mProperties.mConfigClass;
+	}
+
 	public ClassName getProviderClassName() {
 		return mProperties.mProviderClass;
 	}
@@ -84,12 +88,14 @@ public abstract class AbstractConfigElement <T extends AbstractConfigElement.Pro
 		final String    mKey;
 		final TypeName  mType;
 		final ClassName mProviderClass;
+		final TypeName  mConfigClass;
 
-		public Properties(final String name, final String key, final TypeName type, final ClassName providerClass) {
+		public Properties(final String name, final String key, final TypeName type, final ClassName providerClass, final TypeName configClass) {
 			mName = name;
 			mKey = key;
 			mType = type;
 			mProviderClass = providerClass;
+			mConfigClass = configClass;
 		}
 	}
 }

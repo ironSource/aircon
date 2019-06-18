@@ -4,18 +4,11 @@ import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
 import com.android.tools.lint.detector.api.TextFormat;
 import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiReferenceExpression;
-import com.ironsource.aura.aircon.common.annotations.config.IntConfig;
-import com.ironsource.aura.aircon.common.annotations.config.IntEnumConfig;
-import com.ironsource.aura.aircon.common.annotations.config.JsonConfig;
-import com.ironsource.aura.aircon.common.annotations.config.LongConfig;
-import com.ironsource.aura.aircon.common.annotations.config.StringConfig;
-import com.ironsource.aura.aircon.common.annotations.config.StringEnumConfig;
-import com.ironsource.aura.aircon.common.annotations.config.TextConfig;
-import com.ironsource.aura.aircon.common.annotations.config.TimeConfig;
-import com.ironsource.aura.aircon.common.annotations.config.UrlConfig;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiType;
 import com.ironsource.aura.aircon.lint.detector.IssueDetector;
 import com.ironsource.aura.aircon.lint.utils.ConfigElementsUtils;
 import com.ironsource.aura.aircon.lint.utils.ElementUtils;
@@ -28,7 +21,8 @@ import org.jetbrains.uast.UAnnotation;
 public class InvalidDefaultValueResIdDetector
 		extends IssueDetector {
 
-	public static final Issue ISSUE = createErrorIssue("InvalidDefaultValueResId", "Invalid default value res id", "Value must be a resource identifier of type ");
+	public static final  Issue  ISSUE                   = createErrorIssue("InvalidDefaultValueResId", "Invalid default value res id", "Value must be a resource identifier of type ");
+	private static final String ATTRIBUTE_DEFAULT_VALUE = "defaultValue";
 
 	public InvalidDefaultValueResIdDetector(final JavaContext context) {
 		super(context, ISSUE);
@@ -49,51 +43,86 @@ public class InvalidDefaultValueResIdDetector
 			return;
 		}
 
-		final PsiReferenceExpression referenceExpression = (PsiReferenceExpression) defaultValueAttribute;
-		final PsiField resIdField = (PsiField) referenceExpression.resolve();
+		final PsiField configField = (PsiField) node.getUastParent()
+		                                            .getJavaPsi();
+		if (configField == null) {
+			return;
+		}
+		final PsiAnnotation configAnnotation = ConfigElementsUtils.getConfigAnnotation(configField);
 
-		if (resIdField == null) {
-			// TODO - find out why this is null
+		final PsiType configType = getConfigType(configAnnotation);
+
+		if (configType == null) {
 			return;
 		}
 
-		boolean invalidResource;
+		if (ConfigElementsUtils.isColorConfigAnnotation(configAnnotation)) {
+			if (!isColorResource(defaultValueAttribute)) {
+				report(node, "color");
+			}
+			return;
+		}
 
-		final PsiAnnotation configAnnotation = ConfigElementsUtils.getConfigAnnotation((PsiField) node.getUastParent()
-		                                                                                              .getJavaPsi());
-
-		final boolean stringConfig = ElementUtils.isOneOfTypes(configAnnotation, TextConfig.class, StringConfig.class, JsonConfig.class, StringEnumConfig.class, UrlConfig.class);
-		if (stringConfig && !ConfigElementsUtils.isStringResource(resIdField)) {
+		if (ElementUtils.isString(configType) && !isStringResource(defaultValueAttribute)) {
 			report(node, "string");
 			return;
 		}
 
-		invalidResource = ConfigElementsUtils.isBooleanConfigAnnotation(configAnnotation) && !ConfigElementsUtils.isBooleanResource(resIdField);
-		if (invalidResource) {
+		if (ElementUtils.isBoolean(configType) && !isBooleanResource(defaultValueAttribute)) {
 			report(node, "boolean");
 			return;
 		}
 
-		invalidResource = ConfigElementsUtils.isFloatConfigAnnotation(configAnnotation) && !ConfigElementsUtils.isDimenResource(resIdField);
-		if (invalidResource) {
+		if (ElementUtils.isFloat(configType) && !isDimenResource(defaultValueAttribute)) {
 			report(node, "dimen");
 			return;
 		}
 
-		final boolean integerConfig = ElementUtils.isOneOfTypes(configAnnotation, IntConfig.class, LongConfig.class, TimeConfig.class, IntEnumConfig.class);
-		invalidResource = integerConfig && !ConfigElementsUtils.isIntegerResource(resIdField);
-		if (invalidResource) {
+		if ((ElementUtils.isInt(configType) || ElementUtils.isLong(configType)) && !isIntegerResource(defaultValueAttribute)) {
 			report(node, "integer");
 			return;
 		}
+	}
 
-		invalidResource = ConfigElementsUtils.isColorConfigAnnotation(configAnnotation) && !ConfigElementsUtils.isColorResource(resIdField);
-		if (invalidResource) {
-			report(node, "color");
+	private PsiType getConfigType(final PsiAnnotation configAnnotation) {
+		final PsiClass configAnnotationClass = ElementUtils.getAnnotationDeclarationClass(configAnnotation);
+		final PsiMethod[] methods = configAnnotationClass.getMethods();
+		for (PsiMethod method : methods) {
+			if (method.getName()
+			          .equals(ATTRIBUTE_DEFAULT_VALUE)) {
+				return method.getReturnType();
+			}
 		}
+
+		return null;
+	}
+
+	private boolean isStringResource(PsiElement defaultValueElement) {
+		return defaultValueElement.getText()
+		                          .contains("R.string");
+	}
+
+	private boolean isIntegerResource(PsiElement defaultValueElement) {
+		return defaultValueElement.getText()
+		                          .contains("R.integer");
+	}
+
+	private boolean isDimenResource(PsiElement defaultValueElement) {
+		return defaultValueElement.getText()
+		                          .contains("R.dimen");
+	}
+
+	private boolean isBooleanResource(PsiElement defaultValueElement) {
+		return defaultValueElement.getText()
+		                          .contains("R.bool");
+	}
+
+	private boolean isColorResource(PsiElement defaultValueElement) {
+		return defaultValueElement.getText()
+		                          .contains("R.color");
 	}
 
 	private void report(final UAnnotation node, final String type) {
-		report(node, ISSUE.getExplanation(TextFormat.TEXT) + "**" + type + "**");
+		super.report(node, ISSUE.getExplanation(TextFormat.TEXT) + "**" + type + "**");
 	}
 }

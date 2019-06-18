@@ -1,6 +1,24 @@
 Change Log
 ==========
 
+Version 1.4.3
+----------------------------
+   * Added support for generic types in @JsonConfig.
+   * Added support for custom config types annotations.
+
+Version 1.4.2
+----------------------------
+   * bug fixes.
+
+Version 1.4.1
+----------------------------
+   * Added support for groups with multiple identifiable sources
+   * bug fixes.
+
+Version 1.4.0
+----------------------------
+   * First open source version.
+
 Version 1.3.0
 ----------------------------
 

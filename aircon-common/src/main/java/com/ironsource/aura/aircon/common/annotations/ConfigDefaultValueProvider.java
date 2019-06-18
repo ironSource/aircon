@@ -17,6 +17,7 @@ public @interface ConfigDefaultValueProvider {
 	/**
 	 * Config name to provide a default value for.
 	 * This value should be another AirCon config constant.
+	 * @return config field
 	 */
 	String value();
 }

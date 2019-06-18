@@ -18,6 +18,7 @@ public @interface ConfigAdapter {
 	/**
 	 * Config name to set serve as an adapter for.
 	 * This value should be another AirCon config constant.
+	 * @return config field
 	 */
 	String value();
 }

@@ -19,6 +19,7 @@ public @interface Source {
 
 	/**
 	 * The class object of the config source.
+	 * @return config source class
 	 */
 	Class<? extends ConfigSource> value();
 }

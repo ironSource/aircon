@@ -10,9 +10,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifierListOwner;
-import com.intellij.psi.PsiParameter;
 import com.intellij.psi.impl.source.PsiImmediateClassType;
 import com.intellij.psi.impl.source.tree.java.PsiClassObjectAccessExpressionImpl;
+import com.ironsource.aura.aircon.common.ConfigType;
 import com.ironsource.aura.aircon.common.annotations.ConfigAdapter;
 import com.ironsource.aura.aircon.common.annotations.ConfigDefaultValueProvider;
 import com.ironsource.aura.aircon.common.annotations.ConfigMock;
@@ -33,8 +33,6 @@ import com.ironsource.aura.aircon.common.annotations.config.StringEnumConfig;
 import com.ironsource.aura.aircon.common.annotations.config.TextConfig;
 import com.ironsource.aura.aircon.common.annotations.config.value.RemoteIntValue;
 import com.ironsource.aura.aircon.common.annotations.config.value.RemoteStringValue;
-import com.ironsource.aura.aircon.common.annotations.injection.RemoteFlag;
-import com.ironsource.aura.aircon.common.annotations.injection.RemoteParam;
 import com.ironsource.aura.aircon.common.utils.CommonNamingUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -55,13 +53,13 @@ import java.util.List;
  */
 public class ConfigElementsUtils {
 
-	private static final String R_CLASS = "R";
-
 	public static final String ATTRIBUTE_VALUE = "value";
 
 	private static final String ATTRIBUTE_DEFAULT_VALUE = "defaultValue";
 	private static final String ATTRIBUTE_TYPE          = "type";
 	private static final String ATTRIBUTE_ENUM_CLASS    = "enumClass";
+	private static final String ATTRIBUTE_JSON_TYPE     = "type";
+	private static final String ATTRIBUTE_GENERIC_TYPES = "genericTypes";
 
 	public static boolean isConfigAttributeAnnotation(UAnnotation annotation) {
 		return isDefaultResAnnotation(annotation) || isDefaultConfigAnnotation(annotation) || ElementUtils.isOfType(annotation.getJavaPsi(), Mutable.class);
@@ -84,14 +82,24 @@ public class ConfigElementsUtils {
 		return isConfigAnnotation(annotation.getJavaPsi());
 	}
 
-	public static boolean isConfigAnnotation(PsiAnnotation annotation) {
+	private static boolean isConfigAnnotation(PsiAnnotation annotation) {
 		for (Class<? extends Annotation> configClass : Configs.ALL) {
 			if (ElementUtils.isOfType(annotation, configClass)) {
 				return true;
 			}
 		}
 
-		return isGroupAnnotation(annotation);
+		return isGroupAnnotation(annotation) || isCustomConfigAnnotation(annotation);
+	}
+
+	public static boolean isCustomConfigAnnotation(final PsiAnnotation annotation) {
+		final PsiClass annotationClass = ElementUtils.getAnnotationDeclarationClass(annotation);
+		for (final PsiAnnotation annotationClassAnnotation : annotationClass.getAnnotations()) {
+			if (ElementUtils.isOfType(annotationClassAnnotation, ConfigType.class)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static boolean isGroupAnnotation(final PsiAnnotation annotation) {
@@ -225,14 +233,6 @@ public class ConfigElementsUtils {
 		return ElementUtils.isAnnotationOfType(node, FloatConfig.class);
 	}
 
-	public static boolean isRemoteFlagAnnotation(final UAnnotation node) {
-		return ElementUtils.isAnnotationOfType(node.getJavaPsi(), RemoteFlag.class);
-	}
-
-	public static boolean isRemoteParamAnnotation(final UAnnotation node) {
-		return ElementUtils.isAnnotationOfType(node.getJavaPsi(), RemoteParam.class);
-	}
-
 	public static boolean isJsonConfigAnnotation(final PsiAnnotation node) {
 		return ElementUtils.isAnnotationOfType(node, JsonConfig.class);
 	}
@@ -255,14 +255,6 @@ public class ConfigElementsUtils {
 
 	public static boolean isDefaultResAnnotation(final UAnnotation node) {
 		return ElementUtils.isAnnotationOfType(node.getJavaPsi(), DefaultRes.class);
-	}
-
-	public static UExpression getRemoteAnnotationConfigValue(UAnnotation annotation) {
-		return annotation.findAttributeValue(ATTRIBUTE_VALUE);
-	}
-
-	public static String getRemoteAnnotationReferencedConfigAnnotationType(final UAnnotation annotation) {
-		return getConfigFieldType(getReferencedConfigField(annotation, ATTRIBUTE_VALUE));
 	}
 
 	public static String getConfigFieldType(final PsiField configField) {
@@ -324,10 +316,36 @@ public class ConfigElementsUtils {
 	}
 
 	public static PsiClass getEnumClassAttribute(final PsiAnnotation annotation) {
-		final PsiClassObjectAccessExpressionImpl attributeValue = (PsiClassObjectAccessExpressionImpl) annotation.findAttributeValue(ATTRIBUTE_ENUM_CLASS);
-		return (PsiClass) attributeValue.getOperand()
-		                                .getInnermostComponentReferenceElement()
-		                                .resolve();
+		return getClassAttribute(annotation, ATTRIBUTE_ENUM_CLASS);
+	}
+
+	public static PsiClass getJsonTypeAttribute(final PsiAnnotation annotation) {
+		return getClassAttribute(annotation, ATTRIBUTE_JSON_TYPE);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static PsiClass getClassAttribute(final PsiAnnotation annotation, String attribute) {
+		final PsiClassObjectAccessExpressionImpl attributeValue = (PsiClassObjectAccessExpressionImpl) annotation.findAttributeValue(attribute);
+		return resolveClass(attributeValue);
+	}
+
+	public static PsiClass[] getGenericTypesAttribute(final PsiAnnotation annotation) {
+		final PsiArrayInitializerMemberValue attributeValue = (PsiArrayInitializerMemberValue) annotation.findAttributeValue(ATTRIBUTE_GENERIC_TYPES);
+
+		List<PsiClass> psiClasses = new ArrayList<>();
+
+		final PsiAnnotationMemberValue[] initializerList = attributeValue.getInitializers();
+		for (PsiAnnotationMemberValue initializer : initializerList) {
+			psiClasses.add(resolveClass((PsiClassObjectAccessExpressionImpl) initializer));
+		}
+
+		return psiClasses.toArray(new PsiClass[0]);
+	}
+
+	private static PsiClass resolveClass(final PsiClassObjectAccessExpressionImpl expression) {
+		return (PsiClass) expression.getOperand()
+		                            .getInnermostComponentReferenceElement()
+		                            .resolve();
 	}
 
 	private static String getConfigGroupImplClass(final PsiField configField) {
@@ -348,73 +366,6 @@ public class ConfigElementsUtils {
 		return (PsiField) ((JavaUSimpleNameReferenceExpression) value).resolve();
 	}
 
-	public static boolean isRemoteMethod(final PsiMethod method) {
-		if (hasRemoteFlagAnnotation(method)) {
-			return true;
-		}
-
-		for (final PsiParameter psiParameter : method.getParameterList()
-		                                             .getParameters()) {
-			if (isRemoteParameter(psiParameter)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public static boolean hasRemoteFlagAnnotation(final PsiMethod method) {
-		for (final PsiAnnotation psiAnnotation : method.getAnnotations()) {
-			if (ElementUtils.isAnnotationOfType(psiAnnotation, RemoteFlag.class)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public static List<PsiParameter> getNonRemoteParameters(PsiMethod method) {
-		final List<PsiParameter> res = new ArrayList<>();
-		for (PsiParameter parameter : method.getParameterList()
-		                                    .getParameters()) {
-			if (!isRemoteParameter(parameter)) {
-				res.add(parameter);
-			}
-		}
-		return res;
-	}
-
-	public static boolean isRemoteParameter(final PsiParameter parameter) {
-		for (PsiAnnotation jvmAnnotation : parameter.getAnnotations()) {
-			if (ElementUtils.isAnnotationOfType(jvmAnnotation, RemoteParam.class)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public static boolean isStringResource(PsiField field) {
-		return ElementUtils.getInnerClassName(field)
-		                   .equals(R_CLASS + ".string");
-	}
-
-	public static boolean isIntegerResource(PsiField field) {
-		return ElementUtils.getInnerClassName(field)
-		                   .equals(R_CLASS + ".integer");
-	}
-
-	public static boolean isDimenResource(PsiField field) {
-		return ElementUtils.getInnerClassName(field)
-		                   .equals(R_CLASS + ".dimen");
-	}
-
-	public static boolean isBooleanResource(PsiField field) {
-		return ElementUtils.getInnerClassName(field)
-		                   .equals(R_CLASS + ".bool");
-	}
-
-	public static boolean isColorResource(PsiField field) {
-		return ElementUtils.getInnerClassName(field)
-		                   .equals(R_CLASS + ".color");
-	}
 
 	public static UAnnotation getDefaultValueProviderAnnotation(UMethod method) {
 		for (UAnnotation annotation : ((UAnnotated) method).getAnnotations()) {

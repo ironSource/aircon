@@ -24,4 +24,6 @@ public interface Visitor <T, S> {
 	S visit(ColorConfigElement configElement, T arg);
 
 	S visit(UrlConfigElement configElement, T arg);
+
+	S visit(CustomConfigElement configElement, T arg);
 }

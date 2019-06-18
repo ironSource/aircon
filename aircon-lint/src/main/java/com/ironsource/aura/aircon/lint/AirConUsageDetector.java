@@ -14,6 +14,12 @@ import com.ironsource.aura.aircon.lint.detector.annotation.config.enums.InvalidE
 import com.ironsource.aura.aircon.lint.detector.annotation.config.group.CyclicConfigGroupValuesDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.config.group.EmptyConfigGroupValuesDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.config.group.InvalidConfigGroupValuesDetector;
+import com.ironsource.aura.aircon.lint.detector.annotation.config.json.InvalidJsonGenericTypesDetector;
+import com.ironsource.aura.aircon.lint.detector.annotation.configType.InvalidConfigTypeDetector;
+import com.ironsource.aura.aircon.lint.detector.annotation.configType.MissingDefaultValueAttributeDetector;
+import com.ironsource.aura.aircon.lint.detector.annotation.configType.NonFieldTargetDetector;
+import com.ironsource.aura.aircon.lint.detector.annotation.configType.NonMatchingConfigResolverDetector;
+import com.ironsource.aura.aircon.lint.detector.annotation.configType.WrongRetentionDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.defaultConfig.CyclicDefaultValueConfigDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.defaultConfig.NonConfigDefaultValueConfigDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.defaultConfig.WrongTypeDefaultValueConfigDetector;
@@ -26,8 +32,6 @@ import com.ironsource.aura.aircon.lint.detector.configField.MultipleConfigAnnota
 import com.ironsource.aura.aircon.lint.detector.configField.MultipleConfigsForSameKeyDetector;
 import com.ironsource.aura.aircon.lint.detector.configField.MultipleDefaultValueAttributesDetector;
 import com.ironsource.aura.aircon.lint.detector.configField.NonConstFieldDetector;
-import com.ironsource.aura.aircon.lint.detector.remote.RemoteMethodCallDetector;
-import com.ironsource.aura.aircon.lint.detector.remote.WrongConfigTypeDetector;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.UAnnotation;
@@ -71,10 +75,22 @@ public class AirConUsageDetector
 		visitor.registerIssueDetector(new InvalidEnumDefaultValueDetector(context));
 		//endregion
 
+		// region @JsonConfig
+		visitor.registerIssueDetector(new InvalidJsonGenericTypesDetector(context));
+		//endregion
+
 		// region @ConfigGroup
 		visitor.registerIssueDetector(new CyclicConfigGroupValuesDetector(context));
 		visitor.registerIssueDetector(new EmptyConfigGroupValuesDetector(context));
 		visitor.registerIssueDetector(new InvalidConfigGroupValuesDetector(context));
+		//endregion
+
+		// region @ConfigType
+		visitor.registerIssueDetector(new MissingDefaultValueAttributeDetector(context));
+		visitor.registerIssueDetector(new NonFieldTargetDetector(context));
+		visitor.registerIssueDetector(new WrongRetentionDetector(context));
+		visitor.registerIssueDetector(new NonMatchingConfigResolverDetector(context));
+		visitor.registerIssueDetector(new InvalidConfigTypeDetector(context));
 		//endregion
 
 		// region @DefaultConfig
@@ -96,11 +112,6 @@ public class AirConUsageDetector
 		visitor.registerIssueDetector(new MultipleConfigsForSameKeyDetector(context));
 		visitor.registerIssueDetector(new MultipleDefaultValueAttributesDetector(context));
 		visitor.registerIssueDetector(new NonConstFieldDetector(context));
-		//endregion
-
-		// region @Remote
-		visitor.registerIssueDetector(new RemoteMethodCallDetector(context));
-		visitor.registerIssueDetector(new WrongConfigTypeDetector(context));
 		//endregion
 
 		// region Aux methods

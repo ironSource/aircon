@@ -26,12 +26,15 @@ import com.ironsource.aura.aircon.common.annotations.config.TextConfig;
 import com.ironsource.aura.aircon.common.annotations.config.TimeConfig;
 import com.ironsource.aura.aircon.common.annotations.config.UrlConfig;
 import com.ironsource.aura.aircon.sample.BuildConfig;
+import com.ironsource.aura.aircon.sample.LabelConfig;
 import com.ironsource.aura.aircon.sample.R;
 import com.ironsource.aura.aircon.sample.config.model.ImageLocation;
 import com.ironsource.aura.aircon.sample.config.model.Label;
 import com.ironsource.aura.aircon.sample.config.model.RemoteObject;
 import com.ironsource.aura.aircon.sample.config.model.TextLocation;
 import com.ironsource.aura.aircon.source.FireBaseConfigSource;
+
+import java.util.Map;
 
 /**
  * Created on 10/20/2018.
@@ -97,7 +100,15 @@ public interface RemoteConfigs {
 		@StringSetConfig(defaultValue = {"1", "2"})
 		String SOME_STRING_SET = "someStringSet";
 
-		@ConfigGroup(value = {SOME_INT, SOME_STRING}) String COOL_GROUP = "coolGroup";
+		@JsonConfig(defaultValue = "", type = Map.class, genericTypes = {String.class, Integer.class})
+		String SOME_GENERIC_JSON = "someGenericJson";
+
+		@ConfigGroup(value = {SOME_INT, SOME_STRING})
+		String COOL_GROUP = "coolGroup";
+
+		@DefaultRes(R.string.app_name)
+		@LabelConfig(invalidValues = {"invalid1", "invalid2"})
+		String SOME_CUSTOM_LABEL = "someCustomLabel";
 
 		class Validators {
 

@@ -10,6 +10,8 @@ import com.ironsource.aura.aircon.AirCon;
 import com.ironsource.aura.aircon.JsonConverter;
 import com.ironsource.aura.aircon.logging.Logger;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -65,6 +67,17 @@ public class AirConUtils {
 	}
 
 	@SuppressWarnings("unchecked")
+	public static <T> T fromJson(String json, Type type, String defaultValue, @NonNull JsonConverter converter) {
+		try {
+			return converter.fromJson(json, type);
+		} catch (JsonConverter.JsonException e) {
+			log().e("Failed to parse json: " + json);
+			log().logException(e);
+			return defaultValue != null && !TextUtils.equals(json, defaultValue) ? (T) fromJson(defaultValue, type, defaultValue, converter) : null;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
 	public static <T extends Enum<T>> T getRandomEnumValue(String configKey, Class<T> enumClass) {
 		final Enum cachedRandom = RANDOMS_VALUES.get(configKey);
 		if (cachedRandom != null) {
@@ -79,6 +92,15 @@ public class AirConUtils {
 		RANDOMS_VALUES.put(configKey, randomEnumValue);
 
 		return randomEnumValue;
+	}
+
+	public static <T extends Annotation> T getCustomConfigAnnotation(Class featureClass, Class<T> annotationClass, String fieldName) {
+		try {
+			return featureClass.getDeclaredField(fieldName)
+			                   .getAnnotation(annotationClass);
+		} catch (NoSuchFieldException e) {
+			return null;
+		}
 	}
 
 	private static Logger log() {

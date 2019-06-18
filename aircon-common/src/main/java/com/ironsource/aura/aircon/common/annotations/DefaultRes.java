@@ -15,6 +15,7 @@ public @interface DefaultRes {
 	/**
 	 * Resource identifier from R class (e.g R.string.app_name).
 	 * Resource type must match the type of config(e.g @StringConfig can only accept string resources a default)
+	 * @return resource identifier
 	 */
 	int value();
 }

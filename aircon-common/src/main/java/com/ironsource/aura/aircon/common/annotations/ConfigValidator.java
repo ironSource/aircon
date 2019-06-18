@@ -17,6 +17,7 @@ public @interface ConfigValidator {
 	/**
 	 * Config name to set serve as a validator for.
 	 * This value should be another AirCon config constant.
+	 * @return config field
 	 */
 	String value();
 }

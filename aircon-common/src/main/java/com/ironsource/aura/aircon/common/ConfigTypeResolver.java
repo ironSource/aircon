@@ -7,7 +7,7 @@ import java.lang.annotation.Annotation;
  *
  * @param <A> annotation type this config resolver is defined for, this value must be the same as the one supplied as parameter in the {@link ConfigType} annotation itself
  * @param <T> config primitive type, meaning the raw type that will be configured remotely, supported types are: String, float, int, long and boolean.
- * @param <S> config type, meaning the type the config provider will return after {@link #process(Annotation, T)} is invoked on the configured value
+ * @param <S> config type, meaning the type the config provider will return after {@link #process} is invoked on the configured value
  */
 public interface ConfigTypeResolver <A extends Annotation, T, S> {
 

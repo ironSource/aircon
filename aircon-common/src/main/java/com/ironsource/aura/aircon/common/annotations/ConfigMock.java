@@ -15,6 +15,7 @@ public @interface ConfigMock {
 	/**
 	 * Config name to set serve as a mock provider for.
 	 * This value should be another AirCon config constant.
+	 * @return config field
 	 */
 	String value();
 }

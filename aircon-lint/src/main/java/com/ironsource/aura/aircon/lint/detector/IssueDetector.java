@@ -130,17 +130,20 @@ public abstract class IssueDetector {
 
 	protected LintFix addAnnotationFix(UElement target, String targetName, Class<? extends Annotation> clazz, String annotationContent) {
 		final String source = target.asSourceString();
-		return fix(target).name(String.format(ADD_ANNOTATION_FIX_FORMAT, clazz.getSimpleName(), targetName))
-		                  .text(source)
-		                  .with("@" + clazz.getCanonicalName() + "(" + annotationContent + ")" + source)
-		                  .build();
+		return replaceFix(target).name(String.format(ADD_ANNOTATION_FIX_FORMAT, clazz.getSimpleName(), targetName))
+		                         .text(source)
+		                         .with("@" + clazz.getCanonicalName() + "(" + annotationContent + ")" + source)
+		                         .build();
 	}
 
-	protected LintFix.ReplaceStringBuilder fix(UElement target) {
-		return LintFix.create()
-		              .replace()
-		              .range(mContext.getLocation(target))
-		              .shortenNames()
-		              .reformat(true);
+	protected LintFix.ReplaceStringBuilder replaceFix(UElement target) {
+		return fix().replace()
+		            .range(mContext.getLocation(target))
+		            .shortenNames()
+		            .reformat(true);
+	}
+
+	protected LintFix.Builder fix() {
+		return LintFix.create();
 	}
 }

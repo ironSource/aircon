@@ -15,7 +15,7 @@ import java.util.Map;
 public class DuplicateFeatureRemoteDetector
 		extends IssueDetector {
 
-	private static final String EXPLANATION_FORMAT = "FeatureRemoteConfig interface with same name is already defined: %s";
+	private static final String DESCRIPTION_FORMAT = "FeatureRemoteConfig interface with same name is already defined: %s";
 
 	public static final Issue ISSUE = createErrorIssue("DuplicateFeatureRemote", "FeatureRemoteConfig already defined for class with same name", "");
 
@@ -33,7 +33,7 @@ public class DuplicateFeatureRemoteDetector
 
 		final UClass featureRemoteConfig = mFeatureRemoteConfigs.get(node.getName());
 		if (isAlreadyDefined(node, featureRemoteConfig)) {
-			report(node, String.format(EXPLANATION_FORMAT, featureRemoteConfig.getQualifiedName()));
+			reportPsi(node.getNameIdentifier(), String.format(DESCRIPTION_FORMAT, featureRemoteConfig.getQualifiedName()));
 			return;
 		}
 

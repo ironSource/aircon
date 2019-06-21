@@ -112,6 +112,10 @@ public class AirConProcessor
 			}
 		}
 
+		if (!mProcessingEnvironment.hasConfigElements(configClass)) {
+			return;
+		}
+
 		// Create config groups
 		createFeatureConfigGroupElement(configClass, providerClassName);
 
@@ -162,7 +166,9 @@ public class AirConProcessor
 	private void generateRemoteConfigProviders(final Set<? extends Element> featureRemoteConfigClassElements) {
 		for (Element configClassElement : featureRemoteConfigClassElements) {
 			final TypeElement configClass = (TypeElement) configClassElement;
-			generateRemoteConfigProviderClass(configClass);
+			if (mProcessingEnvironment.hasConfigElements(configClass)) {
+				generateRemoteConfigProviderClass(configClass);
+			}
 		}
 	}
 

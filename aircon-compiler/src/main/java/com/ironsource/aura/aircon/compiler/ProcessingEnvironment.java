@@ -46,6 +46,11 @@ public class ProcessingEnvironment {
 		return mProcessingUtils.getLogger();
 	}
 
+	public boolean hasConfigElements(TypeElement classElement) {
+		final List<ConfigElement> configElements = mClassToConfigElements.get(classElement);
+		return configElements != null && !configElements.isEmpty();
+	}
+
 	public List<ConfigElement> getClassConfigElements(TypeElement classElement) {
 		return mClassToConfigElements.get(classElement);
 	}

@@ -1,6 +1,7 @@
 package com.ironsource.aura.aircon.lint;
 
 import com.android.tools.lint.detector.api.JavaContext;
+import com.ironsource.aura.aircon.lint.detector.DuplicateFeatureRemoteDetector;
 import com.ironsource.aura.aircon.lint.detector.FeatureRemoteConfigOnClassDetector;
 import com.ironsource.aura.aircon.lint.detector.IssueDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.ConfigAttributeAnnotationOnNonConfigFieldDetector;
@@ -52,6 +53,7 @@ public class AirConUsageDetector
 	final static List<Class<? extends IssueDetector>> DETECTORS = new ArrayList<Class<? extends IssueDetector>>() {{
 		// region @FeatureRemoteConfig
 		add(FeatureRemoteConfigOnClassDetector.class);
+		add(DuplicateFeatureRemoteDetector.class);
 		//endregion
 
 		// region @EnumConfig

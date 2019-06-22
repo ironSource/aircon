@@ -34,8 +34,9 @@ public abstract class IssueDetector {
 	private static final Map<UElement, Issue>   REPORTED_ISSUES     = new HashMap<>();
 	private static final Map<PsiElement, Issue> REPORTED_PSI_ISSUES = new HashMap<>();
 
-	private final JavaContext mContext;
-	private final Issue       mIssue;
+	private final Issue mIssue;
+
+	protected final JavaContext mContext;
 
 	protected IssueDetector(final JavaContext context, final Issue issue) {
 		mContext = context;

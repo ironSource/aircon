@@ -22,20 +22,20 @@ public class MethodFixBuilder
 	public MethodFixBuilder setReturnType(String returnType) {
 		final String currentReturnType = mTarget.getReturnType()
 		                                        .getPresentableText();
-		mGroupBuilder.add(replacePattern(String.format(".*(%s) " + METHOD_NAME_REGEX, currentReturnType), returnType));
+		replacePattern(String.format(".*(%s) " + METHOD_NAME_REGEX, currentReturnType), returnType);
 		return this;
 	}
 
 	public MethodFixBuilder setVisibility(JvmModifier visibility) {
 		final JvmModifier visibilityModifier = ElementUtils.getVisibilityModifier(mTarget);
-		mGroupBuilder.add(replacePattern(String.format(".*(%s).*", getModifierName(visibilityModifier)), getModifierName(visibility)));
+		replacePattern(String.format(".*(%s).*", getModifierName(visibilityModifier)), getModifierName(visibility));
 		return this;
 	}
 
 	public MethodFixBuilder addModifier(JvmModifier modifier) {
 		final String currentReturnType = mTarget.getReturnType()
 		                                        .getPresentableText();
-		mGroupBuilder.add(replacePattern(String.format(".*()%s " + METHOD_NAME_REGEX, currentReturnType), getModifierName(modifier) + " "));
+		replacePattern(String.format(".*()%s " + METHOD_NAME_REGEX, currentReturnType), getModifierName(modifier) + " ");
 		return this;
 	}
 

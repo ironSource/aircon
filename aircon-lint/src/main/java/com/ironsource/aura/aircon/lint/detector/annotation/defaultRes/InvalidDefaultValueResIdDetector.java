@@ -2,6 +2,7 @@ package com.ironsource.aura.aircon.lint.detector.annotation.defaultRes;
 
 import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
+import com.android.tools.lint.detector.api.LintFix;
 import com.android.tools.lint.detector.api.TextFormat;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
@@ -10,6 +11,7 @@ import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import com.ironsource.aura.aircon.lint.detector.IssueDetector;
+import com.ironsource.aura.aircon.lint.fix.AnnotationFixBuilder;
 import com.ironsource.aura.aircon.lint.utils.ConfigElementsUtils;
 import com.ironsource.aura.aircon.lint.utils.ElementUtils;
 
@@ -23,6 +25,11 @@ public class InvalidDefaultValueResIdDetector
 
 	public static final  Issue  ISSUE                   = createErrorIssue("InvalidDefaultValueResId", "Invalid default value res id", "Value must be a resource identifier of type ");
 	private static final String ATTRIBUTE_DEFAULT_VALUE = "defaultValue";
+	private static final String R_STRING                = "R.string";
+	private static final String R_INTEGER               = "R.integer";
+	private static final String R_DIMEN                 = "R.dimen";
+	private static final String R_BOOLEAN               = "R.bool";
+	private static final String R_COLOR                 = "R.color";
 
 	public InvalidDefaultValueResIdDetector(final JavaContext context) {
 		super(context, ISSUE);
@@ -58,28 +65,28 @@ public class InvalidDefaultValueResIdDetector
 
 		if (ConfigElementsUtils.isColorConfigAnnotation(configAnnotation)) {
 			if (!isColorResource(defaultValueAttribute)) {
-				report(node, "color");
+				report(node, "color", R_COLOR);
 			}
 			return;
 		}
 
 		if (ElementUtils.isString(configType) && !isStringResource(defaultValueAttribute)) {
-			report(node, "string");
+			report(node, "string", R_STRING);
 			return;
 		}
 
 		if (ElementUtils.isBoolean(configType) && !isBooleanResource(defaultValueAttribute)) {
-			report(node, "boolean");
+			report(node, "boolean", R_BOOLEAN);
 			return;
 		}
 
 		if (ElementUtils.isFloat(configType) && !isDimenResource(defaultValueAttribute)) {
-			report(node, "dimen");
+			report(node, "dimen", R_DIMEN);
 			return;
 		}
 
 		if ((ElementUtils.isInt(configType) || ElementUtils.isLong(configType)) && !isIntegerResource(defaultValueAttribute)) {
-			report(node, "integer");
+			report(node, "integer", R_INTEGER);
 			return;
 		}
 	}
@@ -99,30 +106,35 @@ public class InvalidDefaultValueResIdDetector
 
 	private boolean isStringResource(PsiElement defaultValueElement) {
 		return defaultValueElement.getText()
-		                          .contains("R.string");
+		                          .contains(R_STRING);
 	}
 
 	private boolean isIntegerResource(PsiElement defaultValueElement) {
 		return defaultValueElement.getText()
-		                          .contains("R.integer");
+		                          .contains(R_INTEGER);
 	}
 
 	private boolean isDimenResource(PsiElement defaultValueElement) {
 		return defaultValueElement.getText()
-		                          .contains("R.dimen");
+		                          .contains(R_DIMEN);
 	}
 
 	private boolean isBooleanResource(PsiElement defaultValueElement) {
 		return defaultValueElement.getText()
-		                          .contains("R.bool");
+		                          .contains(R_BOOLEAN);
 	}
 
 	private boolean isColorResource(PsiElement defaultValueElement) {
 		return defaultValueElement.getText()
-		                          .contains("R.color");
+		                          .contains(R_COLOR);
 	}
 
-	private void report(final UAnnotation node, final String type) {
-		super.report(node, ISSUE.getExplanation(TextFormat.TEXT) + "**" + type + "**");
+	private void report(final UAnnotation node, final String type, final String rClass) {
+		super.report(node, ISSUE.getExplanation(TextFormat.TEXT) + "**" + type + "**", getFix(node, type, rClass));
+	}
+
+	private LintFix getFix(final UAnnotation node, String type, final String rClass) {
+		return new AnnotationFixBuilder(mContext, node, "Change to " + type + " resource").setValue(rClass + ".")
+		                                                                                  .build();
 	}
 }

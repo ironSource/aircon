@@ -4,6 +4,7 @@ import com.android.tools.lint.detector.api.Category;
 import com.android.tools.lint.detector.api.Implementation;
 import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
+import com.android.tools.lint.detector.api.LintFix;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
 import com.android.tools.lint.detector.api.TextFormat;
@@ -18,6 +19,7 @@ import org.jetbrains.uast.UField;
 import org.jetbrains.uast.UMethod;
 import org.jetbrains.uast.UQualifiedReferenceExpression;
 
+import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,12 +28,15 @@ import java.util.Map;
  */
 public abstract class IssueDetector {
 
+	private static final String ADD_ANNOTATION_FIX_FORMAT = "Add @%s to %s";
+
 	// Prevent same issue reported multiple times
 	private static final Map<UElement, Issue>   REPORTED_ISSUES     = new HashMap<>();
 	private static final Map<PsiElement, Issue> REPORTED_PSI_ISSUES = new HashMap<>();
 
-	private final JavaContext mContext;
-	private final Issue       mIssue;
+	private final Issue mIssue;
+
+	protected final JavaContext mContext;
 
 	protected IssueDetector(final JavaContext context, final Issue issue) {
 		mContext = context;
@@ -70,10 +75,18 @@ public abstract class IssueDetector {
 		report(node, mIssue.getExplanation(TextFormat.RAW));
 	}
 
+	protected void report(final UElement node, LintFix lintFix) {
+		report(node, mIssue.getExplanation(TextFormat.RAW), lintFix);
+	}
+
 	protected void report(final UElement node, String desc) {
+		report(node, desc, null);
+	}
+
+	protected void report(final UElement node, String desc, LintFix lintFix) {
 		if (REPORTED_ISSUES.get(node) != mIssue) {
 			REPORTED_ISSUES.put(node, mIssue);
-			mContext.report(mIssue, node, mContext.getLocation(node), desc);
+			mContext.report(mIssue, node, mContext.getLocation(node), desc, lintFix);
 		}
 	}
 
@@ -82,9 +95,17 @@ public abstract class IssueDetector {
 	}
 
 	protected void reportPsi(final PsiElement node, String desc) {
+		reportPsi(node, desc, null);
+	}
+
+	protected void reportPsi(final PsiElement node, LintFix lintFix) {
+		reportPsi(node, mIssue.getExplanation(TextFormat.RAW), lintFix);
+	}
+
+	protected void reportPsi(final PsiElement node, String desc, LintFix lintFix) {
 		if (REPORTED_PSI_ISSUES.get(node) != mIssue) {
 			REPORTED_PSI_ISSUES.put(node, mIssue);
-			mContext.report(mIssue, node, mContext.getLocation(node), desc);
+			mContext.report(mIssue, node, mContext.getLocation(node), desc, lintFix);
 		}
 	}
 
@@ -106,5 +127,24 @@ public abstract class IssueDetector {
 
 	private static Issue createIssue(String id, String briefDesc, String explanation, Severity severity) {
 		return Issue.create(id, briefDesc, explanation, Category.CORRECTNESS, 6, severity, new Implementation(AirConUsageDetector.class, Scope.JAVA_FILE_SCOPE));
+	}
+
+	protected LintFix addAnnotationFix(UElement target, String targetName, Class<? extends Annotation> clazz, String annotationContent) {
+		final String source = target.asSourceString();
+		return replaceFix(target).name(String.format(ADD_ANNOTATION_FIX_FORMAT, clazz.getSimpleName(), targetName))
+		                         .text(source)
+		                         .with("@" + clazz.getCanonicalName() + "(" + annotationContent + ")" + source)
+		                         .build();
+	}
+
+	protected LintFix.ReplaceStringBuilder replaceFix(UElement target) {
+		return fix().replace()
+		            .range(mContext.getLocation(target))
+		            .shortenNames()
+		            .reformat(true);
+	}
+
+	protected LintFix.Builder fix() {
+		return LintFix.create();
 	}
 }

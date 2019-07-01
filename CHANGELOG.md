@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 1.4.4
+----------------------------
+   * Added quick fixes for lint checks.
+   * Bug fixes.
+
 Version 1.4.3
 ----------------------------
    * Added support for generic types in @JsonConfig.

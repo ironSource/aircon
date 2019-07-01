@@ -1,6 +1,7 @@
 package com.ironsource.aura.aircon.lint;
 
 import com.android.tools.lint.detector.api.JavaContext;
+import com.ironsource.aura.aircon.lint.detector.DuplicateFeatureRemoteDetector;
 import com.ironsource.aura.aircon.lint.detector.FeatureRemoteConfigOnClassDetector;
 import com.ironsource.aura.aircon.lint.detector.IssueDetector;
 import com.ironsource.aura.aircon.lint.detector.annotation.ConfigAttributeAnnotationOnNonConfigFieldDetector;
@@ -46,11 +47,71 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-/*
-	TODO:
-*/
 public class AirConUsageDetector
 		extends AbstractDetector {
+
+	final static List<Class<? extends IssueDetector>> DETECTORS = new ArrayList<Class<? extends IssueDetector>>() {{
+		// region @FeatureRemoteConfig
+		add(FeatureRemoteConfigOnClassDetector.class);
+		add(DuplicateFeatureRemoteDetector.class);
+		//endregion
+
+		// region @EnumConfig
+		add(InconsistentRemoteValueAnnotationsDetector.class);
+		add(InvalidEnumClassDetector.class);
+		add(InvalidEnumDefaultValueDetector.class);
+		//endregion
+
+		// region @JsonConfig
+		add(InvalidJsonGenericTypesDetector.class);
+		//endregion
+
+		// region @ConfigGroup
+		add(CyclicConfigGroupValuesDetector.class);
+		add(EmptyConfigGroupValuesDetector.class);
+		add(InvalidConfigGroupValuesDetector.class);
+		//endregion
+
+		// region @ConfigType
+		add(MissingDefaultValueAttributeDetector.class);
+		add(NonFieldTargetDetector.class);
+		add(WrongRetentionDetector.class);
+		add(NonMatchingConfigResolverDetector.class);
+		add(InvalidConfigTypeDetector.class);
+		//endregion
+
+		// region @DefaultConfig
+		add(CyclicDefaultValueConfigDetector.class);
+		add(NonConfigDefaultValueConfigDetector.class);
+		add(WrongTypeDefaultValueConfigDetector.class);
+		//endregion
+
+		// region @DefaultRes
+		add(InvalidDefaultValueResIdDetector.class);
+		//endregion
+
+		// region Config field
+		add(ConfigFieldReferenceDetector.class);
+		add(InvalidFieldTypeDetector.class);
+		add(MissingDefaultValueDetector.class);
+		add(MissingSourceDetector.class);
+		add(MultipleConfigAnnotationDetector.class);
+		add(MultipleConfigsForSameKeyDetector.class);
+		add(MultipleDefaultValueAttributesDetector.class);
+		add(NonConstFieldDetector.class);
+		//endregion
+
+		// region Aux methods
+		add(AuxMethodInvalidSignatureDetector.class);
+		add(NonConfigAuxMethodAnnotationValueDetector.class);
+		add(ConfigValidatorInvalidSignature.class);
+		add(ConfigMockProtectionDetector.class);
+		//endregion
+
+		// region General
+		add(ConfigAttributeAnnotationOnNonConfigFieldDetector.class);
+		//endregion
+	}};
 
 	private Visitor mVisitor;
 
@@ -65,67 +126,27 @@ public class AirConUsageDetector
 	private Visitor createVisitor(final JavaContext context) {
 		final Visitor visitor = new Visitor();
 
-		// region @FeatureRemoteConfig
-		visitor.registerIssueDetector(new FeatureRemoteConfigOnClassDetector(context));
-		//endregion
-
-		// region @EnumConfig
-		visitor.registerIssueDetector(new InconsistentRemoteValueAnnotationsDetector(context));
-		visitor.registerIssueDetector(new InvalidEnumClassDetector(context));
-		visitor.registerIssueDetector(new InvalidEnumDefaultValueDetector(context));
-		//endregion
-
-		// region @JsonConfig
-		visitor.registerIssueDetector(new InvalidJsonGenericTypesDetector(context));
-		//endregion
-
-		// region @ConfigGroup
-		visitor.registerIssueDetector(new CyclicConfigGroupValuesDetector(context));
-		visitor.registerIssueDetector(new EmptyConfigGroupValuesDetector(context));
-		visitor.registerIssueDetector(new InvalidConfigGroupValuesDetector(context));
-		//endregion
-
-		// region @ConfigType
-		visitor.registerIssueDetector(new MissingDefaultValueAttributeDetector(context));
-		visitor.registerIssueDetector(new NonFieldTargetDetector(context));
-		visitor.registerIssueDetector(new WrongRetentionDetector(context));
-		visitor.registerIssueDetector(new NonMatchingConfigResolverDetector(context));
-		visitor.registerIssueDetector(new InvalidConfigTypeDetector(context));
-		//endregion
-
-		// region @DefaultConfig
-		visitor.registerIssueDetector(new CyclicDefaultValueConfigDetector(context));
-		visitor.registerIssueDetector(new NonConfigDefaultValueConfigDetector(context));
-		visitor.registerIssueDetector(new WrongTypeDefaultValueConfigDetector(context));
-		//endregion
-
-		// region @DefaultRes
-		visitor.registerIssueDetector(new InvalidDefaultValueResIdDetector(context));
-		//endregion
-
-		// region Config field
-		visitor.registerIssueDetector(new ConfigFieldReferenceDetector(context));
-		visitor.registerIssueDetector(new InvalidFieldTypeDetector(context));
-		visitor.registerIssueDetector(new MissingDefaultValueDetector(context));
-		visitor.registerIssueDetector(new MissingSourceDetector(context));
-		visitor.registerIssueDetector(new MultipleConfigAnnotationDetector(context));
-		visitor.registerIssueDetector(new MultipleConfigsForSameKeyDetector(context));
-		visitor.registerIssueDetector(new MultipleDefaultValueAttributesDetector(context));
-		visitor.registerIssueDetector(new NonConstFieldDetector(context));
-		//endregion
-
-		// region Aux methods
-		visitor.registerIssueDetector(new AuxMethodInvalidSignatureDetector(context));
-		visitor.registerIssueDetector(new NonConfigAuxMethodAnnotationValueDetector(context));
-		visitor.registerIssueDetector(new ConfigValidatorInvalidSignature(context));
-		visitor.registerIssueDetector(new ConfigMockProtectionDetector(context));
-		//endregion
-
-		// region General
-		visitor.registerIssueDetector(new ConfigAttributeAnnotationOnNonConfigFieldDetector(context));
-		//endregion
+		registerDetectors(context, visitor);
 
 		return visitor;
+	}
+
+	private void registerDetectors(final JavaContext context, final Visitor visitor) {
+		for (Class<? extends IssueDetector> detectorClass : DETECTORS) {
+			final IssueDetector detector = createDetector(detectorClass, context);
+			if (detector != null) {
+				visitor.registerIssueDetector(detector);
+			}
+		}
+	}
+
+	private IssueDetector createDetector(final Class<? extends IssueDetector> detectorClass, final JavaContext context) {
+		try {
+			return detectorClass.getConstructor(JavaContext.class)
+			                    .newInstance(context);
+		} catch (Exception ignored) {
+			return null;
+		}
 	}
 
 	private static class Visitor

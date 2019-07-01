@@ -39,7 +39,12 @@ public class ConfigElementFactory {
 		final TypeName type = parser.getType();
 
 		Object defaultValue = parser.getDefaultValue();
+
 		final TypeMirror sourceTypeMirror = parser.getSourceTypeMirror(configClass);
+		if (sourceTypeMirror == null) {
+			return null;
+		}
+
 		final TypeMirror sourceIdentifierTypeMirror = parser.getSourceIdentifierTypeMirror(sourceTypeMirror, elementsUtils, types);
 		final boolean mutable = parser.isMutable();
 

@@ -2,7 +2,9 @@ package com.ironsource.aura.aircon.lint.detector.annotation.auxMethod;
 
 import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
+import com.android.tools.lint.detector.api.LintFix;
 import com.intellij.psi.PsiType;
+import com.ironsource.aura.aircon.lint.fix.MethodFixBuilder;
 import com.ironsource.aura.aircon.lint.utils.ElementUtils;
 
 import org.jetbrains.uast.UMethod;
@@ -23,7 +25,12 @@ public class ConfigValidatorInvalidSignature
 	protected void visitConfigValidatorMethod(final UMethod node) {
 		final PsiType returnType = node.getReturnType();
 		if (!ElementUtils.isBoolean(returnType)) {
-			report(node);
+			report(node, getFix(node));
 		}
+	}
+
+	private LintFix getFix(final UMethod node) {
+		return new MethodFixBuilder(mContext, node, "Change return type to boolean").setReturnType("boolean")
+		                                                                            .build();
 	}
 }

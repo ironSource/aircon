@@ -54,6 +54,10 @@ abstract class DefaultConfigProviderGenerator <T extends ConfigElement>
 		                                             .addModifiers(getConfigMethodModifiers())
 		                                             .returns(mElement.getRawType());
 
+		if (mElement.hasIdentifiableSource() && mElement.hasDefaultValueProvider()) {
+			builder.addParameter(getConfigSourceIdentifierParamSpec(mElement.getSourceIdentifierTypeMirror()));
+		}
+
 		if (hasDefaultConfigWithIdentifiableSource()) {
 			builder.addParameter(getConfigSourceIdentifierParamSpec(mElement.getDefaultConfigValueElement()
 			                                                                .getSourceIdentifierTypeMirror()));

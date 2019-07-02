@@ -30,6 +30,9 @@ public class WrongTypeDefaultValueConfigDetector
 		final UField configField = (UField) node.getUastParent();
 
 		final String configFieldType = ConfigElementsUtils.getConfigFieldType(configField);
+		if (configFieldType == null) {
+			return;
+		}
 		final String defaultValueConfigFieldType = ConfigElementsUtils.getConfigFieldType(ElementUtils.getReferencedField(defaultConfig));
 
 		if (!configFieldType.equals(defaultValueConfigFieldType)) {

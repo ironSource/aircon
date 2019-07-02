@@ -2,6 +2,7 @@ package com.ironsource.aura.aircon.lint.detector.annotation.config.json;
 
 import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
+import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.ironsource.aura.aircon.lint.detector.IssueDetector;
 import com.ironsource.aura.aircon.lint.utils.ConfigElementsUtils;
@@ -20,15 +21,20 @@ abstract class JsonConfigAnnotationIssueDetector
 
 	@Override
 	public final void visit(final UAnnotation node) {
-		if (!ConfigElementsUtils.isJsonConfigAnnotation(node.getJavaPsi())) {
+		final PsiAnnotation nodePsi = node.getJavaPsi();
+		if (nodePsi == null || !ConfigElementsUtils.isJsonConfigAnnotation(nodePsi)) {
 			return;
 		}
 
-		final PsiClass jsonType = ConfigElementsUtils.getJsonTypeAttribute(node.getJavaPsi());
-		final PsiClass[] genericTypes = ConfigElementsUtils.getGenericTypesAttribute(node.getJavaPsi());
+		final PsiClass jsonType = ConfigElementsUtils.getJsonTypeAttribute(nodePsi);
+		if (jsonType == null) {
+			return;
+		}
 
-		visitJsonConfigAnnotation(node, jsonType, genericTypes);
+		final int genericTypesCount = ConfigElementsUtils.getGenericTypesCount(nodePsi);
+
+		visitJsonConfigAnnotation(node, jsonType, genericTypesCount);
 	}
 
-	protected abstract void visitJsonConfigAnnotation(final UAnnotation node, final PsiClass jsonType, PsiClass[] genericTypes);
+	protected abstract void visitJsonConfigAnnotation(final UAnnotation node, final PsiClass jsonType, int genericTypesCount);
 }

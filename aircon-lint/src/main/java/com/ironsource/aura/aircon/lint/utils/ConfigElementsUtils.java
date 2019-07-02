@@ -8,6 +8,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiConstantEvaluationHelper;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiJavaCodeReferenceElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.impl.source.PsiImmediateClassType;
@@ -45,8 +46,6 @@ import org.jetbrains.uast.UMethod;
 import org.jetbrains.uast.java.JavaUSimpleNameReferenceExpression;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created on 11/8/2018.
@@ -94,9 +93,11 @@ public class ConfigElementsUtils {
 
 	public static boolean isCustomConfigAnnotation(final PsiAnnotation annotation) {
 		final PsiClass annotationClass = ElementUtils.getAnnotationDeclarationClass(annotation);
-		for (final PsiAnnotation annotationClassAnnotation : annotationClass.getAnnotations()) {
-			if (ElementUtils.isOfType(annotationClassAnnotation, ConfigType.class)) {
-				return true;
+		if (annotationClass != null) {
+			for (final PsiAnnotation annotationClassAnnotation : annotationClass.getAnnotations()) {
+				if (ElementUtils.isOfType(annotationClassAnnotation, ConfigType.class)) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -280,7 +281,7 @@ public class ConfigElementsUtils {
 		}
 		else {
 			final PsiClass annotationClass = ElementUtils.getAnnotationDeclarationClass(configAnnotation);
-			return ElementUtils.getQualifiedName(getDefaultValueMethod(annotationClass).getReturnType());
+			return annotationClass != null ? ElementUtils.getQualifiedName(getDefaultValueMethod(annotationClass).getReturnType()) : null;
 		}
 	}
 
@@ -329,23 +330,18 @@ public class ConfigElementsUtils {
 		return resolveClass(attributeValue);
 	}
 
-	public static PsiClass[] getGenericTypesAttribute(final PsiAnnotation annotation) {
+	public static int getGenericTypesCount(final PsiAnnotation annotation) {
 		final PsiArrayInitializerMemberValue attributeValue = (PsiArrayInitializerMemberValue) annotation.findAttributeValue(ATTRIBUTE_GENERIC_TYPES);
-
-		List<PsiClass> psiClasses = new ArrayList<>();
-
-		final PsiAnnotationMemberValue[] initializerList = attributeValue.getInitializers();
-		for (PsiAnnotationMemberValue initializer : initializerList) {
-			psiClasses.add(resolveClass((PsiClassObjectAccessExpressionImpl) initializer));
-		}
-
-		return psiClasses.toArray(new PsiClass[0]);
+		return attributeValue != null ? attributeValue.getInitializers().length : 0;
 	}
 
 	private static PsiClass resolveClass(final PsiClassObjectAccessExpressionImpl expression) {
-		return (PsiClass) expression.getOperand()
-		                            .getInnermostComponentReferenceElement()
-		                            .resolve();
+		if (expression == null) {
+			return null;
+		}
+		final PsiJavaCodeReferenceElement referenceElement = expression.getOperand()
+		                                                               .getInnermostComponentReferenceElement();
+		return referenceElement != null ? (PsiClass) referenceElement.resolve() : null;
 	}
 
 	private static String getConfigGroupImplClass(final PsiField configField) {

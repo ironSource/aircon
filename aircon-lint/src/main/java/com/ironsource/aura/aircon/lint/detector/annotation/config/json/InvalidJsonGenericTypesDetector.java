@@ -3,6 +3,7 @@ package com.ironsource.aura.aircon.lint.detector.annotation.config.json;
 import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiTypeParameterList;
 
 import org.jetbrains.uast.UAnnotation;
 
@@ -14,7 +15,7 @@ import java.util.Locale;
 public class InvalidJsonGenericTypesDetector
 		extends JsonConfigAnnotationIssueDetector {
 
-	public static final Issue ISSUE = createErrorIssue("InvalidEnumClass", "Invalid enum class", "incorrect number of generic types");
+	public static final Issue ISSUE = createErrorIssue("InvalidGenericArguments", "Invalid generic arguments", "incorrect number of generic types");
 
 	private static final String DESC_FORMAT = "Type %s requires %d generic type arguments (%d defined)";
 
@@ -23,12 +24,11 @@ public class InvalidJsonGenericTypesDetector
 	}
 
 	@Override
-	protected void visitJsonConfigAnnotation(final UAnnotation node, final PsiClass jsonType, final PsiClass[] genericTypes) {
-		final int expectedGenericTypes = jsonType.getTypeParameterList()
-		                                         .getTypeParameters().length;
-		final int definedGenericTypes = genericTypes.length;
-		if (expectedGenericTypes != definedGenericTypes) {
-			report(node, String.format(Locale.getDefault(), DESC_FORMAT, jsonType.getName(), expectedGenericTypes, definedGenericTypes));
+	protected void visitJsonConfigAnnotation(final UAnnotation node, final PsiClass jsonType, final int genericTypesCount) {
+		final PsiTypeParameterList typeParameterList = jsonType.getTypeParameterList();
+		final int expectedGenericTypesCount = typeParameterList != null ? typeParameterList.getTypeParameters().length : 0;
+		if (expectedGenericTypesCount != genericTypesCount) {
+			report(node, String.format(Locale.getDefault(), DESC_FORMAT, jsonType.getName(), expectedGenericTypesCount, genericTypesCount));
 		}
 	}
 }

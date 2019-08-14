@@ -10,6 +10,8 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.ironsource.aura.aircon.AirCon;
+
 import java.lang.reflect.Field;
 
 
@@ -96,8 +98,8 @@ public final class AirConContextWrapper
 	 * </pre>
 	 *
 	 * @param activity the activity
-	 * @param name name received in Activity.onCreateView()
-	 * @param attrSet attrSet received in Activity.onCreateView()
+	 * @param name     name received in Activity.onCreateView()
+	 * @param attrSet  attrSet received in Activity.onCreateView()
 	 * @return view
 	 */
 	@Nullable
@@ -123,8 +125,12 @@ public final class AirConContextWrapper
 			}
 			return view;
 		} catch (Exception e) {
-			//not being able to create the view with the given params is not an error by itself
-			e.printStackTrace();
+			if (AirCon.get()
+			          .isInitialized()) {
+				AirCon.get()
+				      .getLogger()
+				      .e(e.getMessage());
+			}
 			return null;
 		}
 	}
@@ -133,8 +139,9 @@ public final class AirConContextWrapper
 	 * Call this method from {@link android.app.Activity#attachBaseContext(Context)}.
 	 * Wrap a context to intercept {@link #getSystemService(String)} calls for {@link Context#LAYOUT_INFLATER_SERVICE}
 	 * so that we can provide our own {@link LayoutInflater} that will override view attributes with values from {@link AttributeResolver}
-	 * @param context context
-	 * @param attrClass R.attr.class
+	 *
+	 * @param context           context
+	 * @param attrClass         R.attr.class
 	 * @param attributeResolver attribute resolver
 	 * @return an AirCon context wrapper
 	 */

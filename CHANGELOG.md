@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+Version 1.4.6
+----------------------------
+   * Bug fixes.
+
+Version 1.4.5
+----------------------------
+   * Bug fixes.
+
 Version 1.4.4
 ----------------------------
    * Added quick fixes for lint checks.

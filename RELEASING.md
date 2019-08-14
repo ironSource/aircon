@@ -3,5 +3,6 @@
 3. Clean project.
 4. Publish to maven.
 5. Tag release commit.
-6. Merge to master.
-7. Increment version in develop.
+6. Create release branch.
+7. Merge to master.
+8. Increment version in develop.

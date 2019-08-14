@@ -93,11 +93,12 @@ public class InvalidDefaultValueResIdDetector
 
 	private PsiType getConfigType(final PsiAnnotation configAnnotation) {
 		final PsiClass configAnnotationClass = ElementUtils.getAnnotationDeclarationClass(configAnnotation);
-		final PsiMethod[] methods = configAnnotationClass.getMethods();
-		for (PsiMethod method : methods) {
-			if (method.getName()
-			          .equals(ATTRIBUTE_DEFAULT_VALUE)) {
-				return method.getReturnType();
+		if (configAnnotationClass != null) {
+			for (PsiMethod method : configAnnotationClass.getMethods()) {
+				if (method.getName()
+				          .equals(ATTRIBUTE_DEFAULT_VALUE)) {
+					return method.getReturnType();
+				}
 			}
 		}
 

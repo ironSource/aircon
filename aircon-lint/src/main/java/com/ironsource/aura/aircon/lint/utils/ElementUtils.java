@@ -5,6 +5,7 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiJavaCodeReferenceElement;
 import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.PsiReferenceExpression;
@@ -161,8 +162,8 @@ public class ElementUtils {
 	}
 
 	public static PsiClass getAnnotationDeclarationClass(final PsiAnnotation configAnnotation) {
-		return (PsiClass) configAnnotation.getNameReferenceElement()
-		                                  .resolve();
+		final PsiJavaCodeReferenceElement nameReferenceElement = configAnnotation.getNameReferenceElement();
+		return nameReferenceElement != null ? (PsiClass) nameReferenceElement.resolve() : null;
 	}
 
 	public static UClass getContainingClass(UElement element) {

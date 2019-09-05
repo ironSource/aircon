@@ -41,5 +41,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     api project(':aircon-common')
-    lintChecks project(':aircon-lint')
+//    lintChecks project(':aircon-lint')
 }

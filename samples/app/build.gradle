@@ -35,7 +35,7 @@ dependencies {
     implementation project(':aircon')
     implementation project(':firebase-source')
     implementation project(':gson-converter')
-    lintChecks project(':aircon-lint')
+//    lintChecks project(':aircon-lint')
 
     annotationProcessor project(':aircon-compiler')
 

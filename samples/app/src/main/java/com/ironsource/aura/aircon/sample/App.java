@@ -5,8 +5,8 @@ import android.util.Log;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
-import com.ironsource.aura.aircon.AirCon;
 import com.ironsource.aura.aircon.AirConConfiguration;
+import com.ironsource.aura.aircon.AirConKt;
 import com.ironsource.aura.aircon.converter.gson.GsonConverter;
 import com.ironsource.aura.aircon.logging.Logger;
 import com.ironsource.aura.aircon.source.FireBaseConfigSource;
@@ -26,7 +26,7 @@ public class App
 	}
 
 	private void initAirConSdk() {
-		final AirCon airCon = AirCon.get();
+		final AirConKt airCon = AirConKt.INSTANCE;
 		final FirebaseRemoteConfig firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 		firebaseRemoteConfig.setConfigSettings(new FirebaseRemoteConfigSettings.Builder().setDeveloperModeEnabled(BuildConfig.DEBUG)
 		                                                                                 .build());

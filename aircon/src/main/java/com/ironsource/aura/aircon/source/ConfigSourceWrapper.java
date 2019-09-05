@@ -2,7 +2,7 @@ package com.ironsource.aura.aircon.source;
 
 import android.support.annotation.NonNull;
 
-import com.ironsource.aura.aircon.AirCon;
+import com.ironsource.aura.aircon.AirConKt;
 import com.ironsource.aura.aircon.common.ConfigSource;
 
 import java.util.Set;
@@ -126,9 +126,8 @@ public class ConfigSourceWrapper
 	}
 
 	private void log(final String msg, Object... formatParams) {
-		AirCon.get()
-		      .getLogger()
-		      .v(toString() + " - " + String.format(msg, formatParams));
+		AirConKt.INSTANCE.getLogger()
+		                 .v(toString() + " - " + String.format(msg, formatParams));
 	}
 
 	@Override

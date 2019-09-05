@@ -5,7 +5,8 @@ import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.ironsource.aura.aircon.AirCon;
+import com.ironsource.aura.aircon.AirConKt;
+
 
 /**
  * Base class for activities supporting XMl injection.
@@ -15,12 +16,10 @@ public abstract class AirConFragmentActivity
 
 	@Override
 	protected void attachBaseContext(Context newBase) {
-		if (AirCon.get()
-		          .isXmlInjectionEnabled()) {
+		if (AirConKt.INSTANCE.isXmlInjectionEnabled()) {
 			final AttributeResolver attributeResolver = getAttributeResolver();
 			if (attributeResolver != null) {
-				super.attachBaseContext(AirConContextWrapper.wrap(newBase, AirCon.get()
-				                                                                 .getAttrClass(), attributeResolver));
+				super.attachBaseContext(AirConContextWrapper.wrap(newBase, AirConKt.INSTANCE.getAttrClass(), attributeResolver));
 			}
 		}
 		else {
@@ -28,17 +27,25 @@ public abstract class AirConFragmentActivity
 		}
 	}
 
-	protected AttributeResolver getAttributeResolver() {
-		return AirCon.get()
-		             .getAttributeResolver();
-	}
-
 	@Override
 	public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
-		View view = AirConContextWrapper.onActivityCreateView(this, name, attrs);
-		if (view == null) {
-			view = super.onCreateView(parent, name, context, attrs);
+		if (isXmlInjectionEnabled()) {
+			View view = AirConContextWrapper.onActivityCreateView(this, name, attrs);
+			if (view == null) {
+				view = super.onCreateView(parent, name, context, attrs);
+			}
+			return view;
 		}
-		return view;
+		else {
+			return super.onCreateView(parent, name, context, attrs);
+		}
+	}
+
+	protected AttributeResolver getAttributeResolver() {
+		return AirConKt.INSTANCE.getAttributeResolver();
+	}
+
+	private boolean isXmlInjectionEnabled() {
+		return AirConKt.INSTANCE.isXmlInjectionEnabled() && getAttributeResolver() != null;
 	}
 }

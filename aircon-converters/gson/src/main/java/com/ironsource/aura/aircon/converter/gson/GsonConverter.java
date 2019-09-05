@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.ironsource.aura.aircon.JsonConverter;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Type;
 
 public class GsonConverter
@@ -19,13 +21,14 @@ public class GsonConverter
 		mGson = gson;
 	}
 
+	@NotNull
 	@Override
-	public String toJson(final Object obj) {
+	public String toJson(@NotNull final Object obj) {
 		return mGson.toJson(obj);
 	}
 
 	@Override
-	public <T> T fromJson(final String json, final Class<T> clazz) throws
+	public <T> T fromJson(@NotNull final String json, @NotNull final Class<T> clazz) throws
 			JsonException {
 		try {
 			return mGson.fromJson(json, clazz);
@@ -35,7 +38,7 @@ public class GsonConverter
 	}
 
 	@Override
-	public <T> T fromJson(final String json, final Type type) throws
+	public <T> T fromJson(@NotNull final String json, @NotNull final Type type) throws
 			JsonException {
 		try {
 			return mGson.fromJson(json, type);

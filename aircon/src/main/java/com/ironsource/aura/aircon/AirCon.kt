@@ -66,7 +66,7 @@ object AirCon {
      * @see AirConConfiguration.Builder.setJsonConverter
      */
     var jsonConverter: JsonConverter? by InitializedBarrierDelegate {
-        check(jsonConverter != null) { "No json converter available, a converter needs to be supplied in the AirConConfiguration" }
+        check(it != null) { "No json converter available, a converter needs to be supplied in the AirConConfiguration" }
     }
         private set
 
@@ -131,13 +131,13 @@ object AirCon {
     }
 }
 
-private class InitializedBarrierDelegate<T>(private val extCheck: (() -> Unit)? = null) : ReadWriteProperty<AirCon, T?> {
+private class InitializedBarrierDelegate<T>(private val extCheck: ((T?) -> Unit)? = null) : ReadWriteProperty<AirCon, T?> {
     var value: T? = null
 
     override fun getValue(thisRef: AirCon, property: KProperty<*>): T? {
         assertInitialized()
 
-        extCheck?.invoke()
+        extCheck?.invoke(value)
 
         return value
     }

@@ -29,7 +29,7 @@ object AirCon {
      *
      * @throws IllegalStateException if SDK is not initialized.
      */
-    var context: Context? by InitializedBarrierDelegate()
+    var context: Context by LateInitInitializedBarrierDelegate()
         private set
 
     /**
@@ -38,7 +38,7 @@ object AirCon {
      *
      * @throws IllegalStateException if SDK is not initialized.
      */
-    var logger: Logger? by InitializedBarrierDelegate()
+    var logger: Logger by LateInitInitializedBarrierDelegate()
         private set
 
     /**
@@ -76,7 +76,7 @@ object AirCon {
      *
      * @throws IllegalStateException if SDK is not initialized.
      */
-    var configSourceRepository: ConfigSourceRepository? by InitializedBarrierDelegate()
+    var configSourceRepository: ConfigSourceRepository by LateInitInitializedBarrierDelegate()
         private set
 
     private lateinit var mConfigTypes: Map<Class<out Annotation>, ConfigTypeResolver<*, *, *>>
@@ -131,8 +131,8 @@ object AirCon {
     }
 }
 
-private class InitializedBarrierDelegate<T>(private val extCheck: ((T?) -> Unit)? = null) : ReadWriteProperty<AirCon, T?> {
-    var value: T? = null
+private class InitializedBarrierDelegate<T>(initialValue: T? = null, private val extCheck: ((T?) -> Unit)? = null) : ReadWriteProperty<AirCon, T?> {
+    var value: T? = initialValue
 
     override fun getValue(thisRef: AirCon, property: KProperty<*>): T? {
         assertInitialized()
@@ -143,6 +143,24 @@ private class InitializedBarrierDelegate<T>(private val extCheck: ((T?) -> Unit)
     }
 
     override fun setValue(thisRef: AirCon, property: KProperty<*>, value: T?) {
+        this.value = value
+    }
+}
+
+private class LateInitInitializedBarrierDelegate<T : Any>(private val extCheck: ((T) -> Unit)? = null) : ReadWriteProperty<AirCon, T> {
+    lateinit var value: T
+
+    override fun getValue(thisRef: AirCon, property: KProperty<*>): T {
+        assertInitialized()
+
+        if (::value.isInitialized) {
+            extCheck?.invoke(value)
+        }
+
+        return value
+    }
+
+    override fun setValue(thisRef: AirCon, property: KProperty<*>, value: T) {
         this.value = value
     }
 }

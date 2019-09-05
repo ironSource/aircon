@@ -1,7 +1,7 @@
 package com.ironsource.aura.aircon
 
 import android.content.Context
-import com.ironsource.aura.aircon.AirConKt.init
+import com.ironsource.aura.aircon.AirCon.init
 import com.ironsource.aura.aircon.common.ConfigTypeResolver
 import com.ironsource.aura.aircon.injection.AttributeResolver
 import com.ironsource.aura.aircon.logging.Logger
@@ -11,10 +11,10 @@ import kotlin.reflect.KProperty
 
 /**
  * AirCon SDK entry point.
- * Before any use of the SDK [AirConKt][init] should be called (Application.onCreate() is the common place)
+ * Before any use of the SDK [AirCon][init] should be called (Application.onCreate() is the common place)
  */
 @Suppress("MemberVisibilityCanBePrivate")
-object AirConKt {
+object AirCon {
 
     /**
      * Whether the SDK was initialized.
@@ -131,10 +131,10 @@ object AirConKt {
     }
 }
 
-private class InitializedBarrierDelegate<T>(private val extCheck: (() -> Unit)? = null) : ReadWriteProperty<AirConKt, T?> {
+private class InitializedBarrierDelegate<T>(private val extCheck: (() -> Unit)? = null) : ReadWriteProperty<AirCon, T?> {
     var value: T? = null
 
-    override fun getValue(thisRef: AirConKt, property: KProperty<*>): T? {
+    override fun getValue(thisRef: AirCon, property: KProperty<*>): T? {
         assertInitialized()
 
         extCheck?.invoke()
@@ -142,11 +142,11 @@ private class InitializedBarrierDelegate<T>(private val extCheck: (() -> Unit)? 
         return value
     }
 
-    override fun setValue(thisRef: AirConKt, property: KProperty<*>, value: T?) {
+    override fun setValue(thisRef: AirCon, property: KProperty<*>, value: T?) {
         this.value = value
     }
 }
 
 private fun assertInitialized() {
-    check(AirConKt.initialized) { "Sdk not initialized, did you call AirCon.init()?" }
+    check(AirCon.initialized) { "Sdk not initialized, did you call AirCon.init()?" }
 }

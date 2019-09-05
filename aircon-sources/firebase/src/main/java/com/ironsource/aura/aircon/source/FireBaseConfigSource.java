@@ -184,8 +184,7 @@ public class FireBaseConfigSource
 	}
 
 	private void log(final String msg, Object... formatParams) {
-		AirCon.get()
-		      .getLogger()
-		      .v(toString() + " - " + String.format(msg, formatParams));
+		AirCon.INSTANCE.getLogger()
+		               .v(toString() + " - " + String.format(msg, formatParams));
 	}
 }

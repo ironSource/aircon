@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.webkit.URLUtil;
 
-import com.ironsource.aura.aircon.AirConKt;
+import com.ironsource.aura.aircon.AirCon;
 import com.ironsource.aura.aircon.JsonConverter;
 import com.ironsource.aura.aircon.logging.Logger;
 
@@ -104,6 +104,6 @@ public class AirConUtils {
 	}
 
 	private static Logger log() {
-		return AirConKt.INSTANCE.getLogger();
+		return AirCon.INSTANCE.getLogger();
 	}
 }

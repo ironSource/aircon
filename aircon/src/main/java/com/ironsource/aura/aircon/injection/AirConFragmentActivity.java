@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.ironsource.aura.aircon.AirConKt;
+import com.ironsource.aura.aircon.AirCon;
 
 
 /**
@@ -16,10 +16,10 @@ public abstract class AirConFragmentActivity
 
 	@Override
 	protected void attachBaseContext(Context newBase) {
-		if (AirConKt.INSTANCE.isXmlInjectionEnabled()) {
+		if (AirCon.INSTANCE.isXmlInjectionEnabled()) {
 			final AttributeResolver attributeResolver = getAttributeResolver();
 			if (attributeResolver != null) {
-				super.attachBaseContext(AirConContextWrapper.wrap(newBase, AirConKt.INSTANCE.getAttrClass(), attributeResolver));
+				super.attachBaseContext(AirConContextWrapper.wrap(newBase, AirCon.INSTANCE.getAttrClass(), attributeResolver));
 			}
 		}
 		else {
@@ -42,10 +42,10 @@ public abstract class AirConFragmentActivity
 	}
 
 	protected AttributeResolver getAttributeResolver() {
-		return AirConKt.INSTANCE.getAttributeResolver();
+		return AirCon.INSTANCE.getAttributeResolver();
 	}
 
 	private boolean isXmlInjectionEnabled() {
-		return AirConKt.INSTANCE.isXmlInjectionEnabled() && getAttributeResolver() != null;
+		return AirCon.INSTANCE.isXmlInjectionEnabled() && getAttributeResolver() != null;
 	}
 }

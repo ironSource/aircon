@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.ironsource.aura.aircon.AirConKt;
+import com.ironsource.aura.aircon.AirCon;
 
 /**
  * Base class for activities supporting XMl injection.
@@ -16,7 +16,7 @@ public abstract class AirConAppCompatActivity
 	@Override
 	protected void attachBaseContext(Context newBase) {
 		if (isXmlInjectionEnabled()) {
-			super.attachBaseContext(AirConContextWrapper.wrap(newBase, AirConKt.INSTANCE.getAttrClass(), getAttributeResolver()));
+			super.attachBaseContext(AirConContextWrapper.wrap(newBase, AirCon.INSTANCE.getAttrClass(), getAttributeResolver()));
 		}
 		else {
 			super.attachBaseContext(newBase);
@@ -38,10 +38,10 @@ public abstract class AirConAppCompatActivity
 	}
 
 	protected AttributeResolver getAttributeResolver() {
-		return AirConKt.INSTANCE.getAttributeResolver();
+		return AirCon.INSTANCE.getAttributeResolver();
 	}
 
 	private boolean isXmlInjectionEnabled() {
-		return AirConKt.INSTANCE.isXmlInjectionEnabled() && getAttributeResolver() != null;
+		return AirCon.INSTANCE.isXmlInjectionEnabled() && getAttributeResolver() != null;
 	}
 }

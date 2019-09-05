@@ -16,9 +16,9 @@ public class AirConClassDescriptor
 
 	private static final ClassName CLASS_NAME = ClassName.get(BASE_AIRCON_PACKAGE, "AirCon");
 
-	private interface StaticMethods {
+	private interface StaticFields {
 
-		String GET = "get";
+		String INSTANCE = "INSTANCE";
 	}
 
 	private interface Methods {
@@ -54,6 +54,6 @@ public class AirConClassDescriptor
 	}
 
 	public static AirConClassDescriptor get() {
-		return new AirConClassDescriptor(staticMethodCall(CLASS_NAME, StaticMethods.GET));
+		return new AirConClassDescriptor(staticFieldAccess(CLASS_NAME, StaticFields.INSTANCE));
 	}
 }

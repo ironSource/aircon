@@ -44,6 +44,11 @@ public abstract class ClassDescriptor {
 		                             .addMethodCall(methodName, params);
 	}
 
+	protected static CodeBlockBuilder staticFieldAccess(TypeName className, String fieldName) {
+		return new CodeBlockBuilder().addClassQualifier(className)
+		                             .add(fieldName);
+	}
+
 	public static StubClassDescriptor clazz(TypeName className) {
 		return new StubClassDescriptor(new CodeBlockBuilder().addClassQualifier(className)
 		                                                     .add("class"));

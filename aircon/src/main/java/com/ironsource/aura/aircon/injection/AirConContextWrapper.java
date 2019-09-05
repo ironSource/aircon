@@ -10,7 +10,7 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.ironsource.aura.aircon.AirConKt;
+import com.ironsource.aura.aircon.AirCon;
 
 import java.lang.reflect.Field;
 
@@ -125,9 +125,9 @@ public final class AirConContextWrapper
 			}
 			return view;
 		} catch (Exception e) {
-			if (AirConKt.INSTANCE.getInitialized()) {
-				AirConKt.INSTANCE.getLogger()
-				                 .e(e.getMessage());
+			if (AirCon.INSTANCE.getInitialized()) {
+				AirCon.INSTANCE.getLogger()
+				               .e(e.getMessage());
 			}
 			return null;
 		}

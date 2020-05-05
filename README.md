@@ -390,14 +390,14 @@ dependencies {
 For using Firebase config source:
 ```groovy
 dependencies {
-    implementation 'com.ironsource.aura.aircon:firebase-source:1.4.7'
+    implementation 'com.ironsource.aura.aircon:firebase-source:1.4.6'
 }
 ```
 
 For using `Gson` to parse `@JsonConfig`:
 ```groovy
 dependencies {
-    implementation 'com.ironsource.aura.aircon:gson-converter:1.4.7'
+    implementation 'com.ironsource.aura.aircon:gson-converter:1.4.6'
 }
 ```
 

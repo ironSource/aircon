@@ -49,7 +49,7 @@ public class AirConUtils {
     }
 
     public static String colorIntToHex(ColorInt color) {
-        return Integer.toHexString(color.get());
+        return "#" + Integer.toHexString(color.get());
     }
 
     public static String toJson(Object object, @NonNull JsonConverter converter) {

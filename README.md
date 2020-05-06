@@ -382,8 +382,8 @@ Download
 --------
 ```groovy
 dependencies {
-    implementation 'com.ironsource.aura.aircon:aircon:1.4.7'
-    annotationProcessor 'com.ironsource.aura.aircon:aircon-compiler:1.4.7'
+    implementation 'com.ironsource.aura.aircon:aircon:1.4.8'
+    annotationProcessor 'com.ironsource.aura.aircon:aircon-compiler:1.4.8'
 }
 ```
 

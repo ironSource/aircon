@@ -1,6 +1,9 @@
 package com.ironsource.aura.aircon.compiler.utils;
 
 import com.google.auto.common.Visibility;
+import com.ironsource.aura.aircon.compiler.AirConProcessor;
+import com.ironsource.aura.aircon.compiler.Options;
+import com.ironsource.aura.aircon.compiler.consts.Consts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,87 +22,92 @@ import javax.tools.Diagnostic;
  */
 public class ProcessingUtils {
 
-	private ProcessingEnvironment mProcessingEnvironment;
+    private ProcessingEnvironment mProcessingEnvironment;
 
-	private final Logger mLogger;
+    private final Logger mLogger;
 
-	public ProcessingUtils(final ProcessingEnvironment processingEnvironment) {
-		mProcessingEnvironment = processingEnvironment;
-		mLogger = new Logger(processingEnvironment);
-	}
+    public ProcessingUtils(final ProcessingEnvironment processingEnvironment) {
+        mProcessingEnvironment = processingEnvironment;
+        mLogger = new Logger(processingEnvironment);
+    }
 
-	public ProcessingEnvironment getProcessingEnvironment() {
-		return mProcessingEnvironment;
-	}
+    public ProcessingEnvironment getProcessingEnvironment() {
+        return mProcessingEnvironment;
+    }
 
-	public Types getTypeUtils() {
-		return mProcessingEnvironment.getTypeUtils();
-	}
+    public Types getTypeUtils() {
+        return mProcessingEnvironment.getTypeUtils();
+    }
 
-	public Elements getElementUtils() {
-		return mProcessingEnvironment.getElementUtils();
-	}
+    public Elements getElementUtils() {
+        return mProcessingEnvironment.getElementUtils();
+    }
 
-	public Logger getLogger() {
-		return mLogger;
-	}
+    public Logger getLogger() {
+        return mLogger;
+    }
 
-	public TypeMirror unboxedType(TypeMirror typeMirror) {
-		try {
-			return getTypeUtils().unboxedType(typeMirror);
-		} catch (IllegalArgumentException e) {
-			return typeMirror;
-		}
-	}
+    public TypeMirror unboxedType(TypeMirror typeMirror) {
+        try {
+            return getTypeUtils().unboxedType(typeMirror);
+        } catch (IllegalArgumentException e) {
+            return typeMirror;
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	public <T extends Element> List<T> getEnclosedElementsByType(TypeElement element, Class<T> clazz) {
-		final List<? extends Element> enclosedElements = element.getEnclosedElements();
-		final List<T> relevantElements = new ArrayList<>();
-		for (Element enclosedElement : enclosedElements) {
-			if (clazz.isInstance(enclosedElement)) {
-				relevantElements.add((T) enclosedElement);
-			}
-		}
-		return relevantElements;
-	}
+    @SuppressWarnings("unchecked")
+    public <T extends Element> List<T> getEnclosedElementsByType(TypeElement element, Class<T> clazz) {
+        final List<? extends Element> enclosedElements = element.getEnclosedElements();
+        final List<T> relevantElements = new ArrayList<>();
+        for (Element enclosedElement : enclosedElements) {
+            if (clazz.isInstance(enclosedElement)) {
+                relevantElements.add((T) enclosedElement);
+            }
+        }
+        return relevantElements;
+    }
 
-	public static Modifier getVisibilityModifier(Element element) {
-		switch (Visibility.ofElement(element)) {
-			case PRIVATE:
-				return Modifier.PRIVATE;
-			case PROTECTED:
-				return Modifier.PROTECTED;
-			case PUBLIC:
-				return Modifier.PUBLIC;
-		}
+    public static Modifier getVisibilityModifier(Element element) {
+        switch (Visibility.ofElement(element)) {
+            case PRIVATE:
+                return Modifier.PRIVATE;
+            case PROTECTED:
+                return Modifier.PROTECTED;
+            case PUBLIC:
+                return Modifier.PUBLIC;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public static class Logger {
+    public String getBasePackage() {
+        String packageName = mProcessingEnvironment.getOptions().get(Options.BASE_PACKAGE);
+        return packageName != null ? packageName + ".aura.aircon" : Consts.BASE_AIRCON_PACKAGE;
+    }
 
-		private ProcessingEnvironment mEnv;
+    public static class Logger {
 
-		private Logger(ProcessingEnvironment processingEnvironment) {
-			mEnv = processingEnvironment;
-		}
+        private ProcessingEnvironment mEnv;
 
-		public void e(Element element, String message, Object... args) {
-			printMessage(Diagnostic.Kind.ERROR, element, message, args);
-		}
+        private Logger(ProcessingEnvironment processingEnvironment) {
+            mEnv = processingEnvironment;
+        }
 
-		public void d(Element element, String message, Object... args) {
-			printMessage(Diagnostic.Kind.NOTE, element, message, args);
-		}
+        public void e(Element element, String message, Object... args) {
+            printMessage(Diagnostic.Kind.ERROR, element, message, args);
+        }
 
-		private void printMessage(Diagnostic.Kind kind, Element element, String message, Object[] args) {
-			if (args.length > 0) {
-				message = String.format(message, args);
-			}
+        public void d(Element element, String message, Object... args) {
+            printMessage(Diagnostic.Kind.NOTE, element, message, args);
+        }
 
-			mEnv.getMessager()
-			    .printMessage(kind, message, element);
-		}
-	}
+        private void printMessage(Diagnostic.Kind kind, Element element, String message, Object[] args) {
+            if (args.length > 0) {
+                message = String.format(message, args);
+            }
+
+            mEnv.getMessager()
+                    .printMessage(kind, message, element);
+        }
+    }
 }

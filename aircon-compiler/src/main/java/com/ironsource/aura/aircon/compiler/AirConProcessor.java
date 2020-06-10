@@ -9,7 +9,6 @@ import com.ironsource.aura.aircon.common.annotations.FeatureRemoteConfig;
 import com.ironsource.aura.aircon.common.annotations.config.ConfigGroup;
 import com.ironsource.aura.aircon.common.annotations.config.value.RemoteIntValue;
 import com.ironsource.aura.aircon.common.annotations.config.value.RemoteStringValue;
-import com.ironsource.aura.aircon.compiler.consts.Consts;
 import com.ironsource.aura.aircon.compiler.enumsProvider.EnumsProviderClassBuilder;
 import com.ironsource.aura.aircon.compiler.model.element.AbstractConfigElement;
 import com.ironsource.aura.aircon.compiler.model.element.ConfigElement;
@@ -24,7 +23,9 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,180 +41,185 @@ import static com.ironsource.aura.aircon.compiler.utils.Utils.toAnnotationSet;
 
 @AutoService(Processor.class)
 public class AirConProcessor
-		extends SimpleProcessor {
+        extends SimpleProcessor {
 
-	private static final String ATTRIBUTE_AUX_TARGET = "value";
+    private static final String ATTRIBUTE_AUX_TARGET = "value";
 
-	private ProcessingEnvironment mProcessingEnvironment;
+    private ProcessingEnvironment mProcessingEnvironment;
 
-	@Override
-	public synchronized void init(final javax.annotation.processing.ProcessingEnvironment processingEnvironment) {
-		super.init(processingEnvironment);
-		mProcessingEnvironment = new ProcessingEnvironment(mProcessingUtils);
-	}
+    @Override
+    public synchronized void init(final javax.annotation.processing.ProcessingEnvironment processingEnvironment) {
+        super.init(processingEnvironment);
+        mProcessingEnvironment = new ProcessingEnvironment(mProcessingUtils);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Set<String> getSupportedAnnotationTypes() {
-		return toAnnotationSet(FeatureRemoteConfig.class, RemoteIntValue.class, RemoteStringValue.class, ConfigDefaultValueProvider.class, ConfigAdapter.class, ConfigValidator.class);
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public Set<String> getSupportedAnnotationTypes() {
+        return toAnnotationSet(FeatureRemoteConfig.class, RemoteIntValue.class, RemoteStringValue.class, ConfigDefaultValueProvider.class, ConfigAdapter.class, ConfigValidator.class);
+    }
 
-	@Override
-	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-		try {
-			generateEnumsProvider(roundEnv);
+    @Override
+    public Set<String> getSupportedOptions() {
+        return Options.ALL;
+    }
 
-			final Set<? extends Element> featureRemoteConfigClassElements = roundEnv.getElementsAnnotatedWith(FeatureRemoteConfig.class);
+    @Override
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        try {
+            generateEnumsProvider(roundEnv);
 
-			createConfigElements(roundEnv, featureRemoteConfigClassElements);
+            final Set<? extends Element> featureRemoteConfigClassElements = roundEnv.getElementsAnnotatedWith(FeatureRemoteConfig.class);
 
-			generateRemoteConfigProviders(featureRemoteConfigClassElements);
+            createConfigElements(roundEnv, featureRemoteConfigClassElements);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+            generateRemoteConfigProviders(featureRemoteConfigClassElements);
 
-		return true;
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-	private void generateEnumsProvider(final RoundEnvironment roundEnv) {
-		final Map<TypeElement, List<VariableElement>> enumClassToConsts = mapClassElements(roundEnv, RemoteIntValue.class, RemoteStringValue.class);
-		if (!enumClassToConsts.isEmpty()) {
-			final TypeSpec enumsProviderClass = new EnumsProviderClassBuilder(mProcessingEnvironment).build(enumClassToConsts);
-			writeClassToFile(null, Consts.BASE_AIRCON_PACKAGE, enumsProviderClass);
-		}
-	}
+        return true;
+    }
 
-	private void createConfigElements(final RoundEnvironment roundEnv, final Set<? extends Element> featureRemoteConfigClassElements) {
-		for (Element configClassElement : featureRemoteConfigClassElements) {
-			createConfigElements(roundEnv, (TypeElement) configClassElement);
-		}
+    private void generateEnumsProvider(final RoundEnvironment roundEnv) {
+        final Map<TypeElement, List<VariableElement>> enumClassToConsts = mapClassElements(roundEnv, RemoteIntValue.class, RemoteStringValue.class);
+        if (!enumClassToConsts.isEmpty()) {
+            final TypeSpec enumsProviderClass = new EnumsProviderClassBuilder(mProcessingEnvironment).build(enumClassToConsts);
+            writeClassToFile(null, mProcessingEnvironment.getBasePackage(), enumsProviderClass);
+        }
+    }
 
-		onPostConfigElementCreate();
-	}
+    private void createConfigElements(final RoundEnvironment roundEnv, final Set<? extends Element> featureRemoteConfigClassElements) {
+        for (Element configClassElement : featureRemoteConfigClassElements) {
+            createConfigElements(roundEnv, (TypeElement) configClassElement);
+        }
 
-	private void createConfigElements(final RoundEnvironment roundEnv, final TypeElement configClass) {
-		final List<VariableElement> variableElements = mProcessingUtils.getEnclosedElementsByType(configClass, VariableElement.class);
+        onPostConfigElementCreate();
+    }
 
-		final String packageName = getPackage(configClass);
-		final ClassName providerClassName = ClassName.get(packageName, NamingUtils.getProviderClassName(configClass.getSimpleName()
-		                                                                                                           .toString()));
+    private void createConfigElements(final RoundEnvironment roundEnv, final TypeElement configClass) {
+        final List<VariableElement> variableElements = mProcessingUtils.getEnclosedElementsByType(configClass, VariableElement.class);
 
-		final Map<String, ExecutableElement> defaultValueProviders = getAuxMethods(roundEnv, ConfigDefaultValueProvider.class);
-		final Map<String, ExecutableElement> adapters = getAuxMethods(roundEnv, ConfigAdapter.class);
-		final Map<String, ExecutableElement> validators = getAuxMethods(roundEnv, ConfigValidator.class);
-		final Map<String, ExecutableElement> mocks = getAuxMethods(roundEnv, ConfigMock.class);
+        final String packageName = getPackage(configClass);
+        final ClassName providerClassName = ClassName.get(packageName, NamingUtils.getProviderClassName(configClass.getSimpleName()
+                .toString()));
 
-		// Create config elements
-		for (VariableElement variableElement : variableElements) {
-			final ConfigElement configElement = ConfigElementFactory.create(providerClassName, configClass, variableElement, mProcessingUtils.getElementUtils(), mProcessingEnvironment.getTypeUtils(), defaultValueProviders, adapters, validators, mocks);
-			if (configElement != null) {
-				mProcessingEnvironment.addConfigElement(configClass, configElement);
-			}
-		}
+        final Map<String, ExecutableElement> defaultValueProviders = getAuxMethods(roundEnv, ConfigDefaultValueProvider.class);
+        final Map<String, ExecutableElement> adapters = getAuxMethods(roundEnv, ConfigAdapter.class);
+        final Map<String, ExecutableElement> validators = getAuxMethods(roundEnv, ConfigValidator.class);
+        final Map<String, ExecutableElement> mocks = getAuxMethods(roundEnv, ConfigMock.class);
 
-		if (!mProcessingEnvironment.hasConfigElements(configClass)) {
-			return;
-		}
+        // Create config elements
+        for (VariableElement variableElement : variableElements) {
+            final ConfigElement configElement = ConfigElementFactory.create(providerClassName, configClass, variableElement, mProcessingUtils.getElementUtils(), mProcessingEnvironment.getTypeUtils(), defaultValueProviders, adapters, validators, mocks);
+            if (configElement != null) {
+                mProcessingEnvironment.addConfigElement(configClass, configElement);
+            }
+        }
 
-		// Create config groups
-		createFeatureConfigGroupElement(configClass, providerClassName);
+        if (!mProcessingEnvironment.hasConfigElements(configClass)) {
+            return;
+        }
 
-		for (VariableElement variableElement : variableElements) {
-			final ConfigGroup configGroupAnnotation = variableElement.getAnnotation(ConfigGroup.class);
-			if (configGroupAnnotation != null) {
-				final ConfigGroupElement configGroupElement = ConfigGroupElementFactory.createConfigGroupElement(providerClassName, configClass, variableElement, configGroupAnnotation, mProcessingEnvironment.getConfigElements(), mProcessingEnvironment.getConfigGroupElements());
-				mProcessingEnvironment.addConfigGroupElement(configClass, configGroupElement);
-			}
-		}
-	}
+        // Create config groups
+        createFeatureConfigGroupElement(configClass, providerClassName);
 
-	private <A extends Annotation> Map<String, ExecutableElement> getAuxMethods(final RoundEnvironment roundEnv, Class<A> annotationClass) {
-		final Map<String, ExecutableElement> map = new HashMap<>();
-		final Set<? extends Element> auxMethods = roundEnv.getElementsAnnotatedWith(annotationClass);
-		for (Element method : auxMethods) {
-			final String auxMethodTarget = getAuxMethodTarget(method, annotationClass);
-			map.put(auxMethodTarget, (ExecutableElement) method);
-		}
-		return map;
-	}
+        for (VariableElement variableElement : variableElements) {
+            final ConfigGroup configGroupAnnotation = variableElement.getAnnotation(ConfigGroup.class);
+            if (configGroupAnnotation != null) {
+                final ConfigGroupElement configGroupElement = ConfigGroupElementFactory.createConfigGroupElement(providerClassName, configClass, variableElement, configGroupAnnotation, mProcessingEnvironment.getConfigElements(), mProcessingEnvironment.getConfigGroupElements());
+                mProcessingEnvironment.addConfigGroupElement(configClass, configGroupElement);
+            }
+        }
+    }
 
-	private String getAuxMethodTarget(Element auxMethod, Class<? extends Annotation> annotationClass) {
-		try {
-			return (String) annotationClass.getMethod(ATTRIBUTE_AUX_TARGET)
-			                               .invoke(auxMethod.getAnnotation(annotationClass));
-		} catch (Exception e) {
-			return null;
-		}
-	}
+    private <A extends Annotation> Map<String, ExecutableElement> getAuxMethods(final RoundEnvironment roundEnv, Class<A> annotationClass) {
+        final Map<String, ExecutableElement> map = new HashMap<>();
+        final Set<? extends Element> auxMethods = roundEnv.getElementsAnnotatedWith(annotationClass);
+        for (Element method : auxMethods) {
+            final String auxMethodTarget = getAuxMethodTarget(method, annotationClass);
+            map.put(auxMethodTarget, (ExecutableElement) method);
+        }
+        return map;
+    }
 
-	private void createFeatureConfigGroupElement(final TypeElement configClass, final ClassName providerClassName) {
-		final List<ConfigElement> configElements = mProcessingEnvironment.getClassConfigElements(configClass);
-		final ConfigGroupElement featureConfigGroupElement = ConfigGroupElementFactory.createFeatureConfigGroupElement(configClass, providerClassName, configElements);
-		mProcessingEnvironment.addConfigGroupElement(configClass, featureConfigGroupElement);
-	}
+    private String getAuxMethodTarget(Element auxMethod, Class<? extends Annotation> annotationClass) {
+        try {
+            return (String) annotationClass.getMethod(ATTRIBUTE_AUX_TARGET)
+                    .invoke(auxMethod.getAnnotation(annotationClass));
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
-	private void onPostConfigElementCreate() {
-		// Set default config element
-		for (ConfigElement configElement : mProcessingEnvironment.getConfigElements()) {
-			if (configElement.hasDefaultConfigValue()) {
-				final ConfigElement defaultValueConfigElement = AbstractConfigElement.getConfigElementByKey(configElement.getDefaultConfigValue(), mProcessingEnvironment.getConfigElements());
-				configElement.setDefaultConfigValueElement(defaultValueConfigElement);
-			}
-		}
-	}
+    private void createFeatureConfigGroupElement(final TypeElement configClass, final ClassName providerClassName) {
+        final List<ConfigElement> configElements = mProcessingEnvironment.getClassConfigElements(configClass);
+        final ConfigGroupElement featureConfigGroupElement = ConfigGroupElementFactory.createFeatureConfigGroupElement(configClass, providerClassName, configElements);
+        mProcessingEnvironment.addConfigGroupElement(configClass, featureConfigGroupElement);
+    }
 
-	private void generateRemoteConfigProviders(final Set<? extends Element> featureRemoteConfigClassElements) {
-		for (Element configClassElement : featureRemoteConfigClassElements) {
-			final TypeElement configClass = (TypeElement) configClassElement;
-			if (mProcessingEnvironment.hasConfigElements(configClass)) {
-				generateRemoteConfigProviderClass(configClass);
-			}
-		}
-	}
+    private void onPostConfigElementCreate() {
+        // Set default config element
+        for (ConfigElement configElement : mProcessingEnvironment.getConfigElements()) {
+            if (configElement.hasDefaultConfigValue()) {
+                final ConfigElement defaultValueConfigElement = AbstractConfigElement.getConfigElementByKey(configElement.getDefaultConfigValue(), mProcessingEnvironment.getConfigElements());
+                configElement.setDefaultConfigValueElement(defaultValueConfigElement);
+            }
+        }
+    }
 
-	private void generateRemoteConfigProviderClass(TypeElement configClassElement) {
-		final List<TypeSpec> typeSpecs = new RemoteConfigProviderClassBuilder(mProcessingEnvironment).build(configClassElement);
+    private void generateRemoteConfigProviders(final Set<? extends Element> featureRemoteConfigClassElements) {
+        for (Element configClassElement : featureRemoteConfigClassElements) {
+            final TypeElement configClass = (TypeElement) configClassElement;
+            if (mProcessingEnvironment.hasConfigElements(configClass)) {
+                generateRemoteConfigProviderClass(configClass);
+            }
+        }
+    }
 
-		final String packageName = getPackage(configClassElement);
-		for (TypeSpec typeSpec : typeSpecs) {
-			writeClassToFile(configClassElement, packageName, typeSpec);
-		}
-	}
+    private void generateRemoteConfigProviderClass(TypeElement configClassElement) {
+        final List<TypeSpec> typeSpecs = new RemoteConfigProviderClassBuilder(mProcessingEnvironment).build(configClassElement);
 
-	private <T extends Element> Map<TypeElement, List<T>> mapClassElements(final RoundEnvironment roundEnv, Class<? extends Annotation>... annotations) {
-		final Map<TypeElement, List<T>> classToElements = new HashMap<>();
+        final String packageName = getPackage(configClassElement);
+        for (TypeSpec typeSpec : typeSpecs) {
+            writeClassToFile(configClassElement, packageName, typeSpec);
+        }
+    }
 
-		for (Class<? extends Annotation> annotation : annotations) {
-			final Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(annotation);
-			for (Element element : elements) {
-				while (!(element.getEnclosingElement() instanceof TypeElement)) {
-					element = element.getEnclosingElement();
-				}
-				addToMap(classToElements, (T) element);
-			}
+    private <T extends Element> Map<TypeElement, List<T>> mapClassElements(final RoundEnvironment roundEnv, Class<? extends Annotation>... annotations) {
+        final Map<TypeElement, List<T>> classToElements = new HashMap<>();
 
-		}
+        for (Class<? extends Annotation> annotation : annotations) {
+            final Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(annotation);
+            for (Element element : elements) {
+                while (!(element.getEnclosingElement() instanceof TypeElement)) {
+                    element = element.getEnclosingElement();
+                }
+                addToMap(classToElements, (T) element);
+            }
 
-		return classToElements;
-	}
+        }
 
-	private <T extends Element> void addToMap(final Map<TypeElement, List<T>> classToElements, final T element) {
-		final TypeElement classElement = (TypeElement) element.getEnclosingElement();
-		List<T> classElements = classToElements.get(classElement);
-		if (classElements == null) {
-			classElements = new ArrayList<>();
-			classToElements.put(classElement, classElements);
-		}
-		if (!classElements.contains(element)) {
-			classElements.add(element);
-		}
-	}
+        return classToElements;
+    }
 
-	private String getPackage(Element element) {
-		return mProcessingUtils.getElementUtils()
-		                       .getPackageOf(element)
-		                       .getQualifiedName()
-		                       .toString();
-	}
+    private <T extends Element> void addToMap(final Map<TypeElement, List<T>> classToElements, final T element) {
+        final TypeElement classElement = (TypeElement) element.getEnclosingElement();
+        List<T> classElements = classToElements.get(classElement);
+        if (classElements == null) {
+            classElements = new ArrayList<>();
+            classToElements.put(classElement, classElements);
+        }
+        if (!classElements.contains(element)) {
+            classElements.add(element);
+        }
+    }
+
+    private String getPackage(Element element) {
+        return mProcessingUtils.getElementUtils()
+                .getPackageOf(element)
+                .getQualifiedName()
+                .toString();
+    }
 }

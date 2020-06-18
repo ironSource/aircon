@@ -25,15 +25,19 @@ import com.ironsource.aura.aircon.common.annotations.config.StringSetConfig;
 import com.ironsource.aura.aircon.common.annotations.config.TextConfig;
 import com.ironsource.aura.aircon.common.annotations.config.TimeConfig;
 import com.ironsource.aura.aircon.common.annotations.config.UrlConfig;
+import com.ironsource.aura.aircon.common.utils.Consts;
 import com.ironsource.aura.aircon.sample.BuildConfig;
 import com.ironsource.aura.aircon.sample.LabelConfig;
 import com.ironsource.aura.aircon.sample.R;
+import com.ironsource.aura.aircon.sample.StringListConfig;
 import com.ironsource.aura.aircon.sample.config.model.ImageLocation;
 import com.ironsource.aura.aircon.sample.config.model.Label;
 import com.ironsource.aura.aircon.sample.config.model.RemoteObject;
 import com.ironsource.aura.aircon.sample.config.model.TextLocation;
 import com.ironsource.aura.aircon.source.FireBaseConfigSource;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,51 +46,51 @@ import java.util.Map;
 @SuppressLint("MissingAnnotation")
 public interface RemoteConfigs {
 
-	@Source(FireBaseConfigSource.class)
-	@FeatureRemoteConfig
-	interface SomeCoolFeature {
+    @Source(FireBaseConfigSource.class)
+    @FeatureRemoteConfig
+    interface SomeCoolFeature {
 
-		@DefaultRes(R.bool.some_bool)
-		@BooleanConfig
-		String ENABLED = "enabled";
+        @DefaultRes(R.bool.some_bool)
+        @BooleanConfig
+        String ENABLED = "enabled";
 
-		@DefaultConfig(ENABLED)
-		@BooleanConfig
-		String SOME_FLAG = "someFlag";
+        @DefaultConfig(ENABLED)
+        @BooleanConfig
+        String SOME_FLAG = "someFlag";
 
-		@Mutable
-		@DefaultRes(R.string.app_name)
-		@TextConfig(enforceNonEmpty = true)
-		String LABEL = "label";
+        @Mutable
+        @DefaultRes(R.string.app_name)
+        @TextConfig(enforceNonEmpty = true)
+        String LABEL = "label";
 
-		@DefaultRes(R.integer.some_int)
-		@IntConfig(minValue = 5)
-		String SOME_INT = "someInt";
+        @DefaultRes(R.integer.some_int)
+        @IntConfig(minValue = 5)
+        String SOME_INT = "someInt";
 
-		@DefaultRes(R.integer.some_int)
-		@LongConfig(minValue = 0, minValueFallbackPolicy = RangeFallbackPolicy.RANGE_VALUE)
-		String SOME_LONG = "someLong";
+        @DefaultRes(R.integer.some_int)
+        @LongConfig(minValue = 0, minValueFallbackPolicy = RangeFallbackPolicy.RANGE_VALUE)
+        String SOME_LONG = "someLong";
 
-		@FloatConfig(defaultValue = 1.5f, maxValue = 2.5f, maxValueFallbackPolicy = RangeFallbackPolicy.RANGE_VALUE)
-		String SOME_FLOAT = "someFloat";
+        @FloatConfig(defaultValue = 1.5f, maxValue = 2.5f, maxValueFallbackPolicy = RangeFallbackPolicy.RANGE_VALUE)
+        String SOME_FLOAT = "someFloat";
 
-		@TimeConfig(defaultValue = 0, minValue = 36000, maxValue = 360000000, minValueFallbackPolicy = RangeFallbackPolicy.DEFAULT, maxValueFallbackPolicy = RangeFallbackPolicy.RANGE_VALUE)
-		String SOME_DURATION = "someDuration";
+        @TimeConfig(defaultValue = 0, minValue = 36000, maxValue = 360000000, minValueFallbackPolicy = RangeFallbackPolicy.DEFAULT, maxValueFallbackPolicy = RangeFallbackPolicy.RANGE_VALUE)
+        String SOME_DURATION = "someDuration";
 
-		@StringConfig(defaultValue = "test")
-		String SOME_STRING = "someString";
+        @StringConfig(defaultValue = "test")
+        String SOME_STRING = "someString";
 
-		@Mutable
-		@IntEnumConfig(defaultValue = 2, randomizerValue = 3, enumClass = TextLocation.class)
-		String TEXT_LOCATION = "textLocation";
+        @Mutable
+        @IntEnumConfig(defaultValue = 2, randomizerValue = 3, enumClass = TextLocation.class)
+        String TEXT_LOCATION = "textLocation";
 
-		@Mutable
-		@StringEnumConfig(defaultValue = "top", enumClass = ImageLocation.class)
-		String IMAGE_LOCATION = "imageLocation";
+        @Mutable
+        @StringEnumConfig(defaultValue = "top", enumClass = ImageLocation.class)
+        String IMAGE_LOCATION = "imageLocation";
 
-		@Mutable
-		@JsonConfig(defaultValue = "{\"int\":2, \"str\":\"test\"}", type = RemoteObject.class)
-		String SOME_JSON = "someJson";
+        @Mutable
+        @JsonConfig(defaultValue = "{\"int\":2, \"str\":\"test\"}", type = RemoteObject.class)
+        String SOME_JSON = "someJson";
 
 		@Mutable
 		@DefaultRes(R.color.colorAccent)
@@ -97,41 +101,59 @@ public interface RemoteConfigs {
 		@UrlConfig(defaultValue = "")
 		String SOME_URL = "someUrl";
 
-		@StringSetConfig(defaultValue = {"1", "2"})
-		String SOME_STRING_SET = "someStringSet";
+        @StringSetConfig(defaultValue = {"1", "2"})
+        String SOME_STRING_SET = "someStringSet";
 
-		@JsonConfig(defaultValue = "", type = Map.class, genericTypes = {String.class, Integer.class})
-		String SOME_GENERIC_JSON = "someGenericJson";
+        @JsonConfig(defaultValue = "", type = Map.class, genericTypes = {String.class, Integer.class})
+        String SOME_GENERIC_JSON = "someGenericJson";
 
-		@ConfigGroup(value = {SOME_INT, SOME_STRING})
-		String COOL_GROUP = "coolGroup";
+        @ConfigGroup(value = {SOME_INT, SOME_STRING})
+        String COOL_GROUP = "coolGroup";
 
-		@DefaultRes(R.string.app_name)
-		@LabelConfig(invalidValues = {"invalid1", "invalid2"})
-		String SOME_CUSTOM_LABEL = "someCustomLabel";
+        @DefaultRes(R.string.app_name)
+        @LabelConfig(invalidValues = {"invalid1", "invalid2"})
+        String SOME_CUSTOM_LABEL = "someCustomLabel";
 
-		class Validators {
+        @StringListConfig(defaultValue = Consts.NULL_STRING)
+        String SOME_STRING_LIST = "someStringList";
 
-			@ConfigValidator(SOME_URL)
-			static boolean isSomeUrlValid(String val) {
-				return val.startsWith("https");
-			}
-		}
+        class Validators {
 
-		class DefaultsProvider {
+            @ConfigValidator(SOME_URL)
+            static boolean isSomeUrlValid(String val) {
+                return val.startsWith("https");
+            }
 
-			@ConfigDefaultValueProvider(SOME_URL)
-			static String getSomeUrlDefault() {
-				return BuildConfig.DEBUG ? "https://debug-url.com" : "https://release-url.com";
-			}
-		}
+            @ConfigValidator(SOME_STRING_LIST)
+            static boolean isSomeStringListValid(Object list) {
+                return true;
+            }
+        }
 
-		class Adapters {
+        class DefaultsProvider {
 
-			@ConfigAdapter(LABEL)
-			static Label processLabel(String val) {
-				return Label.from(val);
-			}
-		}
-	}
+            @ConfigDefaultValueProvider(SOME_URL)
+            static String getSomeUrlDefault() {
+                return BuildConfig.DEBUG ? "https://debug-url.com" : "https://release-url.com";
+            }
+
+            @ConfigDefaultValueProvider(SOME_STRING_LIST)
+            static List<String> getSomeStringListDefault() {
+                return Arrays.asList();
+            }
+        }
+
+        class Adapters {
+
+            @ConfigAdapter(LABEL)
+            static Label processLabel(String val) {
+                return Label.from(val);
+            }
+
+            @ConfigAdapter(SOME_STRING_LIST)
+            static List<String> processSomeList(List<String> list) {
+                return list;
+            }
+        }
+    }
 }

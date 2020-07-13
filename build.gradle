@@ -1,15 +1,21 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+
+    ext.kotlin_version = '1.4-M3'
     
     repositories {
         google()
         jcenter()
+        maven {
+            url "https://dl.bintray.com/kotlin/kotlin-eap/"
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.3.0'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         classpath 'com.google.gms:google-services:4.2.0'  // Google Services plugin
 
@@ -24,6 +30,10 @@ allprojects {
         jcenter()
 
         maven {
+            url "https://dl.bintray.com/kotlin/kotlin-eap/"
+        }
+
+        maven {
             url  "https://dl.bintray.com/ironsource-aura/AirCon"
         }
     }
@@ -35,9 +45,7 @@ task clean(type: Delete) {
 
 task publishSdk {
     dependsOn 'clean'
-    dependsOn 'aircon-common:bintrayUpload'
-    dependsOn 'aircon-compiler:bintrayUpload'
     dependsOn 'aircon:bintrayUpload'
-    dependsOn 'firebase-source:bintrayUpload'
-    dependsOn 'gson-converter:bintrayUpload'
+//    dependsOn 'firebase-source:bintrayUpload'
+//    dependsOn 'gson-converter:bintrayUpload'
 }

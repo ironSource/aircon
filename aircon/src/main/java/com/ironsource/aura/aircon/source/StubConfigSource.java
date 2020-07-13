@@ -1,7 +1,5 @@
 package com.ironsource.aura.aircon.source;
 
-import com.ironsource.aura.aircon.common.ConfigSource;
-
 import java.util.Set;
 
 /**

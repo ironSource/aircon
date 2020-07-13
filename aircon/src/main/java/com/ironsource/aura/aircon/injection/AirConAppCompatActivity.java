@@ -1,9 +1,10 @@
 package com.ironsource.aura.aircon.injection;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.ironsource.aura.aircon.AirCon;
 

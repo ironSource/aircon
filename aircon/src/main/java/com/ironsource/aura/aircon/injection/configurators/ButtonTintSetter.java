@@ -1,7 +1,7 @@
 package com.ironsource.aura.aircon.injection.configurators;
 
 import android.content.res.ColorStateList;
-import android.support.v4.widget.CompoundButtonCompat;
+import androidx.core.widget.CompoundButtonCompat;
 import android.widget.CompoundButton;
 
 /**

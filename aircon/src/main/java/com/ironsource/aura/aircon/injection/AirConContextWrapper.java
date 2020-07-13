@@ -3,8 +3,8 @@ package com.ironsource.aura.aircon.injection;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -26,8 +26,8 @@ import java.lang.reflect.Field;
  * {@link android.R.attr#background}
  * {@link android.R.attr#indeterminateTint}
  * {@link android.R.attr#backgroundTint}
- * {@link android.support.v7.appcompat.R.attr#backgroundTint}
- * {@link android.support.v7.appcompat.R.attr#titleTextColor}
+ * {@link androidx.appcompat.appcompat.R.attr#backgroundTint}
+ * {@link androidx.appcompat.appcompat.R.attr#titleTextColor}
  * {@link android.R.attr#textColorHighlight}
  * {@link android.R.attr#tint}
  * {@link android.R.attr#text}

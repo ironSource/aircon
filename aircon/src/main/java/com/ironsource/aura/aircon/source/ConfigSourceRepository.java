@@ -1,12 +1,9 @@
 package com.ironsource.aura.aircon.source;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.ironsource.aura.aircon.SdkContext;
-import com.ironsource.aura.aircon.common.ConfigSource;
-import com.ironsource.aura.aircon.common.IdentifiableConfigSource;
-import com.ironsource.aura.aircon.common.annotations.Source;
 import com.ironsource.aura.aircon.logging.Logger;
 
 import java.util.HashMap;
@@ -44,7 +41,6 @@ public class ConfigSourceRepository {
 
 	/**
 	 * Add a config source.
-	 * A config source can be assigned to a config using the {@link Source} annotation.
 	 * A config can have only one instance of the same class.
 	 * For adding multiple config sources of the same class use {@link #addIdentifiableSource(IdentifiableConfigSource)}.
 	 *

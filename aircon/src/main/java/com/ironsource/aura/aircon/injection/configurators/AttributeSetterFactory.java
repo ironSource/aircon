@@ -6,7 +6,7 @@ package com.ironsource.aura.aircon.injection.configurators;
 public class AttributeSetterFactory {
 
 	public static AttributeSetter create(final int attrName) {
-		if (attrName == android.R.attr.buttonTint || attrName == android.support.v7.appcompat.R.attr.buttonTint) {
+		if (attrName == android.R.attr.buttonTint || attrName == androidx.appcompat.R.attr.buttonTint) {
 			return new ButtonTintSetter();
 		}
 		else if (attrName == android.R.attr.drawableTint) {
@@ -24,7 +24,7 @@ public class AttributeSetterFactory {
 		else if (attrName == android.R.attr.backgroundTint) {
 			return new BackgroundTintColorSetter();
 		}
-		else if (attrName == android.support.v7.appcompat.R.attr.backgroundTint) {
+		else if (attrName == androidx.appcompat.R.attr.backgroundTint) {
 			return new CompatBackgroundTintColorSetter();
 		}
 		else if (attrName == android.R.attr.textColorHighlight) {
@@ -33,7 +33,7 @@ public class AttributeSetterFactory {
 		else if (attrName == android.R.attr.tint) {
 			return new TintColorSetter();
 		}
-		else if (attrName == android.support.v7.appcompat.R.attr.titleTextColor) {
+		else if (attrName == androidx.appcompat.R.attr.titleTextColor) {
 			return new TitleTextColorSetter();
 		}
 		else if (attrName == android.R.attr.text) {

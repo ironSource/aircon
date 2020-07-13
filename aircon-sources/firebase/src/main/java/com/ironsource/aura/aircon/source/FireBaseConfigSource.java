@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.ironsource.aura.aircon.AirCon;
-import com.ironsource.aura.aircon.common.ConfigSource;
 import com.ironsource.aura.aircon.properties.AbstractProperty;
 import com.ironsource.aura.aircon.properties.BooleanProperty;
 import com.ironsource.aura.aircon.properties.FloatProperty;

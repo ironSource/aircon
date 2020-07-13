@@ -1,9 +1,8 @@
 package com.ironsource.aura.aircon.source;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.ironsource.aura.aircon.AirCon;
-import com.ironsource.aura.aircon.common.ConfigSource;
 
 import java.util.Set;
 

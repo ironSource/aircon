@@ -2,7 +2,7 @@ package com.ironsource.aura.aircon.utils;
 
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.webkit.URLUtil;
 
@@ -49,7 +49,7 @@ public class AirConUtils {
     }
 
     public static String colorIntToHex(ColorInt color) {
-        return "#" + Integer.toHexString(color.get());
+        return "#" + Integer.toHexString(color.getValue());
     }
 
     public static String toJson(Object object, @NonNull JsonConverter converter) {

@@ -1,7 +1,7 @@
 package com.ironsource.aura.aircon.injection;
 
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
+import androidx.fragment.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.view.View;
 

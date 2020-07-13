@@ -1,8 +1,6 @@
 package com.ironsource.aura.aircon.source;
 
-import android.support.annotation.NonNull;
-
-import com.ironsource.aura.aircon.common.IdentifiableConfigSource;
+import androidx.annotation.NonNull;
 
 /**
  * A factory for {@link IdentifiableConfigSource}.

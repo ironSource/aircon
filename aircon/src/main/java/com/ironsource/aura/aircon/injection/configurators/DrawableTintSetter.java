@@ -3,7 +3,7 @@ package com.ironsource.aura.aircon.injection.configurators;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.v4.graphics.drawable.DrawableCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import android.util.TypedValue;
 import android.widget.TextView;
 

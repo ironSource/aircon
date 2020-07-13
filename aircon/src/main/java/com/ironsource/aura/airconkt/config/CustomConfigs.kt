@@ -14,13 +14,21 @@ class UrlConfig : StringConfig() {
 
 class TextConfig : StringConfig()
 
-class ColorConfig : ResourcedConfig<String, ColorInt>() {
+class ColorConfig : ResourcedConfig<ColorConfig, String, ColorInt>() {
     override fun resolve(resources: Resources, resource: Resource): String {
-        return AirConUtils.colorIntToHex(ColorInt(resources.getColor(resource.resId)))
+        return asRaw(ColorInt(resources.getColor(resource.resId)))
     }
 
     override fun getRawValue(source: ConfigSource, key: String): String? {
         return source.getString(key)
+    }
+
+    override fun setRawValue(source: ConfigSource, key: String, value: String) {
+        source.putString(key, value)
+    }
+
+    override fun asRaw(value: ColorInt): String {
+        return AirConUtils.colorIntToHex(value)
     }
 
     override fun adapt(value: String): ColorInt {

@@ -6,10 +6,11 @@ import com.ironsource.aura.airconkt.source.FireBaseConfigSource
 object CoolKtConfig : FeatureRemoteConfig {
     override val source = FireBaseConfigSource::class
 
-    val someInt by IntConfig()
-            .defaultValue(5)
+    var someInt by IntConfig()
+            .key("")
+            .source(FireBaseConfigSource::class)
             .validated { it > 7 }
-            .adapted { "$it" }
+            .adaptedMutable({ "" }, { 5 })
 
     val someLong by LongConfig()
             .defaultValue(99999999999999L)

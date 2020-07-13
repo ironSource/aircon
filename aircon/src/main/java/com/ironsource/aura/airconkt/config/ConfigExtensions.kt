@@ -2,22 +2,6 @@ package com.ironsource.aura.airconkt.config
 
 import com.ironsource.aura.airconkt.source.ConfigSource
 
-fun <Raw, Actual> Config<Raw, Actual>.validated(validator: (Raw) -> Boolean): Config<Raw, Actual> {
-    return object : Config<Raw, Actual> by this {
-        override fun isValid(value: Raw): Boolean {
-            return this@validated.isValid(value) && validator(value)
-        }
-    }
-}
-
-fun <Raw, Actual> MutableConfig<Raw, Actual>.validated(validator: (Raw) -> Boolean): MutableConfig<Raw, Actual> {
-    return object : MutableConfig<Raw, Actual> by this {
-        override fun isValid(value: Raw): Boolean {
-            return this@validated.isValid(value) && validator(value)
-        }
-    }
-}
-
 fun <Raw, Actual, Adapted> Config<Raw, Actual>.adapted(adapter: (Actual) -> Adapted): Config<Raw, Adapted> {
     return object : AbstractConfig<Config<Raw, Adapted>, Raw, Adapted>() {
 
@@ -29,7 +13,7 @@ fun <Raw, Actual, Adapted> Config<Raw, Actual>.adapted(adapter: (Actual) -> Adap
     }
 }
 
-// TODO renamed since it clashes with the Config.adapted function, need to rethink
+// TODO renamed since it clashes with the adapted function, need to rethink
 fun <Raw, Actual, Adapted> MutableConfig<Raw, Actual>.adaptedMutable(adapter: (Actual) -> Adapted, serializer: (Adapted) -> Raw): MutableConfig<Raw, Adapted> {
     return object : AbstractMutableConfig<MutableConfig<Raw, Adapted>, Raw, Adapted>() {
 

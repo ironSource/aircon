@@ -3,13 +3,10 @@ package com.ironsource.aura.airconkt.sample;
 import android.app.Application;
 import android.util.Log;
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
-import com.ironsource.aura.airconkt.AirConKt;
 import com.ironsource.aura.airconkt.AirConConfiguration;
+import com.ironsource.aura.airconkt.AirConKt;
 import com.ironsource.aura.airconkt.converter.gson.GsonConverter;
 import com.ironsource.aura.airconkt.logging.Logger;
-import com.ironsource.aura.airconkt.source.FireBaseConfigSource;
 
 /**
  * Created on 11/9/2018.
@@ -27,15 +24,16 @@ public class App
 
 	private void initAirConSdk() {
 		final AirConKt airConKt = AirConKt.get();
-		final FirebaseRemoteConfig firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-		firebaseRemoteConfig.setConfigSettings(new FirebaseRemoteConfigSettings.Builder().setDeveloperModeEnabled(BuildConfig.DEBUG)
-		                                                                                 .build());
-		final FireBaseConfigSource configSource = new FireBaseConfigSource(this, firebaseRemoteConfig);
-		airConKt.init(new AirConConfiguration.Builder(this).enableXmlInjection(R.attr.class, configSource)
+//		final FirebaseRemoteConfig firebaseRemoteConfig = FirebaseRemotegetInstance();
+//		firebaseRemotesetConfigSettings(new FirebaseRemoteConfigSettings.Builder().setDeveloperModeEnabled(Build.DEBUG)
+//		                                                                                 .build());
+//		final FireBaseConfigSource configSource = new FireBaseConfigSource(this, firebaseRemoteConfig);
+		airConKt.init(new AirConConfiguration.Builder(this)
+//				.enableXmlInjection(R.attr.class, configSource)
 		                                                 .setJsonConverter(new GsonConverter())
 		                                                 .setLogger(getLogger())
 		                                                 .setLoggingEnabled(BuildConfig.DEBUG)
-		                                                 .addConfigSource(configSource)
+//		                                                 .addConfigSource(configSource)
 		                                                 .build());
 	}
 

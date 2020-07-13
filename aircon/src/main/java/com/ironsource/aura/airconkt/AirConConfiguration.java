@@ -162,7 +162,7 @@ public class AirConConfiguration {
         }
 
         /**
-         * Set a json converter to be used with @JsonConfig.
+         * Set a json converter to be used with @Json
          *
          * @param jsonConverter json converter
          * @return this {@link Builder} instance.

@@ -8,9 +8,10 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-// TODO - nullable types
-// TODO - Enum types, json type, duration type
-// TODO - constraints (min, max..)
+// TODO - nullable types (currently string can be used with String? property but default value cannot be null)
+// TODO - Enum types, duration type
+// TODO - constraints (min, max..) fallback policy
+// TODO - allow changing default value after config is adapted?
 // TODO - reconsider hierarchy here (maybe simple config interface should not contain adapt method)
 interface Config<Raw, Actual> : ReadOnlyProperty<FeatureRemoteConfig, Actual> {
     fun getDefault(): Actual
@@ -30,6 +31,8 @@ abstract class AbstractConfig<Conf : Config<Raw, Actual>, Raw, Actual> : Config<
     private lateinit var sourceClass: KClass<out ConfigSource>
 
     protected lateinit var defaultValueProvider: () -> Actual
+
+    private val constraints: MutableList<Constraint<Raw>> = mutableListOf()
 
     fun key(key: String): Conf {
         confKey = key
@@ -51,6 +54,21 @@ abstract class AbstractConfig<Conf : Config<Raw, Actual>, Raw, Actual> : Config<
         return this as Conf
     }
 
+    fun constraint(constraint: Constraint<Raw>): Conf {
+        constraints.add(constraint)
+        return this as Conf
+    }
+
+    fun constraint(constraint: (Raw) -> Boolean): Conf {
+        constraints.add(object : Constraint<Raw> {
+            override fun isValid(value: Raw): Boolean {
+                return constraint(value)
+            }
+        })
+
+        return this as Conf
+    }
+
     override fun getValue(thisRef: FeatureRemoteConfig, property: KProperty<*>): Actual {
         val source = resolveSource(thisRef)
 
@@ -66,6 +84,13 @@ abstract class AbstractConfig<Conf : Config<Raw, Actual>, Raw, Actual> : Config<
         if (!isValid(value)) {
             log("$source - Invalid value found in remote, using *default* value \"$key\" -> $defaultValue")
             return defaultValue
+        }
+
+        constraints.forEach {
+            if (!it.isValid(value)) {
+                log("$source - value failed to meet constraint $it, using *default* value \"$key\" -> $defaultValue")
+                return defaultValue
+            }
         }
 
         // TODO - Adapt cannot return null on failure, need to find other way represent adaption failure

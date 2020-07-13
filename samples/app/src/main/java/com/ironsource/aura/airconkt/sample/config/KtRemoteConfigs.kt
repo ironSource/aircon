@@ -7,10 +7,7 @@ object CoolKtConfig : FeatureRemoteConfig {
     override val source = FireBaseConfigSource::class
 
     var someInt by IntConfig()
-            .key("")
-            .source(FireBaseConfigSource::class)
-            .validated { it > 7 }
-            .adaptedMutable({ "" }, { 5 })
+            .defaultValue(20)
 
     val someLong by LongConfig()
             .defaultValue(99999999999999L)
@@ -27,4 +24,9 @@ object CoolKtConfig : FeatureRemoteConfig {
     val someNullableString by StringConfig()
 
     val someList by JsonConfig.create<List<String>>()
+
+    val test by IntConfig()
+            .constraint { it > 6 }
+            .range(min = 15)
+            .adapted { "" }
 }

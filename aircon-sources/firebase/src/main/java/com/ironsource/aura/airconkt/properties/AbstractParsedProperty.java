@@ -6,8 +6,8 @@ package com.ironsource.aura.airconkt.properties;
 public abstract class AbstractParsedProperty <T>
 		extends AbstractProperty<T> {
 
-	public AbstractParsedProperty(final String key, final T defaultValue) {
-		super(key, defaultValue);
+	public AbstractParsedProperty(final String key) {
+		super(key);
 	}
 
 	@Override

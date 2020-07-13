@@ -8,21 +8,15 @@ import android.content.SharedPreferences;
 public abstract class AbstractProperty <T> {
 
 	private String mKey;
-	private T      mDefaultValue;
 
-	public AbstractProperty(final String key, final T defaultValue) {
+	public AbstractProperty(final String key) {
 		mKey = key;
-		mDefaultValue = defaultValue;
 	}
 
 	public abstract T fromPrefs(final SharedPreferences overridePrefs);
 
 	public String getKey() {
 		return mKey;
-	}
-
-	public T getDefaultValue() {
-		return mDefaultValue;
 	}
 
 	public T asType(String property) {

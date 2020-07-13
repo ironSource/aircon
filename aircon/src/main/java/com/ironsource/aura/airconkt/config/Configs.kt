@@ -6,9 +6,15 @@ import com.ironsource.aura.airconkt.source.ConfigSource
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 
-// RawODO - nullable types
+// TODO - nullable types
+// TODO - @Mutable
+// TODO - Enum types, json type, duration type
+// TODO - constraints (min, max..)
 interface Config<Raw, Actual> : ReadOnlyProperty<FeatureRemoteConfig, Actual> {
-    fun getDefault(): Raw
+    fun getDefault(): Actual
+    fun getRawValue(source: ConfigSource, key: String): Raw?
+    fun isValid(value: Raw): Boolean
+    fun adapt(value: Raw): Actual
 }
 
 abstract class AbstractConfig<Raw, Actual> : Config<Raw, Actual> {
@@ -16,19 +22,17 @@ abstract class AbstractConfig<Raw, Actual> : Config<Raw, Actual> {
     lateinit var key: String
     lateinit var source: KClass<out ConfigSource>
 
-    protected lateinit var defaultValueProvider: () -> Raw
+    protected lateinit var defaultValueProvider: () -> Actual
 
-    fun defaultValue(value: Raw): AbstractConfig<Raw, Actual> {
+    fun defaultValue(value: Actual): AbstractConfig<Raw, Actual> {
         defaultValueProvider = { value }
         return this
     }
 
-    fun defaultValue(provider: () -> Raw): AbstractConfig<Raw, Actual> {
+    fun defaultValue(provider: () -> Actual): AbstractConfig<Raw, Actual> {
         defaultValueProvider = provider
         return this
     }
-
-    override fun getDefault() = defaultValueProvider()
 
     override fun getValue(thisRef: FeatureRemoteConfig, property: kotlin.reflect.KProperty<*>): Actual {
         val sourceClass = if (::source.isInitialized) source else thisRef.source
@@ -37,22 +41,36 @@ abstract class AbstractConfig<Raw, Actual> : Config<Raw, Actual> {
 
         val source = AirConKt.get()!!.configSourceRepository.getSource(sourceClass.java)
 
-        var value = getValue(source, key, defaultValue)
-        value = if (value != null && isValid(value)) value else defaultValue
-        return adapt(value)
+        val value = getRawValue(source, key)
+        if (value == null) {
+            log("$sourceClass - Value not found in remote, using *default* value \"$key\" -> $defaultValue")
+            return defaultValue
+        }
+
+        if (!isValid(value)) {
+            log("$sourceClass - Invalid value found in remote, using *default* value \"$key\" -> $defaultValue")
+            return defaultValue
+        }
+
+        // TODO - Adapt cannot return null on failure, need to find other way represent adaption failure
+        val adaptedValue = adapt(value)
+        if (adaptedValue == null) {
+            log("$sourceClass - Failed to adapt value found in remote, using *default* value \"$key\" -> $defaultValue")
+            return defaultValue
+        }
+
+        return adaptedValue
     }
 
-    protected open fun isValid(value: Raw) = true
-
-    abstract fun getValue(source: ConfigSource, key: String, defaultValue: Raw): Raw?
-
-    abstract fun adapt(value: Raw): Actual
+    override fun getDefault() = defaultValueProvider()
 }
 
 abstract class ResourcedConfig<Raw, Actual> : AbstractConfig<Raw, Actual>() {
 
     fun defaultValue(resource: Resource): ResourcedConfig<Raw, Actual> {
-        defaultValueProvider = { resolve(AirConKt.get()!!.context.resources, resource) }
+        defaultValueProvider = {
+            adapt(resolve(AirConKt.get()!!.context.resources, resource))
+        }
         return this
     }
 
@@ -60,6 +78,8 @@ abstract class ResourcedConfig<Raw, Actual> : AbstractConfig<Raw, Actual>() {
 }
 
 abstract class SimpleConfig<Raw> : AbstractConfig<Raw, Raw>() {
+    override fun isValid(value: Raw) = true
+
     override fun adapt(value: Raw) = value
 }
 
@@ -78,7 +98,7 @@ class IntConfig : SimpleResourcedConfig<Int>() {
         return resources.getInteger(resource.resId)
     }
 
-    override fun getValue(source: ConfigSource, key: String, defaultValue: Int) = source.getInteger(key, defaultValue)
+    override fun getRawValue(source: ConfigSource, key: String) = source.getInteger(key)
 }
 
 class LongConfig : SimpleResourcedConfig<Long>() {
@@ -86,16 +106,16 @@ class LongConfig : SimpleResourcedConfig<Long>() {
         return resources.getInteger(resource.resId).toLong()
     }
 
-    override fun getValue(source: ConfigSource, key: String, defaultValue: Long) = source.getLong(key, defaultValue)
+    override fun getRawValue(source: ConfigSource, key: String) = source.getLong(key)
 }
 
 class FloatConfig : SimpleResourcedConfig<Float>() {
     override fun resolve(resources: Resources, resource: Resource): Float {
-        //RawODO
+        //TODO
         return 0f
     }
 
-    override fun getValue(source: ConfigSource, key: String, defaultValue: Float) = source.getFloat(key, defaultValue)
+    override fun getRawValue(source: ConfigSource, key: String) = source.getFloat(key)
 }
 
 open class StringConfig : SimpleResourcedConfig<String>() {
@@ -103,7 +123,7 @@ open class StringConfig : SimpleResourcedConfig<String>() {
         return resources.getString(resource.resId)
     }
 
-    override fun getValue(source: ConfigSource, key: String, defaultValue: String) = source.getString(key, defaultValue)
+    override fun getRawValue(source: ConfigSource, key: String) = source.getString(key)
 }
 
 class BooleanConfig : SimpleResourcedConfig<Boolean>() {
@@ -111,6 +131,12 @@ class BooleanConfig : SimpleResourcedConfig<Boolean>() {
         return resources.getBoolean(resource.resId)
     }
 
-    override fun getValue(source: ConfigSource, key: String, defaultValue: Boolean) =
-            source.getBoolean(key, defaultValue)
+    override fun getRawValue(source: ConfigSource, key: String) =
+            source.getBoolean(key)
+}
+
+private fun log(msg: String) {
+    AirConKt.get()
+            .logger
+            .v(msg)
 }

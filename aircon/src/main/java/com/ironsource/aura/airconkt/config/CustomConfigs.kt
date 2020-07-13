@@ -19,9 +19,15 @@ class ColorConfig : ResourcedConfig<String, ColorInt>() {
         return AirConUtils.colorIntToHex(ColorInt(resources.getColor(resource.resId)))
     }
 
-    override fun getValue(source: ConfigSource, key: String, defaultValue: String): String? {
-        return source.getString(key, defaultValue)
+    override fun getRawValue(source: ConfigSource, key: String): String? {
+        return source.getString(key)
     }
 
-    override fun adapt(value: String) = AirConUtils.hexToColorInt(value)
+    override fun adapt(value: String): ColorInt {
+        return AirConUtils.hexToColorInt(value)
+    }
+
+    override fun isValid(value: String): Boolean {
+        return AirConUtils.hexToColorInt(value) != null
+    }
 }

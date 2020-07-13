@@ -1,25 +1,22 @@
 package com.ironsource.aura.airconkt.config
 
-import kotlin.reflect.KProperty
+import com.ironsource.aura.airconkt.source.ConfigSource
 
-fun <T, S> Config<T, S>.validated(validator: (T) -> Boolean): Config<T, S> {
-    return object : Config<T, S> by this {
-        override fun getValue(thisRef: FeatureRemoteConfig, property: KProperty<*>): S {
-            val value = this@validated.getValue(thisRef, property)
-            //TODO
-            return value;
+fun <Raw, Actual> Config<Raw, Actual>.validated(validator: (Raw) -> Boolean): Config<Raw, Actual> {
+    return object : Config<Raw, Actual> by this {
+        override fun isValid(value: Raw): Boolean {
+            return this@validated.isValid(value) && validator(value)
         }
     }
 }
 
-fun <T, S, S2> Config<T, S>.adapted(adapter: (S) -> S2): Config<T, S2> {
-    return object : Config<T, S2> {
-        override fun getValue(thisRef: FeatureRemoteConfig, property: KProperty<*>): S2 {
-            return adapter(this@adapted.getValue(thisRef, property))
-        }
+fun <Raw, Actual, Adapted> Config<Raw, Actual>.adapted(adapter: (Actual) -> Adapted): Config<Raw, Adapted> {
+    return object : AbstractConfig<Raw, Adapted>() {
 
-        override fun getDefault(): T {
-            return this@adapted.getDefault()
-        }
+        override fun getRawValue(source: ConfigSource, key: String) = this@adapted.getRawValue(source, key)
+
+        override fun adapt(value: Raw) = adapter(this@adapted.adapt(value))
+
+        override fun isValid(value: Raw) = this@adapted.isValid(value)
     }
 }

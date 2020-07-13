@@ -11,9 +11,6 @@ import com.ironsource.aura.airconkt.properties.FloatProperty;
 import com.ironsource.aura.airconkt.properties.IntegerProperty;
 import com.ironsource.aura.airconkt.properties.LongProperty;
 import com.ironsource.aura.airconkt.properties.StringProperty;
-import com.ironsource.aura.airconkt.properties.StringSetProperty;
-
-import java.util.Set;
 
 /**
  * Created on 4/25/2019.
@@ -26,25 +23,14 @@ public class FireBaseConfigSource
     private final FirebaseRemoteConfig mRemoteConfig;
     private final SharedPreferences mOverridePrefs;
 
-    private int mFirstLoadTimeMillis;
-
     public FireBaseConfigSource(Context context, FirebaseRemoteConfig remoteConfig) {
         mRemoteConfig = remoteConfig;
         mOverridePrefs = context.getSharedPreferences(PREF_OVERRIDES, Context.MODE_PRIVATE);
     }
 
-    public void setFirstLoadTimeMillis(final int firstLoadTimeMillis) {
-        mFirstLoadTimeMillis = firstLoadTimeMillis;
-    }
-
     @Override
-    public long getFirstLoadTimeMillis() {
-        return mFirstLoadTimeMillis;
-    }
-
-    @Override
-    public Integer getInteger(final String key, final Integer defaultValue) {
-        return get(new IntegerProperty(key, defaultValue));
+    public Integer getInteger(final String key) {
+        return get(new IntegerProperty(key));
     }
 
     @Override
@@ -59,13 +45,8 @@ public class FireBaseConfigSource
     }
 
     @Override
-    public boolean isIntegerConfigured(final String key) {
-        return getInteger(key, 0) != null;
-    }
-
-    @Override
-    public Long getLong(final String key, final Long defaultValue) {
-        return get(new LongProperty(key, defaultValue));
+    public Long getLong(final String key) {
+        return get(new LongProperty(key));
     }
 
     @Override
@@ -80,13 +61,8 @@ public class FireBaseConfigSource
     }
 
     @Override
-    public boolean isLongConfigured(final String key) {
-        return getLong(key, null) != null;
-    }
-
-    @Override
-    public Float getFloat(final String key, final Float defaultValue) {
-        return get(new FloatProperty(key, defaultValue));
+    public Float getFloat(final String key) {
+        return get(new FloatProperty(key));
     }
 
     @Override
@@ -101,13 +77,8 @@ public class FireBaseConfigSource
     }
 
     @Override
-    public boolean isFloatConfigured(final String key) {
-        return getFloat(key, null) != null;
-    }
-
-    @Override
-    public Boolean getBoolean(final String key, final Boolean defaultValue) {
-        return get(new BooleanProperty(key, defaultValue));
+    public Boolean getBoolean(final String key) {
+        return get(new BooleanProperty(key));
     }
 
     @Override
@@ -122,13 +93,8 @@ public class FireBaseConfigSource
     }
 
     @Override
-    public boolean isBooleanConfigured(final String key) {
-        return getBoolean(key, null) != null;
-    }
-
-    @Override
-    public String getString(final String key, final String defaultValue) {
-        return get(new StringProperty(key, defaultValue));
+    public String getString(final String key) {
+        return get(new StringProperty(key));
     }
 
     @Override
@@ -139,39 +105,8 @@ public class FireBaseConfigSource
     }
 
     @Override
-    public boolean isStringConfigured(final String key) {
-        return getString(key, null) != null;
-    }
-
-    @Override
-    public Set<String> getStringSet(final String key, final Set<String> defaultValue) {
-        return get(new StringSetProperty(key, defaultValue));
-    }
-
-    @Override
-    public void putStringSet(final String key, final Set<String> value) {
-        final SharedPreferences.Editor edit = mOverridePrefs.edit();
-        if (value != null) {
-            edit.putStringSet(key, value);
-        } else {
-            edit.remove(key);
-        }
-        edit.apply();
-    }
-
-    @Override
-    public boolean isStringSetConfigured(final String key) {
-        return getStringSet(key, null) != null;
-    }
-
-    @Override
-    public Object getObject(String key, Object defaultValue) {
+    public Object getObject(String key) {
         return null;
-    }
-
-    @Override
-    public boolean isObjectConfigured(String key) {
-        return false;
     }
 
     private <T> T get(AbstractProperty<T> property) {

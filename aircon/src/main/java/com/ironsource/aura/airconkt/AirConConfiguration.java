@@ -243,12 +243,12 @@ public class AirConConfiguration {
 
         @Override
         public Integer getColor(final String attrName) {
-            return mConfigSource.getInteger(attrName, null);
+            return mConfigSource.getInteger(attrName);
         }
 
         @Override
         public String getString(final String attrName) {
-            return mConfigSource.getString(attrName, null);
+            return mConfigSource.getString(attrName);
         }
     }
 }

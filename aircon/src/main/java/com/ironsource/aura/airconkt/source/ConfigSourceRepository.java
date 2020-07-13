@@ -47,7 +47,7 @@ public class ConfigSourceRepository {
 	 * @param configSource config source to add
 	 */
 	public synchronized void addSource(@NonNull ConfigSource configSource) {
-		mConfigSources.put(configSource.getClass(), new ConfigSourceWrapper(configSource));
+		mConfigSources.put(configSource.getClass(), configSource);
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class ConfigSourceRepository {
 	 * @param configSource an identifiable config source
 	 */
 	public synchronized void addIdentifiableSource(@NonNull IdentifiableConfigSource configSource) {
-		mConfigSources.put(configSource.getId(), new ConfigSourceWrapper(configSource));
+		mConfigSources.put(configSource.getId(), configSource);
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class ConfigSourceRepository {
 		}
 
 		//noinspection unchecked - enforced by addIdentifiableSourceFactory() method signature.
-		@NonNull final ConfigSource createdConfigSource = new ConfigSourceWrapper(identifiableConfigSourceFactory.create(sourceId));
+		@NonNull final ConfigSource createdConfigSource = identifiableConfigSourceFactory.create(sourceId);
 		if (identifiableConfigSourceFactory.isSourceReusable()) {
 			mConfigSources.put(sourceId, createdConfigSource);
 		}

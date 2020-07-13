@@ -23,4 +23,8 @@ object CoolKtConfig : FeatureRemoteConfig {
 
     val someBoolean by BooleanConfig()
             .defaultValue(false)
+
+    val someNullableString by StringConfig()
+
+    val someList by JsonConfig.create<List<String>>()
 }

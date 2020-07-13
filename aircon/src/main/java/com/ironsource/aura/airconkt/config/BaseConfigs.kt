@@ -11,6 +11,7 @@ import kotlin.reflect.KProperty
 // TODO - nullable types
 // TODO - Enum types, json type, duration type
 // TODO - constraints (min, max..)
+// TODO - reconsider hierarchy here (maybe simple config interface should not contain adapt method)
 interface Config<Raw, Actual> : ReadOnlyProperty<FeatureRemoteConfig, Actual> {
     fun getDefault(): Actual
     fun getRawValue(source: ConfigSource, key: String): Raw?

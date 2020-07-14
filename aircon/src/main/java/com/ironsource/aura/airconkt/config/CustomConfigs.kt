@@ -15,7 +15,7 @@ private class UrlConfig : StringConfig() {
 
 class TextConfig : StringConfig()
 
-class ColorConfig : ResourcedConfig<ColorConfig, String, ColorInt>() {
+class ColorConfig : ResourcedConfig<String, ColorInt, ColorConfig>() {
     override fun resolve(resources: Resources, resource: Resource): String {
         return asRaw(ColorInt(resources.getColor(resource.resId)))
     }
@@ -41,11 +41,11 @@ class ColorConfig : ResourcedConfig<ColorConfig, String, ColorInt>() {
     }
 }
 
-class JsonConfig<T>(private val type: Class<T>) : ResourcedConfig<JsonConfig<T>, String, T>() {
+class JsonConfig<T>(private val type: Class<T>) : ResourcedConfig<String, T, JsonConfig<T>>() {
 
     companion object {
-        // TODO Can type erasure fuck me here?
-        inline fun <reified T> create(): Config<String, T> = JsonConfig(T::class.java)
+        // TODO Can type erasure fuck me here (if T=List<String>)?
+        inline fun <reified T> create() = JsonConfig(T::class.java)
     }
 
     override fun getRawValue(source: ConfigSource, key: String): String? {

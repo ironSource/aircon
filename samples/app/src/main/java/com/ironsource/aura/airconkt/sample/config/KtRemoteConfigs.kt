@@ -26,7 +26,10 @@ object CoolKtConfig : FeatureRemoteConfig {
     val someList by JsonConfig.create<List<String>>()
 
     val test by IntConfig()
-            .constraint { it > 6 }
+            .constrained { it > 6 }
             .range(min = 15)
             .adapted { "" }
+            .key("2")
+            .key("saf")
+            .defaultValue("")
 }

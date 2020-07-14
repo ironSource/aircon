@@ -3,7 +3,7 @@ package com.ironsource.aura.airconkt.config
 import android.content.res.Resources
 import com.ironsource.aura.airconkt.source.ConfigSource
 
-class IntConfig : SimpleResourcedConfig<IntConfig, Int>() {
+class IntConfig : SimpleResourcedConfig<Int, IntConfig>() {
     override fun resolve(resources: Resources, resource: Resource): Int {
         return resources.getInteger(resource.resId)
     }
@@ -15,7 +15,7 @@ class IntConfig : SimpleResourcedConfig<IntConfig, Int>() {
     }
 }
 
-class LongConfig : SimpleResourcedConfig<LongConfig, Long>() {
+class LongConfig : SimpleResourcedConfig<Long, LongConfig>() {
     override fun resolve(resources: Resources, resource: Resource): Long {
         return resources.getInteger(resource.resId).toLong()
     }
@@ -27,7 +27,7 @@ class LongConfig : SimpleResourcedConfig<LongConfig, Long>() {
     }
 }
 
-class FloatConfig : SimpleResourcedConfig<FloatConfig, Float>() {
+class FloatConfig : SimpleResourcedConfig<Float, FloatConfig>() {
     override fun resolve(resources: Resources, resource: Resource): Float {
         //TODO
         return 0f
@@ -40,7 +40,7 @@ class FloatConfig : SimpleResourcedConfig<FloatConfig, Float>() {
     }
 }
 
-open class StringConfig : SimpleResourcedConfig<StringConfig, String>() {
+open class StringConfig : SimpleResourcedConfig<String, StringConfig>() {
     override fun resolve(resources: Resources, resource: Resource): String {
         return resources.getString(resource.resId)
     }
@@ -52,7 +52,7 @@ open class StringConfig : SimpleResourcedConfig<StringConfig, String>() {
     }
 }
 
-class BooleanConfig : SimpleResourcedConfig<BooleanConfig, Boolean>() {
+class BooleanConfig : SimpleResourcedConfig<Boolean, BooleanConfig>() {
     override fun resolve(resources: Resources, resource: Resource): Boolean {
         return resources.getBoolean(resource.resId)
     }

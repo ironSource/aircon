@@ -1,4 +1,4 @@
-package com.ironsource.aura.airconkt.config
+package com.ironsource.aura.airconkt
 
 import com.ironsource.aura.airconkt.source.ConfigSource
 import kotlin.reflect.KClass

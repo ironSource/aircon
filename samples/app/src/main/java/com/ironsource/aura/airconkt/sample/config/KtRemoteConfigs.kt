@@ -1,9 +1,9 @@
 package com.ironsource.aura.airconkt.sample.config
 
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
-import com.ironsource.aura.airconkt.config.constraint.rangeConstraint
+import com.ironsource.aura.airconkt.config.constraint.maxValue
+import com.ironsource.aura.airconkt.config.constraint.minValue
 import com.ironsource.aura.airconkt.config.intConfig
-import com.ironsource.aura.airconkt.sample.R
 import com.ironsource.aura.airconkt.source.FireBaseConfigSource
 
 object CoolKtConfig : FeatureRemoteConfig {
@@ -29,13 +29,13 @@ object CoolKtConfig : FeatureRemoteConfig {
 //    val someList by JsonConfig.create<List<String>>()
 //
 
-    val test by intConfig {
-        key = ""
-        source = FireBaseConfigSource::class
+    val feature_enabled by intConfig {
         default = 6
-        defaultRes = R.string.app_name
-        defaultProvider { 5 }
-        constraint { it % 2 == 0 }
-        rangeConstraint(min = 5)
+        constraint {
+            acceptIf { it % 2 == 0 }
+            fallbackTo { it + 1 }
+        }
+        minValue = 1
+        maxValue = 10
     }
 }

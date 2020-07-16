@@ -2,14 +2,47 @@ package com.ironsource.aura.airconkt.config.constraint
 
 import com.ironsource.aura.airconkt.config.ReadOnlyConfig
 
-fun <Conf : ReadOnlyConfig<Int, *>> Conf.rangeConstraint(min: Int = Int.MIN_VALUE, max: Int = Int.MAX_VALUE) {
-    return this.constraint { it in min..max }
+var <T> ReadOnlyConfig<T, *>.minValue: T
+        where T : Number, T : Comparable<T>
+    @Deprecated("", level = DeprecationLevel.ERROR)
+    get() = throw UnsupportedOperationException()
+    set(value) {
+        minValue(value)
+    }
+
+// TODO - not exactly DSLi
+fun <T> ReadOnlyConfig<T, *>.minValue(value: T,
+                                      fallbackPolicy: FallbackPolicy = FallbackPolicy.DEFAULT)
+        where T : Number, T : Comparable<T> {
+    rangeFallback(fallbackPolicy, value) { it >= value }
 }
 
-fun <Conf : ReadOnlyConfig<Long, *>> Conf.rangeConstraint(min: Long = Long.MIN_VALUE, max: Long = Long.MAX_VALUE) {
-    return this.constraint { it in min..max }
+var <T> ReadOnlyConfig<T, *>.maxValue: T
+        where T : Number, T : Comparable<T>
+    @Deprecated("", level = DeprecationLevel.ERROR)
+    get() = throw UnsupportedOperationException()
+    set(value) {
+        maxValue(value)
+    }
+
+fun <T> ReadOnlyConfig<T, *>.maxValue(value: T,
+                                      fallbackPolicy: FallbackPolicy = FallbackPolicy.DEFAULT)
+        where T : Number, T : Comparable<T> {
+    rangeFallback(fallbackPolicy, value) { it <= value }
 }
 
-fun <Conf : ReadOnlyConfig<Float, *>> Conf.rangeConstraint(min: Float = Float.MIN_VALUE, max: Float = Float.MAX_VALUE) {
-    return this.constraint { it in min..max }
+private fun <T, S> ReadOnlyConfig<T, S>.rangeFallback(fallbackPolicy: FallbackPolicy,
+                                                      value: T, allowBlock: (T) -> Boolean)
+        where T : Number, T : Comparable<T> {
+    constraint {
+        acceptIf(allowBlock)
+        if (fallbackPolicy == FallbackPolicy.RANGE) {
+            fallbackToPrimitive = value
+        }
+    }
+}
+
+enum class FallbackPolicy {
+    DEFAULT,
+    RANGE
 }

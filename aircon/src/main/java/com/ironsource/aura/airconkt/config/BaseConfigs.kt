@@ -2,7 +2,7 @@ package com.ironsource.aura.airconkt.config
 
 import com.ironsource.aura.airconkt.AirConKt
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
-import com.ironsource.aura.airconkt.config.constraint.Constraint
+import com.ironsource.aura.airconkt.config.constraint.ConstraintBuilder
 import com.ironsource.aura.airconkt.source.ConfigSource
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
@@ -12,17 +12,16 @@ import kotlin.reflect.KProperty
 // TODO - revive adapted
 // TODO - nullable types (currently string can be used with String? property but default value cannot be null)
 // TODO - Enum types, duration type
-// TODO - constraints (min, max..) fallback policy
+// TODO - caching option (defaultValue, final value...)
 
 interface Defaulted<T> {
+    fun default(provider: () -> T)
     var default: T
     var defaultRes: Int
-    fun defaultProvider(provider: () -> T)
 }
 
-interface Constrained<T> {
-    fun constraint(constraint: Constraint<T>)
-    fun constraint(constraint: (T) -> Boolean)
+interface Constrained<Test, Fallback> {
+    fun constraint(name: String? = null, block: ConstraintBuilder<Test, Fallback>.() -> Unit)
 }
 
 interface Processable<T> {
@@ -32,7 +31,7 @@ interface Processable<T> {
 interface ReadOnlyConfig<Raw, Actual> :
         ReadOnlyProperty<FeatureRemoteConfig, Actual>,
         Defaulted<Actual>,
-        Constrained<Raw>,
+        Constrained<Raw, Actual>,
         Processable<Actual> {
     var key: String
     var source: KClass<out ConfigSource>
@@ -50,86 +49,86 @@ open class ReadOnlyConfigDelegate<Raw, Actual> internal constructor(
     override lateinit var processor: ((Actual) -> Actual)
 
     override var default: Actual
-        get() = defaultValueProvider()
+        @Deprecated("", level = DeprecationLevel.ERROR)
+        get() = throw UnsupportedOperationException()
         set(value) {
-            defaultValueProvider = { value }
+            defaultProvider = { value }
         }
 
     override var defaultRes: Int
-        get() = 0
+        @Deprecated("", level = DeprecationLevel.ERROR)
+        get() = throw UnsupportedOperationException()
         set(value) {
-            defaultValueProvider = {
+            defaultProvider = {
                 val adapted = adapter(resourcesResolver.resourcesGetter(AirConKt.get()!!.context.resources, value))
                 adapted ?: throw RuntimeException("Failed to adapt default resource value to type")
             }
         }
 
-    internal lateinit var defaultValueProvider: () -> Actual
+    internal lateinit var defaultProvider: () -> Actual
 
-    private val constraints: MutableList<Constraint<Raw>> = mutableListOf()
+    private val constraints: MutableList<ConstraintBuilder<Raw, Actual>> = mutableListOf()
 
-    override fun defaultProvider(provider: () -> Actual) {
-        defaultValueProvider = provider
+    override fun default(provider: () -> Actual) {
+        defaultProvider = provider
     }
 
-    override fun constraint(constraint: Constraint<Raw>) {
-        constraints.add(constraint)
-    }
-
-    override fun constraint(constraint: (Raw) -> Boolean) {
-        constraints.add(object : Constraint<Raw> {
-            override fun isValid(value: Raw): Boolean {
-                return constraint(value)
-            }
-        })
+    override fun constraint(name: String?,
+                            block: ConstraintBuilder<Raw, Actual>.() -> Unit) {
+        constraints.add(ConstraintBuilder(name, adapter, block))
     }
 
     override fun getValue(thisRef: FeatureRemoteConfig, property: KProperty<*>): Actual {
-        return getRemoteValue(thisRef, property) { default } ?: default
+        return getValue(thisRef, property) { defaultProvider() }
     }
 
-    internal fun getRemoteValue(thisRef: FeatureRemoteConfig, property: KProperty<*>, defaultProvider: () -> Any?): Actual? {
+    internal fun getValue(thisRef: FeatureRemoteConfig, property: KProperty<*>, defaultProvider: () -> Actual): Actual {
+        // Prepare
         val key = resolveKey(property)
         val source = resolveSource(thisRef)
 
+        // Resolve value
         val value = configSourceResolver.sourceGetter(source, key)
         if (value == null) {
-            log("$source - Value not found in remote, using *default* value \"$key\" -> ${defaultValueProvider()}")
-            return null
+            return logAndReturnValue(key, defaultProvider(), "default", "Remote value not found")
         }
 
-        if (!validate(value)) {
-            return null
+        // Internal validation
+        if (!validator(value)) {
+            return logAndReturnValue(key, defaultProvider(), "default", "Internal validation failed")
+        }
+
+        // Constraint validation
+        constraints.forEach { constraint ->
+            val valid = constraint.verify(value)
+            if (!valid) {
+                val msg = "Constraint ${constraint.name} validation failed"
+                val fallbackValue = constraint.fallbackProvider?.invoke(value)
+                return if (fallbackValue != null) {
+                    logAndReturnValue(key, fallbackValue, "fallback", msg)
+                } else {
+                    logAndReturnValue(key, defaultProvider(), "default", msg)
+                }
+            }
         }
 
         val adaptedValue = process(value)
         if (adaptedValue == null) {
-            return null
+            return logAndReturnValue(key, defaultProvider(), "default", "Failed to adapt remote value $value")
         }
 
-        return adaptedValue
+        return logAndReturnValue(key, adaptedValue, "remote", "Remote value configured")
     }
 
-    private fun validate(value: Raw): Boolean {
-        if (!validator(value)) {
-            log("$source - Invalid value found in remote, using *default* value \"$key\" -> ${defaultValueProvider()}")
-            return false;
-        }
-
-        constraints.forEach {
-            if (!it.isValid(value)) {
-                log("$source - value failed to meet constraint $it, using *default* value \"$key\" -> ${defaultValueProvider()}")
-                return false
-            }
-        }
-
-        return true
+    private fun logAndReturnValue(key: String, value: Actual, type: String, msg: String): Actual {
+        log("$source: $msg - using $type value \"$key\"=$value")
+        return value
     }
 
     private fun process(value: Raw): Actual? {
         var adaptedValue = adapter(value)
         if (adaptedValue == null) {
-            log("$source - Failed to adapt value found in remote, using *default* value \"$key\" -> ${defaultValueProvider()}")
+            log("$source - Failed to adapt value found in remote, using *default* value \"$key\" -> ${defaultProvider()}")
             return null
         }
 
@@ -148,9 +147,8 @@ open class ReadOnlyConfigDelegate<Raw, Actual> internal constructor(
         return AirConKt.get()!!.configSourceRepository.getSource(sourceClass.java)
     }
 
-    internal fun hasDefaultValue() = ::defaultValueProvider.isInitialized
+    internal fun hasDefaultValue() = ::defaultProvider.isInitialized
 }
-
 
 interface ReadWriteConfig<Raw, Actual> :
         ReadWriteProperty<FeatureRemoteConfig, Actual>,
@@ -183,10 +181,16 @@ class PrimitiveConfigDelegate<T>(configSourceResolver: ConfigSourceResolver<T>,
 
 fun <Raw, Actual, Conf : ReadOnlyConfig<Raw, Actual>> createConfig(
         block: Conf.() -> Unit,
-        create: () -> Conf): Conf {
-    val config = create()
-    config.block()
-    return config
+        create: () -> Conf) = create().apply(block)
+
+private fun <T, S> ConstraintBuilder<T, S>.verify(value: T): Boolean {
+    verifiers.forEach {
+        if (!it(value)) {
+            return false
+        }
+    }
+
+    return true
 }
 
 private fun log(msg: String) {

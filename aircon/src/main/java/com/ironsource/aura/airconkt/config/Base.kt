@@ -4,38 +4,14 @@ import com.ironsource.aura.airconkt.AirConKt
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.config.constraint.ConstraintBuilder
 import com.ironsource.aura.airconkt.source.ConfigSource
-import kotlin.properties.ReadOnlyProperty
-import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 // TODO - revive adapted
 // TODO - nullable types (currently string can be used with String? property but default value cannot be null)
 // TODO - Enum types, duration type
+// TODO - more builtin constraints (e.g acceptedValues)
 // TODO - caching option (defaultValue, final value...)
-
-interface Defaulted<T> {
-    fun default(provider: () -> T)
-    var default: T
-    var defaultRes: Int
-}
-
-interface Constrained<Test, Fallback> {
-    fun constraint(name: String? = null, block: ConstraintBuilder<Test, Fallback>.() -> Unit)
-}
-
-interface Processable<T> {
-    var processor: ((T) -> T)
-}
-
-interface ReadOnlyConfig<Raw, Actual> :
-        ReadOnlyProperty<FeatureRemoteConfig, Actual>,
-        Defaulted<Actual>,
-        Constrained<Raw, Actual>,
-        Processable<Actual> {
-    var key: String
-    var source: KClass<out ConfigSource>
-}
 
 open class ReadOnlyConfigDelegate<Raw, Actual> internal constructor(
         protected val configSourceResolver: ConfigSourceResolver<Raw>,
@@ -128,7 +104,6 @@ open class ReadOnlyConfigDelegate<Raw, Actual> internal constructor(
     private fun process(value: Raw): Actual? {
         var adaptedValue = adapter(value)
         if (adaptedValue == null) {
-            log("$source - Failed to adapt value found in remote, using *default* value \"$key\" -> ${defaultProvider()}")
             return null
         }
 
@@ -150,10 +125,6 @@ open class ReadOnlyConfigDelegate<Raw, Actual> internal constructor(
     internal fun hasDefaultValue() = ::defaultProvider.isInitialized
 }
 
-interface ReadWriteConfig<Raw, Actual> :
-        ReadWriteProperty<FeatureRemoteConfig, Actual>,
-        ReadOnlyConfig<Raw, Actual>
-
 open class ReadWriteConfigDelegate<Raw, Actual>(
         configSourceResolver: ConfigSourceResolver<Raw>,
         resourcesResolver: ResourcesResolver<Raw>,
@@ -170,18 +141,6 @@ open class ReadWriteConfigDelegate<Raw, Actual>(
         configSourceResolver.sourceSetter(source, key, serializer(value))
     }
 }
-
-class PrimitiveConfigDelegate<T>(configSourceResolver: ConfigSourceResolver<T>,
-                                 resourcesResolver: ResourcesResolver<T>,
-                                 validator: (T) -> Boolean = { true },
-                                 adapter: (T) -> T = { it },
-                                 serializer: (T) -> T = { it })
-    : ReadWriteConfigDelegate<T, T>(configSourceResolver, resourcesResolver,
-        validator, adapter, serializer)
-
-fun <Raw, Actual, Conf : ReadOnlyConfig<Raw, Actual>> createConfig(
-        block: Conf.() -> Unit,
-        create: () -> Conf) = create().apply(block)
 
 private fun <T, S> ConstraintBuilder<T, S>.verify(value: T): Boolean {
     verifiers.forEach {

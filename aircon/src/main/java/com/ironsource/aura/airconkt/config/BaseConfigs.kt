@@ -13,7 +13,6 @@ import kotlin.reflect.KProperty
 // TODO - nullable types (currently string can be used with String? property but default value cannot be null)
 // TODO - Enum types, duration type
 // TODO - constraints (min, max..) fallback policy
-// TODO - reconsider hierarchy here (maybe simple config interface should not contain adapt method)
 
 interface Defaulted<T> {
     var default: T

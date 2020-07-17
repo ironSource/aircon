@@ -28,7 +28,6 @@ fun <T : Enum<T>> getStringEnumConst(enumClass: KClass<T>, remoteValue: Int) =
             value
         }
 
-
 private fun <T : Enum<T>> getIntEnumRemoteValue(enumClass: KClass<T>, enumConstant: T) =
         getEnumRemoteValue(enumClass, RemoteIntValue::class.java, enumConstant) {
             value

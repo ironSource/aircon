@@ -1,11 +1,11 @@
 package com.ironsource.aura.airconkt.config.type
 
 import com.ironsource.aura.airconkt.config.ConfigDelegate
-import com.ironsource.aura.airconkt.config.TypeResolver
+import com.ironsource.aura.airconkt.config.SourceTypeResolver
 import kotlin.reflect.KClass
 
 fun <T : Enum<T>> intEnumConfig(enumClass: KClass<T>, block: IntConfig<T>.() -> Unit) =
-        ConfigDelegate(TypeResolver.int(),
+        ConfigDelegate(SourceTypeResolver.int(),
                 adapter = { getIntEnumConst(enumClass, it) },
                 serializer = {
                     val remoteValue = getIntEnumRemoteValue(enumClass, it)
@@ -16,7 +16,7 @@ fun <T : Enum<T>> intEnumConfig(enumClass: KClass<T>, block: IntConfig<T>.() -> 
         )
 
 fun <T : Enum<T>> stringEnumConfig(enumClass: KClass<T>, block: StringConfig<T>.() -> Unit) =
-        ConfigDelegate(TypeResolver.string(),
+        ConfigDelegate(SourceTypeResolver.string(),
                 adapter = { getStringEnumConst(enumClass, it) },
                 serializer = {
                     val remoteValue = getStringEnumRemoteValue(enumClass, it)

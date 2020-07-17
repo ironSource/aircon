@@ -3,7 +3,7 @@ package com.ironsource.aura.airconkt.config.type
 import com.ironsource.aura.airconkt.config.Config
 import com.ironsource.aura.airconkt.config.ConfigDelegate
 import com.ironsource.aura.airconkt.config.SimpleConfig
-import com.ironsource.aura.airconkt.config.TypeResolver
+import com.ironsource.aura.airconkt.config.SourceTypeResolver
 
 typealias IntConfig<T> = Config<Int, T>
 typealias LongConfig<T> = Config<Long, T>
@@ -12,27 +12,27 @@ typealias StringConfig<T> = Config<String, T>
 typealias BooleanConfig<T> = Config<Boolean, T>
 
 fun <T> typedIntConfig(block: IntConfig<T>.() -> Unit): Config<Int, T> =
-        ConfigDelegate(typeResolver = TypeResolver.int(),
+        ConfigDelegate(sourceTypeResolver = SourceTypeResolver.int(),
                 block = block)
 
 
 fun <T> typedLongConfig(block: LongConfig<T>.() -> Unit): Config<Long, T> =
-        ConfigDelegate(typeResolver = TypeResolver.long(),
+        ConfigDelegate(sourceTypeResolver = SourceTypeResolver.long(),
                 block = block)
 
 
 fun <T> typedFloatConfig(block: FloatConfig<T>.() -> Unit): Config<Float, T> =
-        ConfigDelegate(typeResolver = TypeResolver.float(),
+        ConfigDelegate(sourceTypeResolver = SourceTypeResolver.float(),
                 block = block)
 
 
 fun <T> typedStringConfig(block: StringConfig<T>.() -> Unit): Config<String, T> =
-        ConfigDelegate(typeResolver = TypeResolver.string(),
+        ConfigDelegate(sourceTypeResolver = SourceTypeResolver.string(),
                 block = block)
 
 
 fun <T> typedBooleanConfig(block: BooleanConfig<T>.() -> Unit): Config<Boolean, T> =
-        ConfigDelegate(typeResolver = TypeResolver.boolean(),
+        ConfigDelegate(sourceTypeResolver = SourceTypeResolver.boolean(),
                 block = block)
 
 fun nullableStringConfig(block: StringConfig<String?>.() -> Unit) = typedStringConfig(block.nullableConfigBlock())

@@ -52,6 +52,10 @@ object CoolKtConfig : FeatureRemoteConfig {
     val someTypedInt by typedIntConfig<String> {
         adapt { "$it" }
     }
+
+    val someLabelConfig by labelConfig {
+        default = Label("Default")
+    }
 }
 
 enum class Location {

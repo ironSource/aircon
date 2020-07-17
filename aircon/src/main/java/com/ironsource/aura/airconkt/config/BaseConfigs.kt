@@ -7,11 +7,11 @@ import com.ironsource.aura.airconkt.source.ConfigSource
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-open class ConfigDelegate<Raw, Actual> protected constructor(private val typeResolver: TypeResolver<Raw>,
+open class ConfigDelegate<Raw, Actual> protected constructor(private val typeResolver: SourceTypeResolver<Raw>,
                                                              private val validator: (Raw) -> Boolean)
     : Config<Raw, Actual> {
 
-    protected constructor(typeResolver: TypeResolver<Raw>,
+    protected constructor(typeResolver: SourceTypeResolver<Raw>,
                           validator: (Raw) -> Boolean,
                           adapter: (Raw) -> Actual?,
                           serializer: (Actual) -> Raw) :
@@ -21,17 +21,17 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
     }
 
     companion object {
-        operator fun <Raw, Actual> invoke(typeResolver: TypeResolver<Raw>,
+        operator fun <Raw, Actual> invoke(sourceTypeResolver: SourceTypeResolver<Raw>,
                                           validator: (Raw) -> Boolean = { true },
                                           block: Config<Raw, Actual>.() -> Unit) =
-                ConfigDelegate<Raw, Actual>(typeResolver, validator).apply(block)
+                ConfigDelegate<Raw, Actual>(sourceTypeResolver, validator).apply(block)
 
-        operator fun <Raw, Actual> invoke(typeResolver: TypeResolver<Raw>,
+        operator fun <Raw, Actual> invoke(sourceTypeResolver: SourceTypeResolver<Raw>,
                                           validator: (Raw) -> Boolean = { true },
                                           adapter: (Raw) -> Actual?,
                                           serializer: (Actual) -> Raw,
                                           block: Config<Raw, Actual>.() -> Unit) =
-                ConfigDelegate(typeResolver, validator, adapter, serializer).apply(block)
+                ConfigDelegate(sourceTypeResolver, validator, adapter, serializer).apply(block)
     }
 
     override lateinit var key: String

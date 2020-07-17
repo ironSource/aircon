@@ -1,5 +1,6 @@
-package com.ironsource.aura.airconkt.config
+package com.ironsource.aura.airconkt.config.type
 
+import com.ironsource.aura.airconkt.config.*
 import com.ironsource.aura.airconkt.config.annotations.RemoteIntValue
 import com.ironsource.aura.airconkt.config.annotations.RemoteStringValue
 import kotlin.reflect.KClass

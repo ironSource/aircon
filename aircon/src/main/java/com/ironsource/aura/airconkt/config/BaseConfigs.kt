@@ -9,7 +9,7 @@ import kotlin.reflect.KProperty
 
 // TODO - revive adapted
 // TODO - nullable types (currently string can be used with String? property but default value cannot be null)
-// TODO - Enum types, duration type
+// TODO - sealed class enum? (need to think about inheritors with constructor)
 // TODO - caching option (defaultValue, final value...)
 
 // TODO ONGOING - builtin constraints (e.g acceptedValues)

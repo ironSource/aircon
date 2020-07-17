@@ -1,4 +1,6 @@
-package com.ironsource.aura.airconkt.config
+package com.ironsource.aura.airconkt.config.type
+
+import com.ironsource.aura.airconkt.config.*
 
 class PrimitiveConfigDelegate<T>(configSourceResolver: ConfigSourceResolver<T>,
                                  resourcesResolver: ResourcesResolver<T>,

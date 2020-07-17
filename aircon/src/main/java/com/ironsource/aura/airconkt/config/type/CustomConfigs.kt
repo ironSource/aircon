@@ -1,8 +1,9 @@
-package com.ironsource.aura.airconkt.config
+package com.ironsource.aura.airconkt.config.type
 
 import android.content.res.Resources
 import android.webkit.URLUtil
 import com.ironsource.aura.airconkt.AirConKt
+import com.ironsource.aura.airconkt.config.*
 import com.ironsource.aura.airconkt.utils.AirConUtils
 import com.ironsource.aura.airconkt.utils.ColorInt
 import com.ironsource.aura.airconkt.utils.getColorHex

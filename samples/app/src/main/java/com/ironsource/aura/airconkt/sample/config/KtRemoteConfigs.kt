@@ -3,9 +3,9 @@ package com.ironsource.aura.airconkt.sample.config
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.config.annotations.RemoteIntValue
 import com.ironsource.aura.airconkt.config.annotations.RemoteStringValue
-import com.ironsource.aura.airconkt.config.intConfig
-import com.ironsource.aura.airconkt.config.intEnumConfig
-import com.ironsource.aura.airconkt.config.stringEnumConfig
+import com.ironsource.aura.airconkt.config.type.intConfig
+import com.ironsource.aura.airconkt.config.type.intEnumConfig
+import com.ironsource.aura.airconkt.config.type.stringEnumConfig
 import com.ironsource.aura.airconkt.source.FireBaseConfigSource
 
 object CoolKtConfig : FeatureRemoteConfig {

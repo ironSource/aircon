@@ -1,7 +1,11 @@
 package com.ironsource.aura.airconkt.sample.config
 
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
+import com.ironsource.aura.airconkt.config.annotations.RemoteIntValue
+import com.ironsource.aura.airconkt.config.annotations.RemoteStringValue
 import com.ironsource.aura.airconkt.config.intConfig
+import com.ironsource.aura.airconkt.config.intEnumConfig
+import com.ironsource.aura.airconkt.config.stringEnumConfig
 import com.ironsource.aura.airconkt.source.FireBaseConfigSource
 
 object CoolKtConfig : FeatureRemoteConfig {
@@ -27,6 +31,14 @@ object CoolKtConfig : FeatureRemoteConfig {
 //    val someList by JsonConfig.create<List<String>>()
 //
 
+    val location by intEnumConfig(Location::class) {
+        default = Location.TOP
+    }
+
+    val size by stringEnumConfig(Size::class) {
+        default = Size.SMALL
+    }
+
     val feature_enabled by intConfig {
         default = 6
         constraint {
@@ -34,4 +46,20 @@ object CoolKtConfig : FeatureRemoteConfig {
             fallbackTo { it + 1 }
         }
     }
+}
+
+enum class Location {
+    @RemoteIntValue(0)
+    TOP,
+
+    @RemoteIntValue(1)
+    BOTTOM
+}
+
+enum class Size {
+    @RemoteStringValue("s")
+    SMALL,
+
+    @RemoteStringValue("l")
+    LARGE
 }

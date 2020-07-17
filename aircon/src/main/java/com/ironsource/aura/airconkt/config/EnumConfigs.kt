@@ -11,8 +11,22 @@ fun <T : Enum<T>> intEnumConfig(enumClass: KClass<T>, block: ReadWriteConfig<Int
             validator = { true },
             adapter = { getIntEnumConst(enumClass, it) },
             serializer = {
-                val intEnumRemoteValue = getIntEnumRemoteValue(enumClass, it)
-                intEnumRemoteValue
+                val remoteValue = getIntEnumRemoteValue(enumClass, it)
+                remoteValue
+                        ?: throw IllegalArgumentException("No remote value annotation defined for $enumClass.$it")
+            }
+    )
+}
+
+fun <T : Enum<T>> stringEnumConfig(enumClass: KClass<T>, block: ReadWriteConfig<String, T>.() -> Unit) = createConfig(block) {
+    ReadWriteConfigDelegate(
+            configSourceResolver = ConfigSourceResolver.String,
+            resourcesResolver = ResourcesResolver.String,
+            validator = { true },
+            adapter = { getStringEnumConst(enumClass, it) },
+            serializer = {
+                val remoteValue = getStringEnumRemoteValue(enumClass, it)
+                remoteValue
                         ?: throw IllegalArgumentException("No remote value annotation defined for $enumClass.$it")
             }
     )
@@ -23,7 +37,7 @@ fun <T : Enum<T>> getIntEnumConst(enumClass: KClass<T>, remoteValue: Int) =
             value
         }
 
-fun <T : Enum<T>> getStringEnumConst(enumClass: KClass<T>, remoteValue: Int) =
+fun <T : Enum<T>> getStringEnumConst(enumClass: KClass<T>, remoteValue: String) =
         getEnumConst(enumClass, RemoteStringValue::class.java, remoteValue) {
             value
         }

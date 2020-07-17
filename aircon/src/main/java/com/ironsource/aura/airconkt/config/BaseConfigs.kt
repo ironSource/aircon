@@ -7,15 +7,6 @@ import com.ironsource.aura.airconkt.source.ConfigSource
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-// TODO - adapting custom configs (e.g enum to other)
-// TODO - nullable types (currently string can be used with String? property but default value cannot be null)
-// TODO - sealed class enum? (need to think about inheritors with constructor)
-// TODO - caching option (defaultValue, final value...)
-// TODO - proguard (R8) rules - remote config properties names should not be touched
-// TODO - aux methods (isConfigured, getRawValue, getDefaultValue)...
-
-// TODO ONGOING - builtin constraints (e.g acceptedValues)
-
 open class ConfigDelegate<Raw, Actual> protected constructor(private val typeResolver: TypeResolver<Raw>,
                                                              private val validator: (Raw) -> Boolean)
     : Config<Raw, Actual> {
@@ -48,7 +39,7 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
 
     private lateinit var processor: ((Actual) -> Actual)
     private lateinit var adapter: (Raw) -> Actual?
-    private lateinit var serializer: (Actual) -> Raw
+    private lateinit var serializer: (Actual) -> Raw?
 
     override var default: Actual
         @Deprecated("", level = DeprecationLevel.ERROR)
@@ -84,7 +75,7 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
         this.adapter = adapter
     }
 
-    final override fun serialize(serializer: (Actual) -> Raw) {
+    final override fun serialize(serializer: (Actual) -> Raw?) {
         this.serializer = serializer
     }
 

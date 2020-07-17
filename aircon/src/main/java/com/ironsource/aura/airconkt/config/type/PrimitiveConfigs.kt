@@ -35,13 +35,30 @@ fun <T> typedBooleanConfig(block: BooleanConfig<T>.() -> Unit): Config<Boolean, 
         ConfigDelegate(typeResolver = TypeResolver.boolean(),
                 block = block)
 
+fun nullableStringConfig(block: StringConfig<String?>.() -> Unit) = typedStringConfig(block.nullableConfigBlock())
 
-fun intConfig(block: SimpleConfig<Int>.() -> Unit) = typedIntConfig(block)
+fun intConfig(block: SimpleConfig<Int>.() -> Unit) = typedIntConfig(block.simpleConfigBlock())
 
-fun longConfig(block: SimpleConfig<Long>.() -> Unit) = typedLongConfig(block)
+fun longConfig(block: SimpleConfig<Long>.() -> Unit) = typedLongConfig(block.simpleConfigBlock())
 
-fun floatConfig(block: SimpleConfig<Float>.() -> Unit) = typedFloatConfig(block)
+fun floatConfig(block: SimpleConfig<Float>.() -> Unit) = typedFloatConfig(block.simpleConfigBlock())
 
-fun stringConfig(block: SimpleConfig<String>.() -> Unit) = typedStringConfig(block)
+fun stringConfig(block: SimpleConfig<String>.() -> Unit) = typedStringConfig(block.simpleConfigBlock())
 
-fun booleanConfig(block: SimpleConfig<Boolean>.() -> Unit) = typedBooleanConfig(block)
+fun booleanConfig(block: SimpleConfig<Boolean>.() -> Unit) = typedBooleanConfig(block.simpleConfigBlock())
+
+fun <T> (Config<T, T?>.() -> Unit).nullableConfigBlock(): Config<T, T?>.() -> Unit {
+    return {
+        adapt { it }
+        serialize { it }
+        this@nullableConfigBlock()
+    }
+}
+
+fun <T> (SimpleConfig<T>.() -> Unit).simpleConfigBlock(): SimpleConfig<T>.() -> Unit {
+    return {
+        adapt { it }
+        serialize { it }
+        this@simpleConfigBlock()
+    }
+}

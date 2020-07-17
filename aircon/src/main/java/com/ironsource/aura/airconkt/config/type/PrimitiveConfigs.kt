@@ -1,33 +1,47 @@
 package com.ironsource.aura.airconkt.config.type
 
-import com.ironsource.aura.airconkt.config.*
+import com.ironsource.aura.airconkt.config.Config
+import com.ironsource.aura.airconkt.config.ConfigDelegate
+import com.ironsource.aura.airconkt.config.SimpleConfig
+import com.ironsource.aura.airconkt.config.TypeResolver
 
-class PrimitiveConfigDelegate<T>(configSourceResolver: ConfigSourceResolver<T>,
-                                 resourcesResolver: ResourcesResolver<T>,
-                                 validator: (T) -> Boolean = { true },
-                                 adapter: (T) -> T = { it },
-                                 serializer: (T) -> T = { it })
-    : ReadWriteConfigDelegate<T, T>(configSourceResolver, resourcesResolver,
-        validator, adapter, serializer)
+typealias IntConfig<T> = Config<Int, T>
+typealias LongConfig<T> = Config<Long, T>
+typealias FloatConfig<T> = Config<Float, T>
+typealias StringConfig<T> = Config<String, T>
+typealias BooleanConfig<T> = Config<Boolean, T>
 
-fun intConfig(block: ReadWriteConfig<Int, Int>.() -> Unit): ReadWriteConfig<Int, Int> = createConfig(block) {
-    createConfig(block) {
-        PrimitiveConfigDelegate(ConfigSourceResolver.Int, ResourcesResolver.Int)
-    }
-}
+fun <T> typedIntConfig(block: IntConfig<T>.() -> Unit): Config<Int, T> =
+        ConfigDelegate(typeResolver = TypeResolver.int(),
+                block = block)
 
-fun longConfig(block: ReadWriteConfig<Long, Long>.() -> Unit): ReadWriteConfig<Long, Long> = createConfig(block) {
-    PrimitiveConfigDelegate(ConfigSourceResolver.Long, ResourcesResolver.Long)
-}
 
-fun floatConfig(block: ReadWriteConfig<Float, Float>.() -> Unit): ReadWriteConfig<Float, Float> = createConfig(block) {
-    PrimitiveConfigDelegate(ConfigSourceResolver.Float, ResourcesResolver.Float)
-}
+fun <T> typedLongConfig(block: LongConfig<T>.() -> Unit): Config<Long, T> =
+        ConfigDelegate(typeResolver = TypeResolver.long(),
+                block = block)
 
-fun stringConfig(block: ReadWriteConfig<String, String>.() -> Unit): ReadWriteConfig<String, String> = createConfig(block) {
-    PrimitiveConfigDelegate(ConfigSourceResolver.String, ResourcesResolver.String)
-}
 
-fun booleanConfig(block: ReadWriteConfig<Boolean, Boolean>.() -> Unit): ReadWriteConfig<Boolean, Boolean> = createConfig(block) {
-    PrimitiveConfigDelegate(ConfigSourceResolver.Boolean, ResourcesResolver.Boolean)
-}
+fun <T> typedFloatConfig(block: FloatConfig<T>.() -> Unit): Config<Float, T> =
+        ConfigDelegate(typeResolver = TypeResolver.float(),
+                block = block)
+
+
+fun <T> typedStringConfig(block: StringConfig<T>.() -> Unit): Config<String, T> =
+        ConfigDelegate(typeResolver = TypeResolver.string(),
+                block = block)
+
+
+fun <T> typedBooleanConfig(block: BooleanConfig<T>.() -> Unit): Config<Boolean, T> =
+        ConfigDelegate(typeResolver = TypeResolver.boolean(),
+                block = block)
+
+
+fun intConfig(block: SimpleConfig<Int>.() -> Unit) = typedIntConfig(block)
+
+fun longConfig(block: SimpleConfig<Long>.() -> Unit) = typedLongConfig(block)
+
+fun floatConfig(block: SimpleConfig<Float>.() -> Unit) = typedFloatConfig(block)
+
+fun stringConfig(block: SimpleConfig<String>.() -> Unit) = typedStringConfig(block)
+
+fun booleanConfig(block: SimpleConfig<Boolean>.() -> Unit) = typedBooleanConfig(block)

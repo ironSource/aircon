@@ -7,23 +7,48 @@ import com.ironsource.aura.airconkt.source.ConfigSource
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-// TODO - revive adapted
+// TODO - adapting custom configs (e.g enum to other)
 // TODO - nullable types (currently string can be used with String? property but default value cannot be null)
 // TODO - sealed class enum? (need to think about inheritors with constructor)
 // TODO - caching option (defaultValue, final value...)
+// TODO - proguard (R8) rules - remote config properties names should not be touched
+// TODO - aux methods (isConfigured, getRawValue, getDefaultValue)...
 
 // TODO ONGOING - builtin constraints (e.g acceptedValues)
 
-open class ReadOnlyConfigDelegate<Raw, Actual> internal constructor(
-        protected val configSourceResolver: ConfigSourceResolver<Raw>,
-        protected val resourcesResolver: ResourcesResolver<Raw>,
-        protected val validator: (Raw) -> Boolean,
-        protected val adapter: (Raw) -> Actual?
-) : ReadOnlyConfig<Raw, Actual> {
+open class ConfigDelegate<Raw, Actual> protected constructor(private val typeResolver: TypeResolver<Raw>,
+                                                             private val validator: (Raw) -> Boolean)
+    : Config<Raw, Actual> {
+
+    protected constructor(typeResolver: TypeResolver<Raw>,
+                          validator: (Raw) -> Boolean,
+                          adapter: (Raw) -> Actual?,
+                          serializer: (Actual) -> Raw) :
+            this(typeResolver, validator) {
+        adapt(adapter)
+        serialize(serializer)
+    }
+
+    companion object {
+        operator fun <Raw, Actual> invoke(typeResolver: TypeResolver<Raw>,
+                                          validator: (Raw) -> Boolean = { true },
+                                          block: Config<Raw, Actual>.() -> Unit) =
+                ConfigDelegate<Raw, Actual>(typeResolver, validator).apply(block)
+
+        operator fun <Raw, Actual> invoke(typeResolver: TypeResolver<Raw>,
+                                          validator: (Raw) -> Boolean = { true },
+                                          adapter: (Raw) -> Actual?,
+                                          serializer: (Actual) -> Raw,
+                                          block: Config<Raw, Actual>.() -> Unit) =
+                ConfigDelegate(typeResolver, validator, adapter, serializer).apply(block)
+    }
 
     override lateinit var key: String
     override lateinit var source: KClass<out ConfigSource>
-    override lateinit var processor: ((Actual) -> Actual)
+
+    private lateinit var processor: ((Actual) -> Actual)
+    private lateinit var adapter: (Raw) -> Actual?
+    private lateinit var serializer: (Actual) -> Raw
 
     override var default: Actual
         @Deprecated("", level = DeprecationLevel.ERROR)
@@ -37,7 +62,7 @@ open class ReadOnlyConfigDelegate<Raw, Actual> internal constructor(
         get() = throw UnsupportedOperationException()
         set(value) {
             defaultProvider = {
-                val adapted = adapter(resourcesResolver.resourcesGetter(AirConKt.get()!!.context.resources, value))
+                val adapted = adapter(typeResolver.resourcesResolver.resourcesGetter(AirConKt.get()!!.context.resources, value))
                 adapted ?: throw RuntimeException("Failed to adapt default resource value to type")
             }
         }
@@ -55,6 +80,18 @@ open class ReadOnlyConfigDelegate<Raw, Actual> internal constructor(
         constraints.add(ConstraintBuilder(name, adapter, block))
     }
 
+    final override fun adapt(adapter: (Raw) -> Actual?) {
+        this.adapter = adapter
+    }
+
+    final override fun serialize(serializer: (Actual) -> Raw) {
+        this.serializer = serializer
+    }
+
+    override fun process(processor: (Actual) -> Actual) {
+        this.processor = processor
+    }
+
     override fun getValue(thisRef: FeatureRemoteConfig, property: KProperty<*>): Actual {
         return getValue(thisRef, property) { defaultProvider() }
     }
@@ -65,7 +102,7 @@ open class ReadOnlyConfigDelegate<Raw, Actual> internal constructor(
         val source = resolveSource(thisRef)
 
         // Resolve value
-        val value = configSourceResolver.sourceGetter(source, key)
+        val value = typeResolver.configSourceResolver.sourceGetter(source, key)
         if (value == null) {
             return logAndReturnValue(key, defaultProvider(), "default", "Remote value not found")
         }
@@ -89,7 +126,7 @@ open class ReadOnlyConfigDelegate<Raw, Actual> internal constructor(
             }
         }
 
-        val adaptedValue = process(value)
+        val adaptedValue = process(key, value)
         if (adaptedValue == null) {
             return logAndReturnValue(key, defaultProvider(), "default", "Failed to adapt remote value $value")
         }
@@ -102,7 +139,10 @@ open class ReadOnlyConfigDelegate<Raw, Actual> internal constructor(
         return value
     }
 
-    private fun process(value: Raw): Actual? {
+    private fun process(key: String, value: Raw): Actual? {
+        if (!::adapter.isInitialized) {
+            throw IllegalStateException("Failed to get value - no adapter defined for adapted config \"$key\"")
+        }
         var adaptedValue = adapter(value)
         if (adaptedValue == null) {
             return null
@@ -115,31 +155,23 @@ open class ReadOnlyConfigDelegate<Raw, Actual> internal constructor(
         return adaptedValue
     }
 
-    internal fun resolveKey(property: KProperty<*>) =
-            if (::key.isInitialized) key else property.name
-
-    internal fun resolveSource(thisRef: FeatureRemoteConfig): ConfigSource {
-        val sourceClass = if (::source.isInitialized) source else thisRef.source
-        return AirConKt.get()!!.configSourceRepository.getSource(sourceClass.java)
-    }
-
-    internal fun hasDefaultValue() = ::defaultProvider.isInitialized
-}
-
-open class ReadWriteConfigDelegate<Raw, Actual>(
-        configSourceResolver: ConfigSourceResolver<Raw>,
-        resourcesResolver: ResourcesResolver<Raw>,
-        validator: (Raw) -> Boolean,
-        adapter: (Raw) -> Actual?,
-        private val serializer: (Actual) -> Raw
-) : ReadOnlyConfigDelegate<Raw, Actual>(configSourceResolver, resourcesResolver, validator, adapter),
-        ReadWriteConfig<Raw, Actual> {
-
     override fun setValue(thisRef: FeatureRemoteConfig, property: KProperty<*>, value: Actual) {
         val source = resolveSource(thisRef)
         val key = resolveKey(property)
 
-        configSourceResolver.sourceSetter(source, key, serializer(value))
+        if (!::serializer.isInitialized) {
+            throw IllegalStateException("Failed to set value - no serializer defined for adapted config \"$key\"")
+        }
+
+        typeResolver.configSourceResolver.sourceSetter(source, key, serializer(value))
+    }
+
+    private fun resolveKey(property: KProperty<*>) =
+            if (::key.isInitialized) key else property.name
+
+    private fun resolveSource(thisRef: FeatureRemoteConfig): ConfigSource {
+        val sourceClass = if (::source.isInitialized) source else thisRef.source
+        return AirConKt.get()!!.configSourceRepository.getSource(sourceClass.java)
     }
 }
 
@@ -152,6 +184,8 @@ private fun <T, S> ConstraintBuilder<T, S>.verify(value: T): Boolean {
 
     return true
 }
+
+typealias SimpleConfig<T> = Config<T, T>
 
 private fun log(msg: String) {
     AirConKt.get()

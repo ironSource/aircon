@@ -1,15 +1,15 @@
 package com.ironsource.aura.airconkt.config.constraint
 
-import com.ironsource.aura.airconkt.config.ReadOnlyConfig
+import com.ironsource.aura.airconkt.config.Config
 
-var <T> ReadOnlyConfig<T, *>.whitelist: Iterable<T>
+var <T> Config<T, *>.whitelist: Iterable<T>
     @Deprecated("", level = DeprecationLevel.ERROR)
     get() = throw UnsupportedOperationException()
     set(value) {
         generalConstraint("whitelist") { it in value }
     }
 
-var <T> ReadOnlyConfig<T, *>.blacklist: Iterable<T>
+var <T> Config<T, *>.blacklist: Iterable<T>
     @Deprecated("", level = DeprecationLevel.ERROR)
     get() = throw UnsupportedOperationException()
     set(value) {
@@ -17,7 +17,7 @@ var <T> ReadOnlyConfig<T, *>.blacklist: Iterable<T>
     }
 
 
-private fun <T, S> ReadOnlyConfig<T, S>.generalConstraint(name: String, allowBlock: (T) -> Boolean) {
+private fun <T, S> Config<T, S>.generalConstraint(name: String, allowBlock: (T) -> Boolean) {
     constraint(name) {
         acceptIf(allowBlock)
     }

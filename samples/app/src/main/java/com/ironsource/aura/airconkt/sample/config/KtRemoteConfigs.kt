@@ -3,9 +3,10 @@ package com.ironsource.aura.airconkt.sample.config
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.config.annotations.RemoteIntValue
 import com.ironsource.aura.airconkt.config.annotations.RemoteStringValue
-import com.ironsource.aura.airconkt.config.type.intConfig
+import com.ironsource.aura.airconkt.config.type.booleanConfig
 import com.ironsource.aura.airconkt.config.type.intEnumConfig
 import com.ironsource.aura.airconkt.config.type.stringEnumConfig
+import com.ironsource.aura.airconkt.config.type.typedIntConfig
 import com.ironsource.aura.airconkt.source.FireBaseConfigSource
 
 object CoolKtConfig : FeatureRemoteConfig {
@@ -39,13 +40,15 @@ object CoolKtConfig : FeatureRemoteConfig {
         default = Size.SMALL
     }
 
-    val feature_enabled by intConfig {
-        default = 6
-        constraint {
-            acceptIf { it % 2 == 0 }
-            fallbackTo { it + 1 }
-        }
+    val feature_enabled by booleanConfig {
+        default = false
     }
+
+    val someInt by typedIntConfig<String> {
+        adapt { "$it" }
+    }
+
+
 }
 
 enum class Location {

@@ -3,7 +3,6 @@ package com.ironsource.aura.airconkt.config
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.config.constraint.ConstraintBuilder
 import com.ironsource.aura.airconkt.source.ConfigSource
-import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 
@@ -18,23 +17,24 @@ interface Constrained<Test, Fallback> {
 }
 
 interface Processable<T> {
-    var processor: ((T) -> T)
+    fun process(processor: ((T) -> T))
 }
 
-interface ReadOnlyConfig<Raw, Actual> :
-        ReadOnlyProperty<FeatureRemoteConfig, Actual>,
+interface Adaptable<Raw, Actual> {
+    fun adapt(adapter: (Raw) -> Actual?)
+    fun serialize(serializer: (Actual) -> Raw)
+}
+
+interface Config<Raw, Actual> :
+        ReadWriteProperty<FeatureRemoteConfig, Actual>,
         Defaulted<Actual>,
         Constrained<Raw, Actual>,
-        Processable<Actual> {
+        Processable<Actual>,
+        Adaptable<Raw, Actual> {
     var key: String
     var source: KClass<out ConfigSource>
 }
 
-interface ReadWriteConfig<Raw, Actual> :
-        ReadWriteProperty<FeatureRemoteConfig, Actual>,
-        ReadOnlyConfig<Raw, Actual>
-
-
-fun <Raw, Actual, Conf : ReadOnlyConfig<Raw, Actual>> createConfig(
+fun <Raw, Actual, Conf : Config<Raw, Actual>> createConfig(
         block: Conf.() -> Unit,
         create: () -> Conf) = create().apply(block)

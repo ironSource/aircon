@@ -39,8 +39,7 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
     override var cacheValue: Boolean = true
 
     override var default: Actual
-        @Deprecated("", level = DeprecationLevel.ERROR)
-        get() = throw UnsupportedOperationException()
+        get() = defaultProvider()
         set(value) {
             default { value }
         }
@@ -171,6 +170,12 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
     private fun resolveSource(thisRef: FeatureRemoteConfig): ConfigSource {
         val sourceClass = if (::source.isInitialized) source else thisRef.source
         return AirConKt.get()!!.configSourceRepository.getSource(sourceClass.java)
+    }
+
+    internal fun getRawValue(thisRef: FeatureRemoteConfig, property: KProperty<*>): Raw? {
+        val key = resolveKey(property)
+        val source = resolveSource(thisRef)
+        return typeResolver.configSourceResolver.sourceGetter(source, key)
     }
 }
 

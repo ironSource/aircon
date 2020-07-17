@@ -7,15 +7,20 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 
 // TODO - adapting custom configs (e.g enum to other)
-// TODO - sealed class enum? (need to think about inheritors with constructor)
-// TODO - caching option (defaultValue, final value...)
 // TODO - proguard (R8) rules - remote config properties names should not be touched
 // TODO - aux methods (isConfigured, getRawValue, getDefaultValue)...
+// TODO - unitests
+// TODO - linter
 
-// TODO ONGOING - builtin constraints (e.g acceptedValues)
+// TODO BONUS
+
+// TODO ONGOING
+// TODO - builtin constraints
+// TODO - custom types - sealed class enum? (need to think about inheritors with constructor)
+// TODO - revise DSL structure (+dsl annotations)
 
 interface Defaulted<T> {
-    fun default(provider: () -> T)
+    fun default(cache: Boolean = true, provider: () -> T)
     var default: T
     var defaultRes: Int
 }
@@ -41,8 +46,5 @@ interface Config<Raw, Actual> :
         Adaptable<Raw, Actual> {
     var key: String
     var source: KClass<out ConfigSource>
+    var cacheValue: Boolean
 }
-
-fun <Raw, Actual, Conf : Config<Raw, Actual>> createConfig(
-        block: Conf.() -> Unit,
-        create: () -> Conf) = create().apply(block)

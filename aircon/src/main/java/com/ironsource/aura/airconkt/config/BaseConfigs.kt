@@ -4,12 +4,12 @@ import com.ironsource.aura.airconkt.AirConKt
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.config.constraint.ConstraintBuilder
 import com.ironsource.aura.airconkt.source.ConfigSource
+import com.ironsource.aura.airconkt.utils.cachedBlock
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 open class ConfigDelegate<Raw, Actual> protected constructor(private val typeResolver: SourceTypeResolver<Raw>,
-                                                             private val validator: (Raw) -> Boolean)
-    : Config<Raw, Actual> {
+                                                             private val validator: (Raw) -> Boolean) : Config<Raw, Actual> {
 
     protected constructor(typeResolver: SourceTypeResolver<Raw>,
                           validator: (Raw) -> Boolean,
@@ -36,34 +36,36 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
 
     override lateinit var key: String
     override lateinit var source: KClass<out ConfigSource>
-
-    private lateinit var processor: ((Actual) -> Actual)
-    private lateinit var adapter: (Raw) -> Actual?
-    private lateinit var serializer: (Actual) -> Raw?
+    override var cacheValue: Boolean = true
 
     override var default: Actual
         @Deprecated("", level = DeprecationLevel.ERROR)
         get() = throw UnsupportedOperationException()
         set(value) {
-            defaultProvider = { value }
+            default { value }
         }
 
     override var defaultRes: Int
         @Deprecated("", level = DeprecationLevel.ERROR)
         get() = throw UnsupportedOperationException()
         set(value) {
-            defaultProvider = {
+            default {
                 val adapted = adapter(typeResolver.resourcesResolver.resourcesGetter(AirConKt.get()!!.context.resources, value))
                 adapted ?: throw RuntimeException("Failed to adapt default resource value to type")
             }
         }
 
-    internal lateinit var defaultProvider: () -> Actual
+    private lateinit var processor: ((Actual) -> Actual)
+    private lateinit var adapter: (Raw) -> Actual?
+    private lateinit var serializer: (Actual) -> Raw?
+    private lateinit var defaultProvider: () -> Actual
+
+    private var value: Actual? = null
 
     private val constraints: MutableList<ConstraintBuilder<Raw, Actual?>> = mutableListOf()
 
-    override fun default(provider: () -> Actual) {
-        defaultProvider = provider
+    override fun default(cache: Boolean, provider: () -> Actual) {
+        defaultProvider = if (cache) cachedBlock(provider) else provider
     }
 
     override fun constraint(name: String?,
@@ -84,13 +86,14 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
     }
 
     override fun getValue(thisRef: FeatureRemoteConfig, property: KProperty<*>): Actual {
-        return getValue(thisRef, property) { defaultProvider() }
-    }
-
-    internal fun getValue(thisRef: FeatureRemoteConfig, property: KProperty<*>, defaultProvider: () -> Actual): Actual {
         // Prepare
         val key = resolveKey(property)
         val source = resolveSource(thisRef)
+
+        // Check cache
+        this.value?.let {
+            return logAndReturnValue(key, it, "cached", "Found cached value")
+        }
 
         // Resolve value
         val value = typeResolver.configSourceResolver.sourceGetter(source, key)
@@ -122,8 +125,13 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
             return logAndReturnValue(key, defaultProvider(), "default", "Failed to adapt remote value $value")
         }
 
+        if (cacheValue) {
+            this.value = adaptedValue
+        }
+
         return logAndReturnValue(key, adaptedValue, "remote", "Remote value configured")
     }
+
 
     private fun logAndReturnValue(key: String, value: Actual, type: String, msg: String): Actual {
         log("$source: $msg - using $type value \"$key\"=$value")

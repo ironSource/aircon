@@ -1,5 +1,7 @@
 package com.ironsource.aura.airconkt.config.constraint
 
+import com.ironsource.aura.airconkt.utils.cachedBlock
+
 class ConstraintBuilder<Test, Fallback> private constructor(var name: String? = null,
                                                             private var adapter: (Test) -> Fallback) {
     internal var verifiers: MutableList<(Test) -> Boolean> = mutableListOf()
@@ -38,7 +40,7 @@ class ConstraintBuilder<Test, Fallback> private constructor(var name: String? = 
             fallbackTo { value }
         }
 
-    fun fallbackTo(fallbackProvider: (Test) -> Fallback) {
-        this.fallbackProvider = fallbackProvider
+    fun fallbackTo(cache: Boolean = true, fallbackProvider: (Test) -> Fallback) {
+        this.fallbackProvider = if (cache) cachedBlock(fallbackProvider) else fallbackProvider
     }
 }

@@ -10,14 +10,15 @@ import kotlin.reflect.KProperty
 // TODO - revive adapted
 // TODO - nullable types (currently string can be used with String? property but default value cannot be null)
 // TODO - Enum types, duration type
-// TODO - more builtin constraints (e.g acceptedValues)
 // TODO - caching option (defaultValue, final value...)
+
+// TODO ONGOING - builtin constraints (e.g acceptedValues)
 
 open class ReadOnlyConfigDelegate<Raw, Actual> internal constructor(
         protected val configSourceResolver: ConfigSourceResolver<Raw>,
         protected val resourcesResolver: ResourcesResolver<Raw>,
         protected val validator: (Raw) -> Boolean,
-        protected val adapter: (Raw) -> Actual
+        protected val adapter: (Raw) -> Actual?
 ) : ReadOnlyConfig<Raw, Actual> {
 
     override lateinit var key: String
@@ -43,14 +44,14 @@ open class ReadOnlyConfigDelegate<Raw, Actual> internal constructor(
 
     internal lateinit var defaultProvider: () -> Actual
 
-    private val constraints: MutableList<ConstraintBuilder<Raw, Actual>> = mutableListOf()
+    private val constraints: MutableList<ConstraintBuilder<Raw, Actual?>> = mutableListOf()
 
     override fun default(provider: () -> Actual) {
         defaultProvider = provider
     }
 
     override fun constraint(name: String?,
-                            block: ConstraintBuilder<Raw, Actual>.() -> Unit) {
+                            block: ConstraintBuilder<Raw, Actual?>.() -> Unit) {
         constraints.add(ConstraintBuilder(name, adapter, block))
     }
 
@@ -129,7 +130,7 @@ open class ReadWriteConfigDelegate<Raw, Actual>(
         configSourceResolver: ConfigSourceResolver<Raw>,
         resourcesResolver: ResourcesResolver<Raw>,
         validator: (Raw) -> Boolean,
-        adapter: (Raw) -> Actual,
+        adapter: (Raw) -> Actual?,
         private val serializer: (Actual) -> Raw
 ) : ReadOnlyConfigDelegate<Raw, Actual>(configSourceResolver, resourcesResolver, validator, adapter),
         ReadWriteConfig<Raw, Actual> {

@@ -19,7 +19,7 @@ fun urlConfig(block: ReadWriteConfig<String, String>.() -> Unit) = createConfig(
 fun textConfig(block: ReadWriteConfig<String, String>.() -> Unit) = stringConfig(block)
 
 // TODO Can type erasure fuck me here (if T=List<String>)?
-inline fun <reified T> jsonConfig(noinline block: ReadWriteConfigDelegate<String, T>.() -> Unit) = createConfig(block) {
+inline fun <reified T> jsonConfig(noinline block: ReadWriteConfig<String, T>.() -> Unit) = createConfig(block) {
     ReadWriteConfigDelegate(
             configSourceResolver = ConfigSourceResolver.String,
             resourcesResolver = ResourcesResolver.String,
@@ -29,7 +29,7 @@ inline fun <reified T> jsonConfig(noinline block: ReadWriteConfigDelegate<String
     )
 }
 
-fun colorConfig(block: ReadWriteConfigDelegate<String, ColorInt>.() -> Unit) = createConfig(block) {
+fun colorConfig(block: ReadWriteConfig<String, ColorInt>.() -> Unit) = createConfig(block) {
     ReadWriteConfigDelegate(
             configSourceResolver = ConfigSourceResolver.String,
             resourcesResolver = ResourcesResolver(Resources::getColorHex),

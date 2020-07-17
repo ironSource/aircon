@@ -1,8 +1,6 @@
 package com.ironsource.aura.airconkt.sample.config
 
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
-import com.ironsource.aura.airconkt.config.constraint.maxValue
-import com.ironsource.aura.airconkt.config.constraint.minValue
 import com.ironsource.aura.airconkt.config.intConfig
 import com.ironsource.aura.airconkt.source.FireBaseConfigSource
 
@@ -35,7 +33,5 @@ object CoolKtConfig : FeatureRemoteConfig {
             acceptIf { it % 2 == 0 }
             fallbackTo { it + 1 }
         }
-        minValue = 1
-        maxValue = 10
     }
 }

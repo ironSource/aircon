@@ -14,7 +14,7 @@ interface Defaulted<T> {
 }
 
 interface Constrained<Test, Fallback> {
-    fun constraint(name: String? = null, block: ConstraintBuilder<Test, Fallback>.() -> Unit)
+    fun constraint(name: String? = null, block: ConstraintBuilder<Test, Fallback?>.() -> Unit)
 }
 
 interface Processable<T> {

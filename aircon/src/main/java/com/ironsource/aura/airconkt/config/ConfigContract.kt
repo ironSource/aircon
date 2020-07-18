@@ -7,7 +7,6 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 
 // TODO - adapting custom configs (e.g enum to other)
-// TODO - proguard (R8) rules - remote config properties names should not be touched
 // TODO - identifiable config source won't work
 // TODO - unitests
 // TODO - linter

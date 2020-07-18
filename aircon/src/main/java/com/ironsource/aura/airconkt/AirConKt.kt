@@ -25,7 +25,10 @@ object AirConKt {
             logger = options.loggingOptions.logger
         }
 
-        jsonConverter = options.jsonConverter
+        if (options.hasJsonConverter()) {
+            jsonConverter = options.jsonConverter
+        }
+
         configSourceRepository = options.configSourceRepository
     }
 

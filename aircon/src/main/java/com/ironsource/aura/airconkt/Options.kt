@@ -25,6 +25,8 @@ class Options private constructor() {
 
     internal val configSourceRepository = ConfigSourceRepository()
 
+    internal fun hasJsonConverter() = ::jsonConverter.isInitialized
+
     /**
      * Define SDK logging options
      */

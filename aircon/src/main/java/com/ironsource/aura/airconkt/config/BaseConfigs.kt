@@ -91,18 +91,18 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
 
         // Check cache
         this.value?.let {
-            return logAndReturnValue(key, it, "cached", "Found cached value")
+            return logAndReturnValue(key, source, it, "cached", "Found cached value")
         }
 
         // Resolve value
         val value = typeResolver.configSourceResolver.sourceGetter(source, key)
         if (value == null) {
-            return logAndReturnValue(key, defaultProvider(), "default", "Remote value not found")
+            return logAndReturnValue(key, source, defaultProvider(), "default", "Remote value not found")
         }
 
         // Internal validation
         if (!validator(value)) {
-            return logAndReturnValue(key, defaultProvider(), "default", "Internal validation failed")
+            return logAndReturnValue(key, source, defaultProvider(), "default", "Internal validation failed")
         }
 
         // Constraint validation
@@ -112,27 +112,27 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
                 val msg = "Constraint ${constraint.name} validation failed"
                 val fallbackValue = constraint.fallbackProvider?.invoke(value)
                 return if (fallbackValue != null) {
-                    logAndReturnValue(key, fallbackValue, "fallback", msg)
+                    logAndReturnValue(key, source, fallbackValue, "fallback", msg)
                 } else {
-                    logAndReturnValue(key, defaultProvider(), "default", msg)
+                    logAndReturnValue(key, source, defaultProvider(), "default", msg)
                 }
             }
         }
 
         val adaptedValue = process(key, value)
         if (adaptedValue == null) {
-            return logAndReturnValue(key, defaultProvider(), "default", "Failed to adapt remote value $value")
+            return logAndReturnValue(key, source, defaultProvider(), "default", "Failed to adapt remote value $value")
         }
 
         if (cacheValue) {
             this.value = adaptedValue
         }
 
-        return logAndReturnValue(key, adaptedValue, "remote", "Remote value configured")
+        return logAndReturnValue(key, source, adaptedValue, "remote", "Remote value configured")
     }
 
-    private fun logAndReturnValue(key: String, value: Actual, type: String, msg: String): Actual {
-        AirConKt.logger?.v("$source: $msg - using $type value \"$key\"=$value")
+    private fun logAndReturnValue(key: String, source: ConfigSource, value: Actual, type: String, msg: String): Actual {
+        AirConKt.logger?.v("${source}: $msg - using $type value \"$key\"=$value")
         return value
     }
 

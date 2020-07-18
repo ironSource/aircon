@@ -6,14 +6,12 @@ import com.ironsource.aura.airconkt.source.ConfigSource
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 
-// TODO - adapting custom configs (e.g enum to other)
 // TODO - identifiable config source won't work
 // TODO - unitests
 // TODO - linter
 
 // TODO BONUS
-
-// TODO ONGOING
+// TODO - adapting custom configs (e.g enum to other)
 // TODO - builtin constraints
 // TODO - custom types - sealed class enum? (need to think about inheritors with constructor)
 // TODO - revise DSL structure (+dsl annotations)

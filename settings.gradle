@@ -1,4 +1,4 @@
-include ':aircon', ':gson-converter'
+include ':aircon'
 include 'aircon-converters:gson'
 include 'aircon-sources:firebase'
 include 'samples:app'

@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
 // TODO - convert rest of sdk to KT
 // TODO - unitests
 // TODO - linter
-// TODO - missing documentation
+// TODO - missing documentation, README and CHANGELOG
 
 // TODO BONUS
 // TODO - reintroduce support for identifiable config source

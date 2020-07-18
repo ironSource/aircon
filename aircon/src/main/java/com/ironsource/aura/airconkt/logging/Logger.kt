@@ -3,7 +3,7 @@ package com.ironsource.aura.airconkt.logging
 /**
  * Logger interface for supplying a custom logger to the SDK.
  *
- * @see com.ironsource.aura.airconkt.AirConConfiguration.Builder.setLogger
+ * @see com.ironsource.aura.airconkt.Options.Builder.setLogger
  */
 interface Logger {
     fun v(msg: String)

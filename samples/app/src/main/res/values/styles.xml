@@ -6,9 +6,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="aTitleTextColor">@color/white</item>
-        <item name="aBodyTextColor">@color/white</item>
-        <item name="aTitle">I\'m a remotely configured message!</item>
     </style>
 
 </resources>

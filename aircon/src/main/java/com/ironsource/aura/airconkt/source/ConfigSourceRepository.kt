@@ -1,17 +1,17 @@
 package com.ironsource.aura.airconkt.source
 
-import com.ironsource.aura.airconkt.SdkContext
+import com.ironsource.aura.airconkt.AirConKt
 import com.ironsource.aura.airconkt.logging.Logger
+import kotlin.reflect.KClass
 
 private val STUB_CONFIG_SOURCE: ConfigSource by lazy { StubConfigSource() }
 
 /**
  * Responsible for managing config sources.
  */
-class ConfigSourceRepository internal constructor(private val sdkContext: SdkContext,
-                                                  configSources: List<ConfigSource>) {
+class ConfigSourceRepository internal constructor() {
 
-    private val configSourcesMap = configSources.associateBy { it.javaClass }.toMutableMap()
+    private val configSourcesMap = mutableMapOf<KClass<out ConfigSource>, ConfigSource>()
 
     /**
      * Add a config source.
@@ -21,7 +21,7 @@ class ConfigSourceRepository internal constructor(private val sdkContext: SdkCon
      */
     @Synchronized
     fun addSource(configSource: ConfigSource) {
-        configSourcesMap[configSource.javaClass] = configSource
+        configSourcesMap[configSource::class] = configSource
     }
 
     /**
@@ -35,16 +35,16 @@ class ConfigSourceRepository internal constructor(private val sdkContext: SdkCon
     }
 
     @Synchronized
-    fun getSource(configSourceClass: Class<out ConfigSource?>): ConfigSource {
+    fun getSource(configSourceClass: Class<out ConfigSource>): ConfigSource {
         val configSource = configSourcesMap[configSourceClass]
 
         configSource?.let { return it }
 
-        log().v("Unable to find source, returning stub source for class = " + configSourceClass.simpleName)
+        log()?.v("Unable to find source, returning stub source for class = " + configSourceClass.simpleName)
         return STUB_CONFIG_SOURCE
     }
 
-    private fun log(): Logger {
-        return sdkContext.logger
+    private fun log(): Logger? {
+        return AirConKt.logger
     }
 }

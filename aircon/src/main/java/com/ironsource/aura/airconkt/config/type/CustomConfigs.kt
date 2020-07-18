@@ -26,16 +26,16 @@ inline fun <reified T> jsonConfig(noinline block: StringConfig<T>.() -> Unit) =
         ConfigDelegate(SourceTypeResolver.string(),
                 validator = { it.isNotEmpty() },
                 adapter = {
-                    val res = AirConKt.get().jsonConverter.fromJson(it, T::class.java)
+                    val res = AirConKt.jsonConverter!!.fromJson(it, T::class.java)
                     when (res) {
                         is Success -> res.value
                         is Fail -> {
-                            log().e("Failed to parse json: $it", res.exception)
+                            log()?.e("Failed to parse json: $it", res.exception)
                             null
                         }
                     }
                 },
-                serializer = { AirConKt.get().jsonConverter.toJson(it) },
+                serializer = { AirConKt.jsonConverter!!.toJson(it) },
                 block = block
         )
 
@@ -46,7 +46,7 @@ fun colorConfig(block: StringConfig<ColorInt>.() -> Unit) =
                     try {
                         ColorInt(Color.parseColor(it))
                     } catch (e: Exception) {
-                        log().e("Failed to parse color hex: $it", e)
+                        log()?.e("Failed to parse color hex: $it", e)
                         null
                     }
                 },
@@ -54,7 +54,7 @@ fun colorConfig(block: StringConfig<ColorInt>.() -> Unit) =
                 block = block
         )
 
-fun log(): Logger {
-    return AirConKt.get()
+fun log(): Logger? {
+    return AirConKt
             .logger
 }

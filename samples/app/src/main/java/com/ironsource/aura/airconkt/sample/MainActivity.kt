@@ -1,27 +1,20 @@
-package com.ironsource.aura.airconkt.sample;
+package com.ironsource.aura.airconkt.sample
 
-import android.os.Bundle;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 
-import com.ironsource.aura.airconkt.injection.AirConAppCompatActivity;
+private const val TAG = "MainActivity"
 
-public class MainActivity
-        extends AirConAppCompatActivity {
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-    private static final String TAG = "MainActivity";
-
-    private TextView mTxt;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        loadFireBaseConfig();
+        loadFireBaseConfig()
     }
 
-    private void loadFireBaseConfig() {
+    private fun loadFireBaseConfig() {
 //        FirebaseRemotegetInstance()
 //                .fetch(0)
 //                .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -42,8 +35,8 @@ public class MainActivity
 //                });
     }
 
-    private void onFireBaseConfigLoaded() {
+    private fun onFireBaseConfigLoaded() {
         Toast.makeText(this, "FireBase remote config loaded", Toast.LENGTH_SHORT)
-                .show();
+                .show()
     }
 }

@@ -49,7 +49,7 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
         get() = throw UnsupportedOperationException()
         set(value) {
             default {
-                val adapted = adapter(typeResolver.resourcesResolver.resourcesGetter(AirConKt.get()!!.context.resources, value))
+                val adapted = adapter(typeResolver.resourcesResolver.resourcesGetter(AirConKt.context.resources, value))
                 adapted ?: throw RuntimeException("Failed to adapt default resource value to type")
             }
         }
@@ -131,9 +131,8 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
         return logAndReturnValue(key, adaptedValue, "remote", "Remote value configured")
     }
 
-
     private fun logAndReturnValue(key: String, value: Actual, type: String, msg: String): Actual {
-        log("$source: $msg - using $type value \"$key\"=$value")
+        AirConKt.logger?.v("$source: $msg - using $type value \"$key\"=$value")
         return value
     }
 
@@ -169,7 +168,7 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
 
     private fun resolveSource(thisRef: FeatureRemoteConfig): ConfigSource {
         val sourceClass = if (::source.isInitialized) source else thisRef.source
-        return AirConKt.get()!!.configSourceRepository.getSource(sourceClass.java)
+        return AirConKt.configSourceRepository.getSource(sourceClass.java)
     }
 
     internal fun getRawValue(thisRef: FeatureRemoteConfig, property: KProperty<*>): Raw? {
@@ -190,9 +189,3 @@ private fun <T, S> ConstraintBuilder<T, S>.verify(value: T): Boolean {
 }
 
 typealias SimpleConfig<T> = Config<T, T>
-
-private fun log(msg: String) {
-    AirConKt.get()
-            .logger
-            .v(msg)
-}

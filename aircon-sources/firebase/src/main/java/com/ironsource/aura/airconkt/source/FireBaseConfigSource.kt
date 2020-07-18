@@ -103,8 +103,7 @@ class FireBaseConfigSource(context: Context, private val remoteConfig: FirebaseR
     }
 
     private fun log(msg: String) {
-        AirConKt.get()
-                .logger
-                .v("${toString()} - $msg")
+        AirConKt.logger
+                ?.v("${toString()} - $msg")
     }
 }

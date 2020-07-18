@@ -9,27 +9,27 @@ class ConfigSourceResolver<T> private constructor(
     companion object {
         val Int = ConfigSourceResolver(
                 ConfigSource::getInteger,
-                ConfigSource::putInteger,
+                ConfigSource::putInteger
         )
 
         val Long = ConfigSourceResolver(
                 ConfigSource::getLong,
-                ConfigSource::putLong,
+                ConfigSource::putLong
         )
 
         val Float = ConfigSourceResolver(
                 ConfigSource::getFloat,
-                ConfigSource::putFloat,
+                ConfigSource::putFloat
         )
 
         val Boolean = ConfigSourceResolver(
                 ConfigSource::getBoolean,
-                ConfigSource::putBoolean,
+                ConfigSource::putBoolean
         )
 
         val String = ConfigSourceResolver(
                 ConfigSource::getString,
-                ConfigSource::putString,
+                ConfigSource::putString
         )
     }
 }

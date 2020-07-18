@@ -32,7 +32,7 @@ private fun <A : Annotation, T : Enum<T>, S> getEnumRemoteValue(enumClass: KClas
         enumClass.java.declaredFields
                 .filter { it.isEnumConstant }
                 .associateBy({ it.get(enumClass) as T },
-                        { it.getAnnotation(annotationClass)?.remoteValueResolver() },
+                        { it.getAnnotation(annotationClass)?.remoteValueResolver() }
                 ).get(enumConstant)
 
 @Suppress("UNCHECKED_CAST")

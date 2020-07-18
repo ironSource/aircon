@@ -31,11 +31,11 @@ class ConfigSourceRepository internal constructor() {
      */
     @Synchronized
     fun removeSource(configSource: ConfigSource) {
-        configSourcesMap.remove(configSource.javaClass)
+        configSourcesMap.remove(configSource::class)
     }
 
     @Synchronized
-    fun getSource(configSourceClass: Class<out ConfigSource>): ConfigSource {
+    fun getSource(configSourceClass: KClass<out ConfigSource>): ConfigSource {
         val configSource = configSourcesMap[configSourceClass]
 
         configSource?.let { return it }

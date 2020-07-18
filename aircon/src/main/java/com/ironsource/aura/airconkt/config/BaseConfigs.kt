@@ -168,7 +168,7 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
 
     private fun resolveSource(thisRef: FeatureRemoteConfig): ConfigSource {
         val sourceClass = if (::source.isInitialized) source else thisRef.source
-        return AirConKt.configSourceRepository.getSource(sourceClass.java)
+        return AirConKt.configSourceRepository.getSource(sourceClass)
     }
 
     internal fun getRawValue(thisRef: FeatureRemoteConfig, property: KProperty<*>): Raw? {

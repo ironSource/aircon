@@ -11,6 +11,7 @@ import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
 
 object DefaultProvider : Spek({
+
     class Config : FeatureRemoteConfig {
         override val source = MapSource::class
 

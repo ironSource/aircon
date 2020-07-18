@@ -4,7 +4,7 @@ import com.ironsource.aura.airconkt.AirConKt
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.config.constraint.ConstraintBuilder
 import com.ironsource.aura.airconkt.source.ConfigSource
-import com.ironsource.aura.airconkt.utils.cachedBlock
+import com.ironsource.aura.airconkt.utils.toCached
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
@@ -14,7 +14,7 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
     protected constructor(typeResolver: SourceTypeResolver<Raw>,
                           validator: (Raw) -> Boolean,
                           adapter: (Raw) -> Actual?,
-                          serializer: (Actual) -> Raw) :
+                          serializer: (Actual) -> Raw?) :
             this(typeResolver, validator) {
         adapt(adapter)
         serialize(serializer)
@@ -29,7 +29,7 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
         operator fun <Raw, Actual> invoke(sourceTypeResolver: SourceTypeResolver<Raw>,
                                           validator: (Raw) -> Boolean = { true },
                                           adapter: (Raw) -> Actual?,
-                                          serializer: (Actual) -> Raw,
+                                          serializer: (Actual) -> Raw?,
                                           block: Config<Raw, Actual>.() -> Unit) =
                 ConfigDelegate(sourceTypeResolver, validator, adapter, serializer).apply(block)
     }
@@ -64,7 +64,7 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
     private val constraints: MutableList<ConstraintBuilder<Raw, Actual?>> = mutableListOf()
 
     override fun default(cache: Boolean, provider: () -> Actual) {
-        defaultProvider = if (cache) cachedBlock(provider) else provider
+        defaultProvider = if (cache) provider.toCached() else provider
     }
 
     override fun constraint(name: String?,

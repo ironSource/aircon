@@ -1,6 +1,7 @@
 package com.ironsource.aura.airconkt.source
 
 class StubConfigSource : ConfigSource {
+
     override fun getInteger(key: String) = null
 
     override fun putInteger(key: String, value: Int?) {

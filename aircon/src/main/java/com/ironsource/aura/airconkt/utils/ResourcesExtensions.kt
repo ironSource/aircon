@@ -11,4 +11,5 @@ fun Resources.getFloat(id: Int): Float {
     return typedValue.float
 }
 
-fun Resources.getColorHex(id: Int) = AirConUtils.colorIntToHex(ColorInt(getColor(id)))
+fun Resources.getColorHex(id: Int) =
+        "#" + Integer.toHexString(getColor(id))

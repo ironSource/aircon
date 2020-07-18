@@ -1,6 +1,6 @@
 package com.ironsource.aura.airconkt.config.constraint
 
-import com.ironsource.aura.airconkt.utils.cachedBlock
+import com.ironsource.aura.airconkt.utils.toCached
 
 class ConstraintBuilder<Test, Fallback> private constructor(var name: String? = null,
                                                             private var adapter: (Test) -> Fallback) {
@@ -41,6 +41,6 @@ class ConstraintBuilder<Test, Fallback> private constructor(var name: String? = 
         }
 
     fun fallbackTo(cache: Boolean = true, fallbackProvider: (Test) -> Fallback) {
-        this.fallbackProvider = if (cache) cachedBlock(fallbackProvider) else fallbackProvider
+        this.fallbackProvider = if (cache) fallbackProvider.toCached() else fallbackProvider
     }
 }

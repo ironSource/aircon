@@ -12,62 +12,60 @@ import com.ironsource.aura.airconkt.logging.Logger;
  * Created on 11/9/2018.
  */
 public class App
-		extends Application {
+        extends Application {
 
-	public static final String TAG = "AirConSample";
+    public static final String TAG = "AirConSample";
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		initAirConSdk();
-	}
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        initAirConSdk();
+    }
 
-	private void initAirConSdk() {
-		final AirConKt airConKt = AirConKt.get();
+    private void initAirConSdk() {
+        final AirConKt airConKt = AirConKt.get();
 //		final FirebaseRemoteConfig firebaseRemoteConfig = FirebaseRemotegetInstance();
 //		firebaseRemotesetConfigSettings(new FirebaseRemoteConfigSettings.Builder().setDeveloperModeEnabled(Build.DEBUG)
 //		                                                                                 .build());
 //		final FireBaseConfigSource configSource = new FireBaseConfigSource(this, firebaseRemoteConfig);
-		airConKt.init(new AirConConfiguration.Builder(this)
+        airConKt.init(new AirConConfiguration.Builder(this)
 //				.enableXmlInjection(R.attr.class, configSource)
-		                                                 .setJsonConverter(new GsonConverter())
-		                                                 .setLogger(getLogger())
-		                                                 .setLoggingEnabled(BuildConfig.DEBUG)
+                .setJsonConverter(new GsonConverter())
+                .setLogger(getLogger())
+                .setLoggingEnabled(BuildConfig.DEBUG)
 //		                                                 .addConfigSource(configSource)
-		                                                 .build());
-	}
+                .build());
+    }
 
-	private Logger getLogger() {
-		return new Logger() {
-			@Override
-			public void v(final String msg) {
-				Log.v(TAG, msg);
-			}
+    private Logger getLogger() {
+        return new Logger() {
+            @Override
+            public void v(final String msg) {
+                Log.v(TAG, msg);
+            }
 
-			@Override
-			public void d(final String msg) {
-				Log.d(TAG, msg);
-			}
+            @Override
+            public void d(final String msg) {
+                Log.d(TAG, msg);
+            }
 
-			@Override
-			public void w(final String msg) {
-				Log.w(TAG, msg);
-			}
+            @Override
+            public void w(final String msg) {
+                Log.w(TAG, msg);
+            }
 
-			@Override
-			public void i(final String msg) {
-				Log.i(TAG, msg);
-			}
+            @Override
+            public void i(final String msg) {
+                Log.i(TAG, msg);
+            }
 
-			@Override
-			public void e(final String msg) {
-				Log.e(TAG, msg);
-			}
-
-			@Override
-			public void logException(final Exception e) {
-				Log.e(TAG, e.toString());
-			}
-		};
-	}
+            @Override
+            public void e(final String msg, final Exception e) {
+                Log.e(TAG, msg);
+                if (e != null) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
 }

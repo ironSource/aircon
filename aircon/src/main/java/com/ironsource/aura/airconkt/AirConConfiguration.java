@@ -2,20 +2,17 @@ package com.ironsource.aura.airconkt;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+
 import androidx.annotation.NonNull;
 
 import com.ironsource.aura.airconkt.injection.AttributeResolver;
 import com.ironsource.aura.airconkt.logging.AndroidLogger;
+import com.ironsource.aura.airconkt.logging.ControllableLogger;
 import com.ironsource.aura.airconkt.logging.Logger;
-import com.ironsource.aura.airconkt.logging.LoggerWrapper;
 import com.ironsource.aura.airconkt.source.ConfigSource;
-import com.ironsource.aura.airconkt.source.IdentifiableConfigSource;
-import com.ironsource.aura.airconkt.source.IdentifiableConfigSourceFactory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Configuration class used to initialize the SDK.
@@ -30,18 +27,14 @@ public class AirConConfiguration {
     private final AttributeResolver mAttributeResolver;
     private final JsonConverter mJsonConverter;
     private final List<ConfigSource> mConfigSources;
-    private final List<IdentifiableConfigSource> mIdentifiableConfigSources;
-    private final Map<Class, IdentifiableConfigSourceFactory> mIdentifiableConfigSourceFactories;
 
-    private AirConConfiguration(final Context context, final Logger logger, final Class attrClass, final AttributeResolver attributeResolver, final JsonConverter jsonConverter, final List<ConfigSource> configSources, final List<IdentifiableConfigSource> identifiableConfigSources, final Map<Class, IdentifiableConfigSourceFactory> identifiableConfigSourceFactories) {
+    private AirConConfiguration(final Context context, final Logger logger, final Class attrClass, final AttributeResolver attributeResolver, final JsonConverter jsonConverter, final List<ConfigSource> configSources) {
         mContext = context;
         mLogger = logger;
         mAttrClass = attrClass;
         mAttributeResolver = attributeResolver;
         mJsonConverter = jsonConverter;
         mConfigSources = configSources;
-        mIdentifiableConfigSources = identifiableConfigSources;
-        mIdentifiableConfigSourceFactories = identifiableConfigSourceFactories;
     }
 
     Context getContext() {
@@ -68,14 +61,6 @@ public class AirConConfiguration {
         return mConfigSources;
     }
 
-    List<IdentifiableConfigSource> getIdentifiableConfigSources() {
-        return mIdentifiableConfigSources;
-    }
-
-    Map<Class, IdentifiableConfigSourceFactory> getIdentifiableConfigSourceFactories() {
-        return mIdentifiableConfigSourceFactories;
-    }
-
     public static class Builder {
 
         private final Context mContext;
@@ -87,8 +72,6 @@ public class AirConConfiguration {
         private JsonConverter mJsonConverter;
 
         private final List<ConfigSource> mConfigSources;
-        private final List<IdentifiableConfigSource> mIdentifiableConfigSources;
-        private final Map<Class, IdentifiableConfigSourceFactory> mIdentifiableConfigSourceFactories;
 
         /**
          * Constructs a Builder with the application context retrieved from the supplied context.
@@ -100,8 +83,6 @@ public class AirConConfiguration {
             mLogger = new AndroidLogger();
             mLoggingEnabled = true;
             mConfigSources = new ArrayList<>();
-            mIdentifiableConfigSources = new ArrayList<>();
-            mIdentifiableConfigSourceFactories = new HashMap<>();
         }
 
         /**
@@ -175,7 +156,6 @@ public class AirConConfiguration {
         /**
          * Add a config source.
          * A config can have only one instance of the same class.
-         * For adding multiple config sources of the same class use {@link #addIdentifiableSource(IdentifiableConfigSource)}.
          *
          * @param configSource config source to add
          * @return this {@link Builder} instance.
@@ -186,44 +166,12 @@ public class AirConConfiguration {
         }
 
         /**
-         * Add an identifiable config source.
-         * An identifiable config source is useful for cases where more than once instance
-         * of a ConfigSource class can be used.
-         * The config provider methods will be generated with the config id as a parameter to decide
-         * to which config source the config belongs.
-         *
-         * @param configSource an identifiable config source
-         * @return this {@link Builder} instance.
-         */
-        public Builder addIdentifiableSource(@NonNull IdentifiableConfigSource configSource) {
-            mIdentifiableConfigSources.add(configSource);
-            return this;
-        }
-
-        /**
-         * Add a factory used to construct an identifiable config source on demand.
-         * This is useful for cases where the config source is needs to be dynamically created
-         * given an ID.
-         *
-         * @param configSourceClass the factory config source class.
-         * @param factory           config source factory.
-         * @param <T>               config source id type
-         * @param <S>               config source type
-         * @return this {@link Builder} instance.
-         * @see #addIdentifiableSource(IdentifiableConfigSource)
-         */
-        public <T, S extends IdentifiableConfigSource<T>> Builder addIdentifiableSourceFactory(Class<S> configSourceClass, IdentifiableConfigSourceFactory<T> factory) {
-            mIdentifiableConfigSourceFactories.put(configSourceClass, factory);
-            return this;
-        }
-
-        /**
          * Constructs an {@link AirConConfiguration} object using this Builder fields.
          *
          * @return an {@link AirConConfiguration} object.
          */
         public AirConConfiguration build() {
-            return new AirConConfiguration(mContext, new LoggerWrapper(mLogger, mLoggingEnabled), mAttrClass, mAttributeResolver, mJsonConverter, mConfigSources, mIdentifiableConfigSources, mIdentifiableConfigSourceFactories);
+            return new AirConConfiguration(mContext, new ControllableLogger(mLogger, mLoggingEnabled), mAttrClass, mAttributeResolver, mJsonConverter, mConfigSources);
         }
     }
 

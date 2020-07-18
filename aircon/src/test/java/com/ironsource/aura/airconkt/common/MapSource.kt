@@ -2,7 +2,7 @@ package com.ironsource.aura.airconkt.common
 
 import com.ironsource.aura.airconkt.source.ConfigSource
 
-class MapSource(private val map: MutableMap<String, Any?>) : ConfigSource {
+open class MapSource(private val map: MutableMap<String, Any?>) : ConfigSource {
 
     override fun getInteger(key: String) = testAndGet<Int>(key)
 

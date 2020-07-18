@@ -7,13 +7,15 @@ import com.ironsource.aura.airconkt.AirConKt
 import io.mockk.every
 import io.mockk.mockk
 
-fun initSdk(map: MutableMap<String, Any?>) {
+fun initSdk(map: MutableMap<String, Any?>,
+            map2: MutableMap<String, Any?>? = null) {
     AirConKt.init(mockContext()) {
         logging {
             logger = ConsoleLogger()
         }
-        configSource {
-            MapSource(map)
+        configSource { MapSource(map) }
+        if (map2!=null){
+            configSource { MapSource2(map2) }
         }
     }
 }

@@ -132,7 +132,7 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
     }
 
     private fun logAndReturnValue(key: String, source: ConfigSource, value: Actual, type: String, msg: String): Actual {
-        AirConKt.logger?.v("${source}: $msg - using $type value \"$key\"=$value")
+        AirConKt.logger?.v("${source::class}: $msg - using $type value \"$key\"=$value")
         return value
     }
 

@@ -6,7 +6,6 @@ import com.ironsource.aura.airconkt.source.ConfigSource
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 
-// TODO - convert rest of sdk to KT
 // TODO - unitests
 // TODO - linter
 // TODO - missing documentation, README and CHANGELOG

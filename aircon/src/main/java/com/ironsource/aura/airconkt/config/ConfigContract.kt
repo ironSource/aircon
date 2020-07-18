@@ -28,7 +28,7 @@ interface Constrained<Test, Fallback> {
 }
 
 interface Processable<T> {
-    fun process(processor: ((T) -> T))
+    fun process(processor: (T) -> T)
 }
 
 interface Adaptable<Raw, Actual> {

@@ -2,18 +2,17 @@ package com.ironsource.aura.airconkt.defaultValue
 
 import android.graphics.Color
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
-import com.ironsource.aura.airconkt.common.MapSource
-import com.ironsource.aura.airconkt.common.initSdk
+import com.ironsource.aura.airconkt.common.airConTest
+import com.ironsource.aura.airconkt.common.mapConfig
 import com.ironsource.aura.airconkt.config.type.*
 import com.ironsource.aura.airconkt.utils.ColorInt
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
 
-object DefaultValue : Spek({
-    class Config : FeatureRemoteConfig {
-        override val source = MapSource::class
+object DefaultValueTest : Spek(airConTest {
 
+    class Config : FeatureRemoteConfig by mapConfig() {
         val someInt by intConfig {
             default = 0
         }
@@ -39,30 +38,33 @@ object DefaultValue : Spek({
 
     val config = Config()
 
-    beforeGroup {
-        initSdk(mutableMapOf())
-    }
+    describe("Fallback to default when no remote value configured") {
 
-    describe("Fallback to default") {
-        it("intConfig") {
+        it("Should return default - intConfig") {
             assertEquals(0, config.someInt)
         }
-        it("longConfig") {
+
+        it("Should return default - longConfig") {
             assertEquals(0, config.someLong)
         }
-        it("floatConfig") {
+
+        it("Should return default - floatConfig") {
             assertEquals(0f, config.someFloat)
         }
-        it("stringConfig") {
+
+        it("Should return default - stringConfig") {
             assertEquals("", config.someString)
         }
-        it("nullableStringConfig") {
+
+        it("Should return default - nullableStringConfig") {
             assertEquals(null, config.someNullableString)
         }
-        it("booleanConfig") {
+
+        it("Should return default - booleanConfig") {
             assertEquals(false, config.someBoolean)
         }
-        it("colorConfig") {
+
+        it("Should return default - colorConfig") {
             assertEquals(ColorInt(Color.WHITE), config.someColor)
         }
     }

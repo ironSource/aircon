@@ -2,10 +2,12 @@ package com.ironsource.aura.airconkt.config
 
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.config.constraint.ConstraintBuilder
+import com.ironsource.aura.airconkt.dsl.AirConDsl
 import com.ironsource.aura.airconkt.source.ConfigSource
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 
+// TODO - dsl marker
 // TODO - unitests
 // TODO - linter
 // TODO - missing documentation, README and CHANGELOG
@@ -37,6 +39,7 @@ interface Adaptable<Raw, Actual> {
     fun serialize(serializer: (Actual) -> Raw?)
 }
 
+@AirConDsl
 interface Config<Raw, Actual> :
         ReadWriteProperty<FeatureRemoteConfig, Actual>,
         Defaulted<Actual>,

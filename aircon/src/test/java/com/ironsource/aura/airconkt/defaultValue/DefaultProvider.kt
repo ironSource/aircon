@@ -2,22 +2,31 @@ package com.ironsource.aura.airconkt.defaultValue
 
 import android.graphics.Color
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
-import com.ironsource.aura.airconkt.common.MapSource
-import com.ironsource.aura.airconkt.common.initSdk
+import com.ironsource.aura.airconkt.common.airConTest
+import com.ironsource.aura.airconkt.common.mapConfig
 import com.ironsource.aura.airconkt.config.type.*
 import com.ironsource.aura.airconkt.utils.ColorInt
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
+import java.util.*
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
-object DefaultProvider : Spek({
+object DefaultProvider : Spek(airConTest {
 
-    class Config : FeatureRemoteConfig {
-        override val source = MapSource::class
-
+    class Config : FeatureRemoteConfig by mapConfig() {
         val someInt by intConfig {
             default { 0 }
         }
+
+        val someIntWithCache by intConfig {
+            default { Random().nextInt() }
+        }
+
+        val someIntWithoutCache by intConfig {
+            default(cache = false) { Random().nextInt() }
+        }
+
         val someLong by longConfig {
             default { 0 }
         }
@@ -40,31 +49,39 @@ object DefaultProvider : Spek({
 
     val config = Config()
 
-    beforeGroup {
-        initSdk(mutableMapOf())
-    }
+    describe("Fallback to default provider resolved value when no remote value configured") {
 
-    describe("Fallback to default by provider") {
-        it("intConfig") {
+        it("Should return default - intConfig") {
             assertEquals(0, config.someInt)
         }
-        it("longConfig") {
+        it("Should return default - longConfig") {
             assertEquals(0, config.someLong)
         }
-        it("floatConfig") {
+        it("Should return default - floatConfig") {
             assertEquals(0f, config.someFloat)
         }
-        it("stringConfig") {
+        it("Should return default - Should return default - stringConfig") {
             assertEquals("", config.someString)
         }
-        it("nullableStringConfig") {
+        it("Should return default - nullableStringConfig") {
             assertEquals(null, config.someNullableString)
         }
-        it("booleanConfig") {
+        it("Should return default - booleanConfig") {
             assertEquals(false, config.someBoolean)
         }
-        it("colorConfig") {
+        it("Should return default - colorConfig") {
             assertEquals(ColorInt(Color.WHITE), config.someColor)
+        }
+    }
+
+    describe("Cache flag should control number of calls to default provider") {
+
+        it("Config with cache - default provider should only be called once") {
+            assertEquals(config.someIntWithCache, config.someIntWithCache)
+        }
+
+        it("Config without cache - default provider should be called every time field getter called") {
+            assertNotEquals(config.someIntWithoutCache, config.someIntWithoutCache)
         }
     }
 })

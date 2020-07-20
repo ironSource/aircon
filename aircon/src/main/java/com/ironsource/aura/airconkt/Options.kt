@@ -1,5 +1,6 @@
 package com.ironsource.aura.airconkt
 
+import com.ironsource.aura.airconkt.dsl.AirConDsl
 import com.ironsource.aura.airconkt.logging.AndroidLogger
 import com.ironsource.aura.airconkt.logging.Logger
 import com.ironsource.aura.airconkt.source.ConfigSource
@@ -10,6 +11,7 @@ import com.ironsource.aura.airconkt.source.ConfigSourceRepository
  *
  * @see AirConKt.init
  */
+@AirConDsl
 class Options private constructor() {
     companion object {
         operator fun invoke(block: Options.() -> Unit) = Options().apply(block)
@@ -43,6 +45,7 @@ class Options private constructor() {
     }
 }
 
+@AirConDsl
 class LoggingOptions private constructor() {
     companion object {
         operator fun invoke(block: LoggingOptions.() -> Unit) = LoggingOptions().apply(block)

@@ -1,7 +1,9 @@
 package com.ironsource.aura.airconkt.config.constraint
 
+import com.ironsource.aura.airconkt.dsl.AirConDsl
 import com.ironsource.aura.airconkt.utils.toCached
 
+@AirConDsl
 class ConstraintBuilder<Test, Fallback> private constructor(var name: String? = null,
                                                             private var adapter: (Test) -> Fallback) {
     internal var verifiers: MutableList<(Test) -> Boolean> = mutableListOf()

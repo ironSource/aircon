@@ -7,7 +7,8 @@ import com.ironsource.aura.airconkt.source.ConfigSource
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 
-// TODO - dsl marker
+// TODO - object raw type
+// TODO - formatter
 // TODO - unitests
 // TODO - linter
 // TODO - missing documentation, README and CHANGELOG

@@ -12,7 +12,7 @@ import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
-object DefaultProvider : Spek(airConTest {
+object DefaultProviderTest : Spek(airConTest {
 
     class Config : FeatureRemoteConfig by mapConfig() {
         val someInt by intConfig {

@@ -8,20 +8,20 @@ import kotlin.test.assertEquals
 
 object SourceTest : Spek(airConTest {
 
-    class Config : FeatureRemoteConfig by mapConfig() {
-        val classSourceInt by intConfig {
-            key = "someInt"
-        }
-
-        val specificSourceInt by intConfig {
-            key = "someInt"
-            source = MapSource2::class
-        }
-    }
-
-    val config = Config()
-
     describe("Usage of correct config source") {
+
+        class Config : FeatureRemoteConfig by mapConfig() {
+            val classSourceInt by intConfig {
+                key = "someInt"
+            }
+
+            val specificSourceInt by intConfig {
+                key = "someInt"
+                source = MapSource2::class
+            }
+        }
+
+        val config = Config()
 
         it("Should inherit source from class when no source set for config") {
             withRemoteMap("someInt" to 1)

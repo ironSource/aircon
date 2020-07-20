@@ -10,16 +10,17 @@ import kotlin.test.assertEquals
 
 object KeyTest : Spek(airConTest {
 
-    class Config : FeatureRemoteConfig by mapConfig() {
-        val someInt by intConfig {
-        }
-
-        val someIntWithKey by intConfig {
-            key = "someInt"
-        }
-    }
-
     describe("Usage of correct config key") {
+
+        class Config : FeatureRemoteConfig by mapConfig() {
+            val someInt by intConfig {
+            }
+
+            val someIntWithKey by intConfig {
+                key = "someInt"
+            }
+        }
+
         val config = Config()
 
         beforeGroup {

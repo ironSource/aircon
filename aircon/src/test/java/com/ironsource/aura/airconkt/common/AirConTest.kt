@@ -4,13 +4,19 @@ import com.ironsource.aura.airconkt.AirConKt
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
 import org.spekframework.spek2.dsl.Root
 
-inline fun airConTest(crossinline block: Root.() -> Unit): Root.() -> Unit {
+fun airConTest(block: Root.() -> Unit): Root.() -> Unit {
     return {
-        AirConKt.init(mockContext()) {
-            logging {
-                logger = ConsoleLogger()
+
+        beforeGroup {
+            AirConKt.init(mockContext()) {
+                logging {
+                    logger = ConsoleLogger()
+                }
             }
+
+            withRemoteMap()
         }
+
         block()
     }
 }

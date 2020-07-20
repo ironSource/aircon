@@ -7,21 +7,6 @@ import com.ironsource.aura.airconkt.AirConKt
 import io.mockk.every
 import io.mockk.mockk
 
-fun initSdk(map: MutableMap<String, Any?>? = null,
-            map2: MutableMap<String, Any?>? = null) {
-    AirConKt.init(mockContext()) {
-        logging {
-            logger = ConsoleLogger()
-        }
-        if (map != null) {
-            configSource { MapSource(map) }
-        }
-        if (map2 != null) {
-            configSource { MapSource2(map2) }
-        }
-    }
-}
-
 fun mockContext(): Context {
     val mockk = mockk<Context>()
     every { mockk.applicationContext } returns mockk

@@ -7,9 +7,8 @@ import com.ironsource.aura.airconkt.source.ConfigSource
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 
-// TODO - object raw type
 // TODO - formatter
-// TODO - unitests
+// TODO - unitests (config setValue, adapter, validator)
 // TODO - linter
 // TODO - missing documentation, README and CHANGELOG
 // TODO - benchmark vs old AirCon (runtime, compile-time, supported features..)

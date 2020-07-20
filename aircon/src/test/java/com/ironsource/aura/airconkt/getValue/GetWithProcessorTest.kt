@@ -1,6 +1,7 @@
 package com.ironsource.aura.airconkt.getValue
 
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
+import com.ironsource.aura.airconkt.common.Label
 import com.ironsource.aura.airconkt.common.airConTest
 import com.ironsource.aura.airconkt.common.mapConfig
 import com.ironsource.aura.airconkt.common.withRemoteMap
@@ -29,6 +30,9 @@ object GetWithProcessorTest : Spek(airConTest {
             val someBoolean by booleanConfig {
                 process { !it }
             }
+            val someTyped by typedConfig<Label> {
+                process { Label(it.value + "Processed") }
+            }
         }
 
         val config = Config()
@@ -39,7 +43,9 @@ object GetWithProcessorTest : Spek(airConTest {
                     "someLong" to 1L,
                     "someFloat" to 1f,
                     "someString" to "remote",
-                    "someBoolean" to true)
+                    "someBoolean" to true,
+                    "someTyped" to Label("remote")
+            )
         }
 
         it("Should return processed remote value - intConfig") {
@@ -60,6 +66,10 @@ object GetWithProcessorTest : Spek(airConTest {
 
         it("Should return processed remote value - booleanConfig") {
             assertEquals(false, config.someBoolean)
+        }
+
+        it("Should return processed remote value - typedConfig") {
+            assertEquals(Label("remoteProcessed"), config.someTyped)
         }
     }
 })

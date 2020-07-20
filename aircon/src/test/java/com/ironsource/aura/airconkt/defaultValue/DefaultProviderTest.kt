@@ -2,6 +2,7 @@ package com.ironsource.aura.airconkt.defaultValue
 
 import android.graphics.Color
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
+import com.ironsource.aura.airconkt.common.Label
 import com.ironsource.aura.airconkt.common.airConTest
 import com.ironsource.aura.airconkt.common.mapConfig
 import com.ironsource.aura.airconkt.config.type.*
@@ -45,6 +46,9 @@ object DefaultProviderTest : Spek(airConTest {
         val someColor by colorConfig {
             default { ColorInt(Color.WHITE) }
         }
+        val someTyped by typedConfig<Label> {
+            default { Label("default") }
+        }
     }
 
     val config = Config()
@@ -54,23 +58,33 @@ object DefaultProviderTest : Spek(airConTest {
         it("Should return default - intConfig") {
             assertEquals(0, config.someInt)
         }
+
         it("Should return default - longConfig") {
             assertEquals(0, config.someLong)
         }
+
         it("Should return default - floatConfig") {
             assertEquals(0f, config.someFloat)
         }
+
         it("Should return default - Should return default - stringConfig") {
             assertEquals("", config.someString)
         }
+
         it("Should return default - nullableStringConfig") {
             assertEquals(null, config.someNullableString)
         }
+
         it("Should return default - booleanConfig") {
             assertEquals(false, config.someBoolean)
         }
+
         it("Should return default - colorConfig") {
             assertEquals(ColorInt(Color.WHITE), config.someColor)
+        }
+
+        it("Should return default - typedConfig") {
+            assertEquals(Label("default"), config.someTyped)
         }
     }
 

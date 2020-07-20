@@ -97,5 +97,10 @@ interface ConfigSource {
     /**
      * Experimental feature
      */
-    fun getObject(key: String): Any?
+    fun getAny(key: String): Any?
+
+    /**
+     * Experimental feature
+     */
+    fun putAny(key: String, value: Any?)
 }

@@ -10,6 +10,7 @@ typealias LongConfig<T> = Config<Long, T>
 typealias FloatConfig<T> = Config<Float, T>
 typealias StringConfig<T> = Config<String, T>
 typealias BooleanConfig<T> = Config<Boolean, T>
+typealias AnyConfig<T> = Config<Any, T>
 
 fun <T> typedIntConfig(block: IntConfig<T>.() -> Unit): Config<Int, T> =
         ConfigDelegate(sourceTypeResolver = SourceTypeResolver.int(),
@@ -47,7 +48,16 @@ fun stringConfig(block: SimpleConfig<String>.() -> Unit) = typedStringConfig(blo
 
 fun booleanConfig(block: SimpleConfig<Boolean>.() -> Unit) = typedBooleanConfig(block.simpleConfigBlock())
 
-fun <T> (Config<T, T?>.() -> Unit).nullableConfigBlock(): Config<T, T?>.() -> Unit {
+// Experimental feature
+inline fun <reified T> typedConfig(crossinline block: AnyConfig<T>.() -> Unit): Config<Any, T> =
+        ConfigDelegate(sourceTypeResolver = SourceTypeResolver.any(),
+                block = {
+                    adapt { it as? T }
+                    serialize { it }
+                    block()
+                })
+
+private fun <T> (Config<T, T?>.() -> Unit).nullableConfigBlock(): Config<T, T?>.() -> Unit {
     return {
         adapt { it }
         serialize { it }
@@ -55,7 +65,7 @@ fun <T> (Config<T, T?>.() -> Unit).nullableConfigBlock(): Config<T, T?>.() -> Un
     }
 }
 
-fun <T> (SimpleConfig<T>.() -> Unit).simpleConfigBlock(): SimpleConfig<T>.() -> Unit {
+private fun <T> (SimpleConfig<T>.() -> Unit).simpleConfigBlock(): SimpleConfig<T>.() -> Unit {
     return {
         adapt { it }
         serialize { it }

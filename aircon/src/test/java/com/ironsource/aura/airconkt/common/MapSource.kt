@@ -34,7 +34,11 @@ open class MapSource(private val map: MutableMap<String, Any?>) : ConfigSource {
         map[key] = value
     }
 
-    override fun getObject(key: String) = testAndGet<Any>(key)
+    override fun getAny(key: String) = testAndGet<Any>(key)
+
+    override fun putAny(key: String, value: Any?) {
+        map[key] = value
+    }
 
     private inline fun <reified T> testAndGet(key: String): T? {
         val value = map[key]

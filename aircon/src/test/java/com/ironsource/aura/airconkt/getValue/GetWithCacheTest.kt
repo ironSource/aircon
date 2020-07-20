@@ -1,6 +1,7 @@
 package com.ironsource.aura.airconkt.getValue
 
 import com.ironsource.aura.airconkt.FeatureRemoteConfig
+import com.ironsource.aura.airconkt.common.Label
 import com.ironsource.aura.airconkt.common.airConTest
 import com.ironsource.aura.airconkt.common.mapConfig
 import com.ironsource.aura.airconkt.common.withRemoteMap
@@ -21,6 +22,7 @@ object GetCache : Spek(airConTest {
             val someFloat by floatConfig { }
             val someString by stringConfig { }
             val someBoolean by booleanConfig { }
+            val someTyped by typedConfig<Label> {}
         }
 
         val cacheConfig = CacheConfig()
@@ -58,6 +60,12 @@ object GetCache : Spek(airConTest {
             recalcMap()
             assertEquals(value, cacheConfig.someBoolean)
         }
+
+        it("Should return original value after map is updated - typedConfig") {
+            val value = cacheConfig.someTyped
+            recalcMap()
+            assertEquals(value, cacheConfig.someTyped)
+        }
     }
 
     describe("Non cached config should resolve value on every field read") {
@@ -68,6 +76,7 @@ object GetCache : Spek(airConTest {
             val someFloat by floatConfig { cacheValue = false }
             val someString by stringConfig { cacheValue = false }
             val someBoolean by booleanConfig { cacheValue = false }
+            val someTyped by typedConfig<Label> { cacheValue = false }
         }
 
         val nonCacheConfig = NoCacheConfig()
@@ -105,6 +114,12 @@ object GetCache : Spek(airConTest {
             recalcMap()
             assertNotEquals(value, nonCacheConfig.someBoolean)
         }
+
+        it("Should return updated value after map is updated - typedConfig") {
+            val value = nonCacheConfig.someTyped
+            recalcMap()
+            assertNotEquals(value, nonCacheConfig.someTyped)
+        }
     }
 })
 
@@ -116,5 +131,6 @@ private fun recalcMap() {
             "someLong" to random.nextLong(),
             "someFloat" to random.nextFloat(),
             "someString" to "${random.nextLong()}",
-            "someBoolean" to random.nextBoolean())
+            "someBoolean" to random.nextBoolean(),
+            "someTyped" to Label(UUID.randomUUID().toString()))
 }

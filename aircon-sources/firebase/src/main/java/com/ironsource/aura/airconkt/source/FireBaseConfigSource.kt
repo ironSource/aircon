@@ -88,7 +88,11 @@ class FireBaseConfigSource(context: Context, private val remoteConfig: FirebaseR
                 .apply()
     }
 
-    override fun getObject(key: String) = null
+    override fun getAny(key: String) = null
+
+    override fun putAny(key: String, value: Any?) {
+        // Not supported
+    }
 
     private operator fun <T> get(key: String, def: T, parser: (String) -> T?, prefsResolver: SharedPreferences.(String, T) -> T): T? {
         if (overridePrefs.contains(key)) {

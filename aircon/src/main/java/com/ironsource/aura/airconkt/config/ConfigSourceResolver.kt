@@ -31,5 +31,10 @@ class ConfigSourceResolver<T> private constructor(
                 ConfigSource::getString,
                 ConfigSource::putString
         )
+
+        val Any = ConfigSourceResolver(
+                ConfigSource::getAny,
+                ConfigSource::putAny
+        )
     }
 }

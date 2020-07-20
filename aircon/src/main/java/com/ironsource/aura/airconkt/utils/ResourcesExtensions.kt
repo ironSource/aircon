@@ -11,5 +11,9 @@ fun Resources.getFloat(id: Int): Float {
     return typedValue.float
 }
 
+fun Resources.getAny(id: Int): Any {
+    return getString(id)
+}
+
 fun Resources.getColorHex(id: Int) =
         "#" + Integer.toHexString(getColor(id))

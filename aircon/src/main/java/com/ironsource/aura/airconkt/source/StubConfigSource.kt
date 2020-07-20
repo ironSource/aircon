@@ -32,5 +32,9 @@ class StubConfigSource : ConfigSource {
         // No-op
     }
 
-    override fun getObject(key: String) = null
+    override fun getAny(key: String) = null
+
+    override fun putAny(key: String, value: Any?) {
+        // No-op
+    }
 }

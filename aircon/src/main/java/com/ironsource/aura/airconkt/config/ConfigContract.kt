@@ -9,6 +9,7 @@ import kotlin.reflect.KClass
 // TODO - unitests
 // TODO - linter
 // TODO - missing documentation, README and CHANGELOG
+// TODO - benchmark vs old AirCon (runtime, compile-time, supported features..)
 
 // TODO BONUS
 // TODO - reintroduce support for identifiable config source

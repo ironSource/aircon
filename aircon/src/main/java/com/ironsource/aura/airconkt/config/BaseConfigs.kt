@@ -60,6 +60,7 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
     private lateinit var defaultProvider: () -> Actual
 
     private var value: Actual? = null
+    private var isValueSet: Boolean = false
 
     private val constraints: MutableList<ConstraintBuilder<Raw, Actual?>> = mutableListOf()
 
@@ -91,7 +92,7 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
 
         // Check cache
         this.value?.let {
-            return logAndReturnValue(key, source, it, "cached", "Found cached value")
+            return logAndReturnValue(key, source, it, if (isValueSet) "set" else "cached", "Found cached value")
         }
 
         // Resolve value
@@ -159,6 +160,13 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
         if (!::serializer.isInitialized) {
             throw IllegalStateException("Failed to set value - no serializer defined for adapted config \"$key\"")
         }
+
+        if (cacheValue) {
+            this.value = value
+            isValueSet = true
+        }
+
+        AirConKt.logger?.v("${source::class.simpleName}: Setting value \"$key\"=$value")
 
         typeResolver.configSourceResolver.sourceSetter(source, key, serializer(value))
     }

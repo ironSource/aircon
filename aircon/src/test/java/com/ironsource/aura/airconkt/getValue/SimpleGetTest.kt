@@ -20,7 +20,7 @@ object SimpleGetTest : Spek(airConTest {
             val someFloat by floatConfig {}
             val someString by stringConfig {}
             val someBoolean by booleanConfig {}
-            val someAny by typedConfig<Label> {}
+            val someTyped by typedConfig<Label> {}
         }
 
         val config = Config()
@@ -57,7 +57,7 @@ object SimpleGetTest : Spek(airConTest {
         }
 
         it("Should return remote value - anyConfig") {
-            assertEquals(Label(), config.someAny)
+            assertEquals(Label(), config.someTyped)
         }
     }
 })

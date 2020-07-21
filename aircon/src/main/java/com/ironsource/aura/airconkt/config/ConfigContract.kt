@@ -8,17 +8,17 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 
 // TODO - revise custom configs api
-// TODO - formatter
-// TODO - missing documentation, README and CHANGELOG
+// TODO - adapting custom configs (e.g enum to other)
+
+// TODO - DEPLOYMENT
+// TODO - fill documentation, README and CHANGELOG
 // TODO - benchmark vs old AirCon (runtime, compile-time, supported features..)
 
-// TODO BONUS
+// TODO - BONUS
 // TODO - solution for generic jsonConfig types
 // TODO - reintroduce support for identifiable config source
-// TODO - adapting custom configs (e.g enum to other)
-// TODO - builtin constraints
 // TODO - custom types - sealed class enum? (need to think about inheritors with constructor)
-// TODO - revise DSL structure (+dsl annotations)
+// TODO - revise DSL structure
 
 interface Defaulted<T> {
     fun default(cache: Boolean = true,

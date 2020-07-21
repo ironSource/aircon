@@ -11,16 +11,16 @@ import com.ironsource.aura.airconkt.utils.Fail
 import com.ironsource.aura.airconkt.utils.Success
 import com.ironsource.aura.airconkt.utils.getColorHex
 
-fun urlConfig(block: PrimitiveConfig<String>.() -> Unit): ConfigProperty<String> =
-        ConfigDelegate(SourceTypeResolver.string(),
+fun urlConfig(block: SimpleConfig<String>.() -> Unit) =
+        ConfigPropertyFactory.from(SourceTypeResolver.string(),
                 validator = { URLUtil.isValidUrl(it) },
                 block = block)
 
-fun textConfig(block: PrimitiveConfig<String>.() -> Unit): ConfigProperty<String> =
+fun textConfig(block: SimpleConfig<String>.() -> Unit) =
         stringConfig(block)
 
-inline fun <reified T> jsonConfig(noinline block: Config<String, T>.() -> Unit): ConfigProperty<T> =
-        ConfigDelegate(SourceTypeResolver.string(),
+inline fun <reified T> jsonConfig(noinline block: Config<String, T>.() -> Unit) =
+        ConfigPropertyFactory.from(SourceTypeResolver.string(),
                 validator = { it.isNotEmpty() },
                 adapter = {
                     val res = AirConKt.jsonConverter!!.fromJson(it, T::class.java)
@@ -36,8 +36,9 @@ inline fun <reified T> jsonConfig(noinline block: Config<String, T>.() -> Unit):
                 block = block
         )
 
-fun colorConfig(block: Config<String, ColorInt>.() -> Unit): ConfigProperty<ColorInt> =
-        ConfigDelegate(SourceTypeResolver.string(resourcesResolver = ResourcesResolver(Resources::getColorHex)),
+fun colorConfig(block: Config<String, ColorInt>.() -> Unit) =
+        ConfigPropertyFactory.from(SourceTypeResolver.string(
+                resourcesResolver = ResourcesResolver(Resources::getColorHex)),
                 validator = { it.isNotEmpty() },
                 adapter = {
                     try {

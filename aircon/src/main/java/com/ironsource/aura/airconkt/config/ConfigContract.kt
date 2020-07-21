@@ -7,7 +7,6 @@ import com.ironsource.aura.airconkt.source.ConfigSource
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 
-// TODO - revise custom configs api
 // TODO - adapting custom configs (e.g enum to other)
 
 // TODO - DEPLOYMENT
@@ -19,6 +18,8 @@ import kotlin.reflect.KClass
 // TODO - reintroduce support for identifiable config source
 // TODO - custom types - sealed class enum? (need to think about inheritors with constructor)
 // TODO - revise DSL structure
+
+typealias SimpleConfig<T> = Config<T, T>
 
 interface Defaulted<T> {
     fun default(cache: Boolean = true,

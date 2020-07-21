@@ -8,32 +8,37 @@ import com.ironsource.aura.airconkt.utils.toCached
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-class ConfigDelegate<Raw, Actual> internal constructor(private val typeResolver: SourceTypeResolver<Raw>,
-                                                       private val validator: (Raw) -> Boolean)
-    : ConfigProperty<Actual>,
-        AdaptableConfig<Raw, Actual> {
+// This factory exposes API for user custom configs definition
+object ConfigPropertyFactory {
 
-    internal constructor(typeResolver: SourceTypeResolver<Raw>,
-                         validator: (Raw) -> Boolean,
-                         adapter: (Raw) -> Actual?,
-                         serializer: (Actual) -> Raw?) :
+    fun <Raw, Actual> from(sourceTypeResolver: SourceTypeResolver<Raw>,
+                           validator: (Raw) -> Boolean = { true },
+                           block: AdaptableConfig<Raw, Actual>.() -> Unit):
+            ConfigProperty<Actual> =
+            ConfigDelegate<Raw, Actual>(sourceTypeResolver, validator).apply(block)
+
+    fun <Raw, Actual> from(sourceTypeResolver: SourceTypeResolver<Raw>,
+                           validator: (Raw) -> Boolean = { true },
+                           adapter: (Raw) -> Actual?,
+                           serializer: (Actual) -> Raw?,
+                           block: AdaptableConfig<Raw, Actual>.() -> Unit):
+            ConfigProperty<Actual> =
+            ConfigDelegate(sourceTypeResolver, validator, adapter, serializer).apply(block)
+}
+
+private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeResolver<Raw>,
+                                          private val validator: (Raw) -> Boolean)
+    : ConfigProperty<Actual>,
+        AdaptableConfig<Raw, Actual>,
+        ConfigDelegateApi<Raw, Actual> {
+
+    constructor(typeResolver: SourceTypeResolver<Raw>,
+                validator: (Raw) -> Boolean,
+                adapter: (Raw) -> Actual?,
+                serializer: (Actual) -> Raw?) :
             this(typeResolver, validator) {
         adapt(adapter)
         serialize(serializer)
-    }
-
-    companion object {
-        operator fun <Raw, Actual> invoke(sourceTypeResolver: SourceTypeResolver<Raw>,
-                                          validator: (Raw) -> Boolean = { true },
-                                          block: AdaptableConfig<Raw, Actual>.() -> Unit) =
-                ConfigDelegate<Raw, Actual>(sourceTypeResolver, validator).apply(block)
-
-        operator fun <Raw, Actual> invoke(sourceTypeResolver: SourceTypeResolver<Raw>,
-                                          validator: (Raw) -> Boolean = { true },
-                                          adapter: (Raw) -> Actual?,
-                                          serializer: (Actual) -> Raw?,
-                                          block: AdaptableConfig<Raw, Actual>.() -> Unit) =
-                ConfigDelegate(sourceTypeResolver, validator, adapter, serializer).apply(block)
     }
 
     override lateinit var key: String
@@ -198,7 +203,7 @@ class ConfigDelegate<Raw, Actual> internal constructor(private val typeResolver:
         return AirConKt.configSourceRepository.getSource(sourceClass)
     }
 
-    internal fun getRawValue(thisRef: FeatureRemoteConfig,
+    override fun getRawValue(thisRef: FeatureRemoteConfig,
                              property: KProperty<*>): Raw? {
         val key = resolveKey(property)
         val source = resolveSource(thisRef)

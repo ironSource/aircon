@@ -1,66 +1,58 @@
 package com.ironsource.aura.airconkt.config.type
 
-import com.ironsource.aura.airconkt.config.*
+import com.ironsource.aura.airconkt.config.AdaptableConfig
+import com.ironsource.aura.airconkt.config.ConfigPropertyFactory
+import com.ironsource.aura.airconkt.config.SimpleConfig
+import com.ironsource.aura.airconkt.config.SourceTypeResolver
 
-typealias AdaptableIntConfig<T> = AdaptableConfig<Int, T>
-typealias AdaptableLongConfig<T> = AdaptableConfig<Long, T>
-typealias AdaptableFloatConfig<T> = AdaptableConfig<Float, T>
-typealias AdaptableStringConfig<T> = AdaptableConfig<String, T>
-typealias AdaptableBooleanConfig<T> = AdaptableConfig<Boolean, T>
-typealias AdaptableAnyConfig<T> = AdaptableConfig<Any, T>
-typealias PrimitiveConfig<T> = Config<T, T>
-
-fun <T> typedIntConfig(block: AdaptableIntConfig<T>.() -> Unit): ConfigProperty<T> =
-        ConfigDelegate(sourceTypeResolver = SourceTypeResolver.int(),
+fun <T> typedIntConfig(block: AdaptableConfig<Int, T>.() -> Unit) =
+        ConfigPropertyFactory.from(sourceTypeResolver = SourceTypeResolver.int(),
                 block = block)
 
-fun <T> typedLongConfig(block: AdaptableLongConfig<T>.() -> Unit): ConfigProperty<T> =
-        ConfigDelegate(sourceTypeResolver = SourceTypeResolver.long(),
+fun <T> typedLongConfig(block: AdaptableConfig<Long, T>.() -> Unit) =
+        ConfigPropertyFactory.from(sourceTypeResolver = SourceTypeResolver.long(),
                 block = block)
 
-
-fun <T> typedFloatConfig(block: AdaptableFloatConfig<T>.() -> Unit): ConfigProperty<T> =
-        ConfigDelegate(sourceTypeResolver = SourceTypeResolver.float(),
+fun <T> typedFloatConfig(block: AdaptableConfig<Float, T>.() -> Unit) =
+        ConfigPropertyFactory.from(sourceTypeResolver = SourceTypeResolver.float(),
                 block = block)
 
-
-fun <T> typedStringConfig(block: AdaptableStringConfig<T>.() -> Unit): ConfigProperty<T> =
-        ConfigDelegate(sourceTypeResolver = SourceTypeResolver.string(),
+fun <T> typedStringConfig(block: AdaptableConfig<String, T>.() -> Unit) =
+        ConfigPropertyFactory.from(sourceTypeResolver = SourceTypeResolver.string(),
                 block = block)
 
-
-fun <T> typedBooleanConfig(block: AdaptableBooleanConfig<T>.() -> Unit): ConfigProperty<T> =
-        ConfigDelegate(sourceTypeResolver = SourceTypeResolver.boolean(),
+fun <T> typedBooleanConfig(block: AdaptableConfig<Boolean, T>.() -> Unit) =
+        ConfigPropertyFactory.from(sourceTypeResolver = SourceTypeResolver.boolean(),
                 block = block)
 
-fun nullableStringConfig(block: AdaptableStringConfig<String?>.() -> Unit): ConfigProperty<String?> =
+fun nullableStringConfig(block: AdaptableConfig<String, String?>.() -> Unit) =
         typedStringConfig(block.nullableConfigBlock())
 
-fun intConfig(block: PrimitiveConfig<Int>.() -> Unit): ConfigProperty<Int> =
+fun intConfig(block: SimpleConfig<Int>.() -> Unit) =
         typedIntConfig(block.primitiveConfigBlock())
 
-fun longConfig(block: PrimitiveConfig<Long>.() -> Unit): ConfigProperty<Long> =
+fun longConfig(block: SimpleConfig<Long>.() -> Unit) =
         typedLongConfig(block.primitiveConfigBlock())
 
-fun floatConfig(block: PrimitiveConfig<Float>.() -> Unit): ConfigProperty<Float> =
+fun floatConfig(block: SimpleConfig<Float>.() -> Unit) =
         typedFloatConfig(block.primitiveConfigBlock())
 
-fun stringConfig(block: PrimitiveConfig<String>.() -> Unit): ConfigProperty<String> =
+fun stringConfig(block: SimpleConfig<String>.() -> Unit) =
         typedStringConfig(block.primitiveConfigBlock())
 
-fun booleanConfig(block: PrimitiveConfig<Boolean>.() -> Unit): ConfigProperty<Boolean> =
+fun booleanConfig(block: SimpleConfig<Boolean>.() -> Unit) =
         typedBooleanConfig(block.primitiveConfigBlock())
 
 // Experimental feature
-inline fun <reified T> typedConfig(crossinline block: AdaptableAnyConfig<T>.() -> Unit): ConfigProperty<T> =
-        ConfigDelegate(sourceTypeResolver = SourceTypeResolver.any(),
+inline fun <reified T> typedConfig(crossinline block: AdaptableConfig<Any, T>.() -> Unit) =
+        ConfigPropertyFactory.from<Any, T>(sourceTypeResolver = SourceTypeResolver.any(),
                 block = {
                     adapt { it as? T }
                     serialize { it }
                     block()
                 })
 
-private fun <T> (PrimitiveConfig<T>.() -> Unit).primitiveConfigBlock(): AdaptableConfig<T, T>.() -> Unit {
+private fun <T> (SimpleConfig<T>.() -> Unit).primitiveConfigBlock(): AdaptableConfig<T, T>.() -> Unit {
     return {
         adapt { it }
         serialize { it }

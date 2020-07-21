@@ -9,7 +9,6 @@ import kotlin.reflect.KClass
 
 // TODO - revise custom configs api
 // TODO - formatter
-// TODO - linter
 // TODO - missing documentation, README and CHANGELOG
 // TODO - benchmark vs old AirCon (runtime, compile-time, supported features..)
 
@@ -22,13 +21,16 @@ import kotlin.reflect.KClass
 // TODO - revise DSL structure (+dsl annotations)
 
 interface Defaulted<T> {
-    fun default(cache: Boolean = true, provider: () -> T)
+    fun default(cache: Boolean = true,
+                provider: () -> T)
+
     var default: T
     var defaultRes: Int
 }
 
 interface Constrained<Test, Fallback> {
-    fun constraint(name: String? = null, block: ConstraintBuilder<Test, Fallback?>.() -> Unit)
+    fun constraint(name: String? = null,
+                   block: ConstraintBuilder<Test, Fallback?>.() -> Unit)
 }
 
 interface Processable<T> {
@@ -47,6 +49,7 @@ interface Config<Raw, Actual> :
         Defaulted<Actual>,
         Constrained<Raw, Actual>,
         Processable<Actual> {
+
     var key: String
     var source: KClass<out ConfigSource>
     var cacheValue: Boolean

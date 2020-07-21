@@ -10,7 +10,8 @@ import kotlin.reflect.KProperty
 
 class ConfigDelegate<Raw, Actual> internal constructor(private val typeResolver: SourceTypeResolver<Raw>,
                                                        private val validator: (Raw) -> Boolean)
-    : ConfigProperty<Actual>, AdaptableConfig<Raw, Actual> {
+    : ConfigProperty<Actual>,
+        AdaptableConfig<Raw, Actual> {
 
     internal constructor(typeResolver: SourceTypeResolver<Raw>,
                          validator: (Raw) -> Boolean,
@@ -50,7 +51,9 @@ class ConfigDelegate<Raw, Actual> internal constructor(private val typeResolver:
         get() = throw UnsupportedOperationException()
         set(value) {
             default {
-                val adapted = adapter(typeResolver.resourcesResolver.resourcesGetter(AirConKt.context.resources, value))
+                val adapted = adapter(
+                        typeResolver.resourcesResolver.resourcesGetter(AirConKt.context.resources,
+                                value))
                 adapted ?: throw RuntimeException("Failed to adapt default resource value to type")
             }
         }
@@ -65,7 +68,8 @@ class ConfigDelegate<Raw, Actual> internal constructor(private val typeResolver:
 
     private val constraints: MutableList<ConstraintBuilder<Raw, Actual?>> = mutableListOf()
 
-    override fun default(cache: Boolean, provider: () -> Actual) {
+    override fun default(cache: Boolean,
+                         provider: () -> Actual) {
         defaultProvider = if (cache) provider.toCached() else provider
     }
 
@@ -86,25 +90,29 @@ class ConfigDelegate<Raw, Actual> internal constructor(private val typeResolver:
         this.processor = processor
     }
 
-    override fun getValue(thisRef: FeatureRemoteConfig, property: KProperty<*>): Actual {
+    override fun getValue(thisRef: FeatureRemoteConfig,
+                          property: KProperty<*>): Actual {
         // Prepare
         val key = resolveKey(property)
         val source = resolveSource(thisRef)
 
         // Check cache
         this.value?.let {
-            return logAndReturnValue(key, source, it, if (isValueSet) "set" else "cached", "Found cached value")
+            return logAndReturnValue(key, source, it, if (isValueSet) "set" else "cached",
+                    "Found cached value")
         }
 
         // Resolve value
         val value = typeResolver.configSourceResolver.sourceGetter(source, key)
         if (value == null) {
-            return logAndReturnValue(key, source, defaultProvider(), "default", "Remote value not found")
+            return logAndReturnValue(key, source, defaultProvider(), "default",
+                    "Remote value not found")
         }
 
         // Internal validation
         if (!validator(value)) {
-            return logAndReturnValue(key, source, defaultProvider(), "default", "Internal validation failed")
+            return logAndReturnValue(key, source, defaultProvider(), "default",
+                    "Internal validation failed")
         }
 
         // Constraint validation
@@ -123,7 +131,8 @@ class ConfigDelegate<Raw, Actual> internal constructor(private val typeResolver:
 
         val adaptedValue = process(key, value)
         if (adaptedValue == null) {
-            return logAndReturnValue(key, source, defaultProvider(), "default", "Failed to adapt remote value $value")
+            return logAndReturnValue(key, source, defaultProvider(), "default",
+                    "Failed to adapt remote value $value")
         }
 
         if (cacheValue) {
@@ -133,14 +142,20 @@ class ConfigDelegate<Raw, Actual> internal constructor(private val typeResolver:
         return logAndReturnValue(key, source, adaptedValue, "remote", "Remote value configured")
     }
 
-    private fun logAndReturnValue(key: String, source: ConfigSource, value: Actual, type: String, msg: String): Actual {
+    private fun logAndReturnValue(key: String,
+                                  source: ConfigSource,
+                                  value: Actual,
+                                  type: String,
+                                  msg: String): Actual {
         AirConKt.logger?.v("${source::class.simpleName}: $msg - using $type value \"$key\"=$value")
         return value
     }
 
-    private fun process(key: String, value: Raw): Actual? {
+    private fun process(key: String,
+                        value: Raw): Actual? {
         if (!::adapter.isInitialized) {
-            throw IllegalStateException("Failed to get value - no adapter defined for adapted config \"$key\"")
+            throw IllegalStateException(
+                    "Failed to get value - no adapter defined for adapted config \"$key\"")
         }
         var adaptedValue = adapter(value)
         if (adaptedValue == null) {
@@ -154,12 +169,15 @@ class ConfigDelegate<Raw, Actual> internal constructor(private val typeResolver:
         return adaptedValue
     }
 
-    override fun setValue(thisRef: FeatureRemoteConfig, property: KProperty<*>, value: Actual) {
+    override fun setValue(thisRef: FeatureRemoteConfig,
+                          property: KProperty<*>,
+                          value: Actual) {
         val source = resolveSource(thisRef)
         val key = resolveKey(property)
 
         if (!::serializer.isInitialized) {
-            throw IllegalStateException("Failed to set value - no serializer defined for adapted config \"$key\"")
+            throw IllegalStateException(
+                    "Failed to set value - no serializer defined for adapted config \"$key\"")
         }
 
         if (cacheValue) {
@@ -180,7 +198,8 @@ class ConfigDelegate<Raw, Actual> internal constructor(private val typeResolver:
         return AirConKt.configSourceRepository.getSource(sourceClass)
     }
 
-    internal fun getRawValue(thisRef: FeatureRemoteConfig, property: KProperty<*>): Raw? {
+    internal fun getRawValue(thisRef: FeatureRemoteConfig,
+                             property: KProperty<*>): Raw? {
         val key = resolveKey(property)
         val source = resolveSource(thisRef)
         return typeResolver.configSourceResolver.sourceGetter(source, key)

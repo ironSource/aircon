@@ -15,6 +15,7 @@ import kotlin.reflect.KClass
 // TODO - benchmark vs old AirCon (runtime, compile-time, supported features..)
 
 // TODO BONUS
+// TODO - solution for generic jsonConfig types
 // TODO - reintroduce support for identifiable config source
 // TODO - adapting custom configs (e.g enum to other)
 // TODO - builtin constraints

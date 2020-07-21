@@ -38,11 +38,11 @@ class CoolKtConfig : FeatureRemoteConfig {
         default = null
     }
 
-    val location by intEnumConfig(Location::class) {
+    val location by intEnumConfig<Location> {
         default = Location.TOP
     }
 
-    val size by stringEnumConfig(Size::class) {
+    val size by stringEnumConfig<Size> {
         default = Size.SMALL
     }
 

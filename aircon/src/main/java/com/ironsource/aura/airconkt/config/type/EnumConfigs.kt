@@ -4,27 +4,26 @@ import com.ironsource.aura.airconkt.config.Config
 import com.ironsource.aura.airconkt.config.ConfigDelegate
 import com.ironsource.aura.airconkt.config.ConfigProperty
 import com.ironsource.aura.airconkt.config.SourceTypeResolver
-import kotlin.reflect.KClass
 
-fun <T : Enum<T>> intEnumConfig(enumClass: KClass<T>, block: Config<Int, T> .() -> Unit): ConfigProperty<T> {
+inline fun <reified T : Enum<T>> intEnumConfig(noinline block: Config<Int, T> .() -> Unit): ConfigProperty<T> {
     return ConfigDelegate(SourceTypeResolver.int(),
-            adapter = { getIntEnumConst(enumClass, it) },
+            adapter = { Utils.getIntEnumConst(T::class, it) },
             serializer = {
-                val remoteValue = getIntEnumRemoteValue(enumClass, it)
+                val remoteValue = Utils.getIntEnumRemoteValue(T::class, it)
                 remoteValue
-                        ?: throw IllegalArgumentException("No remote value annotation defined for $enumClass.$it")
+                        ?: throw IllegalArgumentException("No remote value annotation defined for ${T::class}.$it")
             },
             block = block
     )
 }
 
-fun <T : Enum<T>> stringEnumConfig(enumClass: KClass<T>, block: Config<String, T> .() -> Unit): ConfigProperty<T> {
+inline fun <reified T : Enum<T>> stringEnumConfig(noinline block: Config<String, T> .() -> Unit): ConfigProperty<T> {
     return ConfigDelegate(SourceTypeResolver.string(),
-            adapter = { getStringEnumConst(enumClass, it) },
+            adapter = { Utils.getStringEnumConst(T::class, it) },
             serializer = {
-                val remoteValue = getStringEnumRemoteValue(enumClass, it)
+                val remoteValue = Utils.getStringEnumRemoteValue(T::class, it)
                 remoteValue
-                        ?: throw IllegalArgumentException("No remote value annotation defined for $enumClass.$it")
+                        ?: throw IllegalArgumentException("No remote value annotation defined for ${T::class}.$it")
             },
             block = block
     )

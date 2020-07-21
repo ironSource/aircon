@@ -31,36 +31,76 @@ enum class Size {
 object EnumConfigTest : Spek(airConTest {
 
     class Config : FeatureRemoteConfig by mapConfig() {
-        var someIntEnum by intEnumConfig(Location::class) {
+        var someIntEnum by intEnumConfig<Location> {
             cacheValue = false
+            default = Location.TOP
         }
 
-        var someStringEnum by stringEnumConfig(Size::class) {
+        var someStringEnum by stringEnumConfig<Size> {
             cacheValue = false
+            default = Size.SMALL
         }
     }
 
     val config = Config()
 
-    describe("Enum config field get should return remote value") {
+    describe("Enum config field get") {
 
-        beforeGroup {
-            withRemoteMap(
-                    "someIntEnum" to 1,
-                    "someStringEnum" to "l"
-            )
+        describe("Valid value") {
+            beforeGroup {
+                withRemoteMap(
+                        "someIntEnum" to 1,
+                        "someStringEnum" to "l"
+                )
+            }
+
+            it("Should return remote value when corresponds to const") {
+                assertEquals(Location.BOTTOM, config.someIntEnum)
+            }
+
+            it("Should return remote value when corresponds to const") {
+                assertEquals(Size.LARGE, config.someStringEnum)
+            }
         }
 
-        it("Should return remote value - intEnum") {
-            assertEquals(Location.BOTTOM, config.someIntEnum)
+        describe("Value not corresponding to enum const") {
+            beforeGroup {
+                withRemoteMap(
+                        "someIntEnum" to 5,
+                        "someStringEnum" to "M"
+                )
+            }
+
+            it("Should return default value when not corresponds to any const - intEnum") {
+                assertEquals(Location.TOP, config.someIntEnum)
+            }
+
+
+            it("Should return default value when not corresponds to any const - stringEnm") {
+                assertEquals(Size.SMALL, config.someStringEnum)
+            }
         }
 
-        it("Should return remote value - stringEnum") {
-            assertEquals(Size.LARGE, config.someStringEnum)
+        describe("Invalid value type") {
+            beforeGroup {
+                withRemoteMap(
+                        "someIntEnum" to false,
+                        "someStringEnum" to 5
+                )
+            }
+
+            it("Should return default value when not valid value type - intEnum") {
+                assertEquals(Location.TOP, config.someIntEnum)
+            }
+
+
+            it("Should return default value when not valid value type - stringEnm") {
+                assertEquals(Size.SMALL, config.someStringEnum)
+            }
         }
     }
 
-    describe("Enum config field get should return set value") {
+    describe("Enum config field set") {
 
         it("Should return set value - intEnum") {
             config.someIntEnum = Location.TOP

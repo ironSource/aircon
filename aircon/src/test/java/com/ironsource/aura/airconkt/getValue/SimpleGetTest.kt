@@ -21,6 +21,10 @@ object SimpleGetTest : Spek(airConTest {
             val someString by stringConfig {}
             val someBoolean by booleanConfig {}
             val someTyped by typedConfig<Label> {}
+            var someLabel by typedStringConfig<Label> {
+                adapt { Label(it) }
+                serialize { it.value }
+            }
         }
 
         val config = Config()
@@ -32,7 +36,8 @@ object SimpleGetTest : Spek(airConTest {
                     "someFloat" to 1f,
                     "someString" to "remote",
                     "someBoolean" to true,
-                    "someAny" to Label()
+                    "someTyped" to Label(),
+                    "someLabel" to "remote"
             )
         }
 
@@ -56,8 +61,12 @@ object SimpleGetTest : Spek(airConTest {
             assertEquals(true, config.someBoolean)
         }
 
-        it("Should return remote value - anyConfig") {
+        it("Should return remote value - typedConfig") {
             assertEquals(Label(), config.someTyped)
+        }
+
+        it("Should return remote value - typedStringConfig with adapter") {
+            assertEquals(Label("remote"), config.someLabel)
         }
     }
 })

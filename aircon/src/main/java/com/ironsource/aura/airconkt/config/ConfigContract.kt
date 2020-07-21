@@ -8,7 +8,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 
 // TODO - formatter
-// TODO - unitests (adapter, custom configs)
+// TODO - unitests (custom configs)
 // TODO - linter
 // TODO - missing documentation, README and CHANGELOG
 // TODO - benchmark vs old AirCon (runtime, compile-time, supported features..)

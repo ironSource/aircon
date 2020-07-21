@@ -10,6 +10,7 @@ import kotlin.reflect.KClass
 /**
  * TODO - FIRST RELEASE
  * Adapting custom configs (e.g enum to other)
+ * Think about repeatable configs
  */
 
 /**
@@ -32,7 +33,7 @@ import kotlin.reflect.KClass
 
 /**
  * TODO - Backlog
- * Custom types - seal~ed class enum? (need to think about inheritors with constructor)
+ * Custom types - sealed class enum? (need to think about inheritors with constructor)
  */
 
 typealias SimpleConfig<T> = Config<T, T>

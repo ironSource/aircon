@@ -1,10 +1,10 @@
 package com.ironsource.aura.airconkt.config.constraint
 
-import com.ironsource.aura.airconkt.config.AdaptableConfig
+import com.ironsource.aura.airconkt.config.Config
 
 val DEFAULT_POLICY = FallbackPolicy.DEFAULT
 
-var <T> AdaptableConfig<T, *>.minValue: T
+var <T> Config<T, *>.minValue: T
         where T : Number, T : Comparable<T>
     @Deprecated("", level = DeprecationLevel.ERROR)
     get() = throw UnsupportedOperationException()
@@ -13,13 +13,13 @@ var <T> AdaptableConfig<T, *>.minValue: T
     }
 
 // TODO - not exactly DSLi
-fun <T> AdaptableConfig<T, *>.minValue(value: T,
+fun <T> Config<T, *>.minValue(value: T,
                                        fallbackPolicy: FallbackPolicy = DEFAULT_POLICY)
         where T : Number, T : Comparable<T> {
     rangeFallback("min value", fallbackPolicy, value) { it >= value }
 }
 
-var <T> AdaptableConfig<T, *>.maxValue: T
+var <T> Config<T, *>.maxValue: T
         where T : Number, T : Comparable<T>
     @Deprecated("", level = DeprecationLevel.ERROR)
     get() = throw UnsupportedOperationException()
@@ -27,13 +27,13 @@ var <T> AdaptableConfig<T, *>.maxValue: T
         maxValue(value)
     }
 
-fun <T> AdaptableConfig<T, *>.maxValue(value: T,
+fun <T> Config<T, *>.maxValue(value: T,
                                        fallbackPolicy: FallbackPolicy = DEFAULT_POLICY)
         where T : Number, T : Comparable<T> {
     rangeFallback("max value", fallbackPolicy, value) { it <= value }
 }
 
-private fun <T, S> AdaptableConfig<T, S>.rangeFallback(name: String, fallbackPolicy: FallbackPolicy,
+private fun <T, S> Config<T, S>.rangeFallback(name: String, fallbackPolicy: FallbackPolicy,
                                                        value: T, allowBlock: (T) -> Boolean)
         where T : Number, T : Comparable<T> {
     constraint(name) {

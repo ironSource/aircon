@@ -8,13 +8,14 @@ import com.ironsource.aura.airconkt.utils.toCached
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-open class ConfigDelegate<Raw, Actual> protected constructor(private val typeResolver: SourceTypeResolver<Raw>,
-                                                             private val validator: (Raw) -> Boolean) : AdaptableConfig<Raw, Actual> {
+class ConfigDelegate<Raw, Actual> internal constructor(private val typeResolver: SourceTypeResolver<Raw>,
+                                                       private val validator: (Raw) -> Boolean)
+    : ConfigProperty<Actual>, AdaptableConfig<Raw, Actual> {
 
-    protected constructor(typeResolver: SourceTypeResolver<Raw>,
-                          validator: (Raw) -> Boolean,
-                          adapter: (Raw) -> Actual?,
-                          serializer: (Actual) -> Raw?) :
+    internal constructor(typeResolver: SourceTypeResolver<Raw>,
+                         validator: (Raw) -> Boolean,
+                         adapter: (Raw) -> Actual?,
+                         serializer: (Actual) -> Raw?) :
             this(typeResolver, validator) {
         adapt(adapter)
         serialize(serializer)
@@ -73,11 +74,11 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
         constraints.add(ConstraintBuilder(name, adapter, block))
     }
 
-    final override fun adapt(adapter: (Raw) -> Actual?) {
+    override fun adapt(adapter: (Raw) -> Actual?) {
         this.adapter = adapter
     }
 
-    final override fun serialize(serializer: (Actual) -> Raw?) {
+    override fun serialize(serializer: (Actual) -> Raw?) {
         this.serializer = serializer
     }
 
@@ -195,5 +196,3 @@ private fun <T, S> ConstraintBuilder<T, S>.verify(value: T): Boolean {
 
     return true
 }
-
-typealias SimpleConfig<T> = AdaptableConfig<T, T>

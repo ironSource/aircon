@@ -7,6 +7,7 @@ import com.ironsource.aura.airconkt.source.ConfigSource
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 
+// TODO - revise custom configs api
 // TODO - formatter
 // TODO - unitests (custom configs)
 // TODO - linter
@@ -39,9 +40,10 @@ interface Adaptable<Raw, Actual> {
     fun serialize(serializer: (Actual) -> Raw?)
 }
 
+interface ConfigProperty<T> : ReadWriteProperty<FeatureRemoteConfig, T>
+
 @AirConDsl
 interface Config<Raw, Actual> :
-        ReadWriteProperty<FeatureRemoteConfig, Actual>,
         Defaulted<Actual>,
         Constrained<Raw, Actual>,
         Processable<Actual> {

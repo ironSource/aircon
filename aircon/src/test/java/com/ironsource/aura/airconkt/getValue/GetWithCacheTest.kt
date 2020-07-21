@@ -55,12 +55,6 @@ object GetCache : Spek(airConTest {
             assertEquals(value, cacheConfig.someString)
         }
 
-        it("Should return original value after map is updated - booleanConfig") {
-            val value = cacheConfig.someBoolean
-            recalcMap()
-            assertEquals(value, cacheConfig.someBoolean)
-        }
-
         it("Should return original value after map is updated - typedConfig") {
             val value = cacheConfig.someTyped
             recalcMap()
@@ -107,12 +101,6 @@ object GetCache : Spek(airConTest {
             val value = nonCacheConfig.someString
             recalcMap()
             assertNotEquals(value, nonCacheConfig.someString)
-        }
-
-        it("Should return updated value after map is updated - booleanConfig") {
-            val value = nonCacheConfig.someBoolean
-            recalcMap()
-            assertNotEquals(value, nonCacheConfig.someBoolean)
         }
 
         it("Should return updated value after map is updated - typedConfig") {

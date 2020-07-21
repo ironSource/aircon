@@ -10,8 +10,8 @@ internal fun <T : Enum<T>> getIntEnumConst(enumClass: KClass<T>, remoteValue: In
         }
 
 internal fun <T : Enum<T>> getStringEnumConst(enumClass: KClass<T>, remoteValue: String) =
-        getEnumConst(enumClass, RemoteStringValue::class.java, remoteValue) {
-            value
+        getEnumConst(enumClass, RemoteStringValue::class.java, remoteValue.toLowerCase()) {
+            value.toLowerCase()
         }
 
 internal fun <T : Enum<T>> getIntEnumRemoteValue(enumClass: KClass<T>, enumConstant: T) =

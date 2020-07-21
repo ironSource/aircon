@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 open class ConfigDelegate<Raw, Actual> protected constructor(private val typeResolver: SourceTypeResolver<Raw>,
-                                                             private val validator: (Raw) -> Boolean) : Config<Raw, Actual> {
+                                                             private val validator: (Raw) -> Boolean) : AdaptableConfig<Raw, Actual> {
 
     protected constructor(typeResolver: SourceTypeResolver<Raw>,
                           validator: (Raw) -> Boolean,
@@ -23,14 +23,14 @@ open class ConfigDelegate<Raw, Actual> protected constructor(private val typeRes
     companion object {
         operator fun <Raw, Actual> invoke(sourceTypeResolver: SourceTypeResolver<Raw>,
                                           validator: (Raw) -> Boolean = { true },
-                                          block: Config<Raw, Actual>.() -> Unit) =
+                                          block: AdaptableConfig<Raw, Actual>.() -> Unit) =
                 ConfigDelegate<Raw, Actual>(sourceTypeResolver, validator).apply(block)
 
         operator fun <Raw, Actual> invoke(sourceTypeResolver: SourceTypeResolver<Raw>,
                                           validator: (Raw) -> Boolean = { true },
                                           adapter: (Raw) -> Actual?,
                                           serializer: (Actual) -> Raw?,
-                                          block: Config<Raw, Actual>.() -> Unit) =
+                                          block: AdaptableConfig<Raw, Actual>.() -> Unit) =
                 ConfigDelegate(sourceTypeResolver, validator, adapter, serializer).apply(block)
     }
 
@@ -196,4 +196,4 @@ private fun <T, S> ConstraintBuilder<T, S>.verify(value: T): Boolean {
     return true
 }
 
-typealias SimpleConfig<T> = Config<T, T>
+typealias SimpleConfig<T> = AdaptableConfig<T, T>

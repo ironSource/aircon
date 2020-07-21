@@ -44,9 +44,13 @@ interface Config<Raw, Actual> :
         ReadWriteProperty<FeatureRemoteConfig, Actual>,
         Defaulted<Actual>,
         Constrained<Raw, Actual>,
-        Processable<Actual>,
-        Adaptable<Raw, Actual> {
+        Processable<Actual> {
     var key: String
     var source: KClass<out ConfigSource>
     var cacheValue: Boolean
 }
+
+@AirConDsl
+interface AdaptableConfig<Raw, Actual> :
+        Config<Raw, Actual>,
+        Adaptable<Raw, Actual>

@@ -6,64 +6,40 @@ import com.ironsource.aura.airconkt.config.SimpleConfig
 import com.ironsource.aura.airconkt.config.SourceTypeResolver
 
 fun <T> typedIntConfig(block: AdaptableConfig<Int, T>.() -> Unit) =
-        ConfigPropertyFactory.from(sourceTypeResolver = SourceTypeResolver.int(),
-                block = block)
+        ConfigPropertyFactory.from(SourceTypeResolver.int(), block = block)
 
 fun <T> typedLongConfig(block: AdaptableConfig<Long, T>.() -> Unit) =
-        ConfigPropertyFactory.from(sourceTypeResolver = SourceTypeResolver.long(),
-                block = block)
+        ConfigPropertyFactory.from(SourceTypeResolver.long(), block = block)
 
 fun <T> typedFloatConfig(block: AdaptableConfig<Float, T>.() -> Unit) =
-        ConfigPropertyFactory.from(sourceTypeResolver = SourceTypeResolver.float(),
-                block = block)
+        ConfigPropertyFactory.from(SourceTypeResolver.float(), block = block)
 
 fun <T> typedStringConfig(block: AdaptableConfig<String, T>.() -> Unit) =
-        ConfigPropertyFactory.from(sourceTypeResolver = SourceTypeResolver.string(),
-                block = block)
+        ConfigPropertyFactory.from(SourceTypeResolver.string(), block = block)
 
 fun <T> typedBooleanConfig(block: AdaptableConfig<Boolean, T>.() -> Unit) =
-        ConfigPropertyFactory.from(sourceTypeResolver = SourceTypeResolver.boolean(),
-                block = block)
+        ConfigPropertyFactory.from(SourceTypeResolver.boolean(), block = block)
 
 fun nullableStringConfig(block: AdaptableConfig<String, String?>.() -> Unit) =
-        typedStringConfig(block.nullableConfigBlock())
+        ConfigPropertyFactory.fromNullablePrimitive(SourceTypeResolver.string(), block = block)
 
 fun intConfig(block: SimpleConfig<Int>.() -> Unit) =
-        typedIntConfig(block.primitiveConfigBlock())
+        ConfigPropertyFactory.fromPrimitive(SourceTypeResolver.int(), block = block)
 
 fun longConfig(block: SimpleConfig<Long>.() -> Unit) =
-        typedLongConfig(block.primitiveConfigBlock())
+        ConfigPropertyFactory.fromPrimitive(SourceTypeResolver.long(), block = block)
 
 fun floatConfig(block: SimpleConfig<Float>.() -> Unit) =
-        typedFloatConfig(block.primitiveConfigBlock())
+        ConfigPropertyFactory.fromPrimitive(SourceTypeResolver.float(), block = block)
 
 fun stringConfig(block: SimpleConfig<String>.() -> Unit) =
-        typedStringConfig(block.primitiveConfigBlock())
+        ConfigPropertyFactory.fromPrimitive(SourceTypeResolver.string(), block = block)
 
 fun booleanConfig(block: SimpleConfig<Boolean>.() -> Unit) =
-        typedBooleanConfig(block.primitiveConfigBlock())
+        ConfigPropertyFactory.fromPrimitive(SourceTypeResolver.boolean(), block = block)
 
-// Experimental feature
-inline fun <reified T> typedConfig(crossinline block: AdaptableConfig<Any, T>.() -> Unit) =
-        ConfigPropertyFactory.from<Any, T>(sourceTypeResolver = SourceTypeResolver.any(),
-                block = {
-                    adapt { it as? T }
-                    serialize { it }
-                    block()
-                })
-
-private fun <T> (SimpleConfig<T>.() -> Unit).primitiveConfigBlock(): AdaptableConfig<T, T>.() -> Unit {
-    return {
-        adapt { it }
-        serialize { it }
-        this@primitiveConfigBlock()
-    }
-}
-
-private fun <T> (AdaptableConfig<T, T?>.() -> Unit).nullableConfigBlock(): AdaptableConfig<T, T?>.() -> Unit {
-    return {
-        adapt { it }
-        serialize { it }
-        this@nullableConfigBlock()
-    }
-}
+inline fun <reified T> typedConfig(noinline block: AdaptableConfig<Any, T>.() -> Unit) =
+        ConfigPropertyFactory.from<Any, T>(SourceTypeResolver.any(),
+                adapter = { it as? T },
+                serializer = { it },
+                block = block)

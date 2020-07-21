@@ -3,18 +3,19 @@ package com.ironsource.aura.airconkt.config
 import com.ironsource.aura.airconkt.config.constraint.Constraint
 import com.ironsource.aura.airconkt.dsl.AirConDsl
 import com.ironsource.aura.airconkt.source.ConfigSource
+import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 
 /**
  * TODO - FIRST RELEASE
  * Adapting custom configs (e.g enum to other)
- * Separate readonly config
  */
 
 /**
  * TODO - DEPLOYMENT
  * Fill documentation, README and CHANGELOG
+ * Example on how to create custom config, custom constraint
  * Benchmark vs old AirCon (runtime, compile-time, sdk size, supported features..)
  */
 
@@ -31,7 +32,7 @@ import kotlin.reflect.KClass
 
 /**
  * TODO - Backlog
- * Custom types - sealed class enum? (need to think about inheritors with constructor)
+ * Custom types - seal~ed class enum? (need to think about inheritors with constructor)
  */
 
 typealias SimpleConfig<T> = Config<T, T>
@@ -59,6 +60,7 @@ interface Adaptable<Raw, Actual> {
 }
 
 interface ConfigProperty<T> : ReadWriteProperty<FeatureRemoteConfig, T>
+interface ReadOnlyConfigProperty<T> : ReadOnlyProperty<FeatureRemoteConfig, T>
 
 @AirConDsl
 interface Config<Raw, Actual> :

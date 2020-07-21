@@ -1,11 +1,14 @@
 package com.ironsource.aura.airconkt.getValue
 
-import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
+import android.webkit.URLUtil
 import com.ironsource.aura.airconkt.common.Label
 import com.ironsource.aura.airconkt.common.airConTest
 import com.ironsource.aura.airconkt.common.mapConfig
 import com.ironsource.aura.airconkt.common.withRemoteMap
+import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.config.type.*
+import io.mockk.every
+import io.mockk.mockkStatic
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
@@ -25,6 +28,7 @@ object SimpleGetTest : Spek(airConTest {
                 adapt { Label(it) }
                 serialize { it.value }
             }
+            val someUrl by urlConfig { }
         }
 
         val config = Config()
@@ -37,7 +41,8 @@ object SimpleGetTest : Spek(airConTest {
                     "someString" to "remote",
                     "someBoolean" to true,
                     "someTyped" to Label(),
-                    "someLabel" to "remote"
+                    "someLabel" to "remote",
+                    "someUrl" to "www.google.com"
             )
         }
 
@@ -67,6 +72,12 @@ object SimpleGetTest : Spek(airConTest {
 
         it("Should return remote value - typedStringConfig with adapter") {
             assertEquals(Label("remote"), config.someLabel)
+        }
+
+        it("Should return remote value - urlConfig") {
+            mockkStatic(URLUtil::class)
+            every { URLUtil.isValidUrl(any()) } returns true
+            assertEquals("www.google.com", config.someUrl)
         }
     }
 })

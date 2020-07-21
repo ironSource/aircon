@@ -11,11 +11,30 @@ import kotlin.reflect.KProperty
 // This factory exposes API for user custom configs definition
 object ConfigPropertyFactory {
 
-    fun <Raw, Actual> from(sourceTypeResolver: SourceTypeResolver<Raw>,
-                           validator: (Raw) -> Boolean = { true },
-                           block: AdaptableConfig<Raw, Actual>.() -> Unit):
+    internal fun <Raw, Actual> from(sourceTypeResolver: SourceTypeResolver<Raw>,
+                                    validator: (Raw) -> Boolean = { true },
+                                    block: AdaptableConfig<Raw, Actual>.() -> Unit):
             ConfigProperty<Actual> =
             ConfigDelegate<Raw, Actual>(sourceTypeResolver, validator).apply(block)
+
+    fun <T> fromPrimitive(sourceTypeResolver: SourceTypeResolver<T>,
+                          validator: (T) -> Boolean = { true },
+                          block: AdaptableConfig<T, T>.() -> Unit):
+            ConfigProperty<T> =
+            ConfigDelegate<T, T>(sourceTypeResolver, validator, { it }, { it }).apply(block)
+
+    fun <T> fromNullablePrimitive(sourceTypeResolver: SourceTypeResolver<T>,
+                          validator: (T) -> Boolean = { true },
+                          block: AdaptableConfig<T, T?>.() -> Unit):
+            ConfigProperty<T?> =
+            ConfigDelegate<T, T?>(sourceTypeResolver, validator, { it }, { it }).apply(block)
+
+    fun <Raw, Actual> from(sourceTypeResolver: SourceTypeResolver<Raw>,
+                           validator: (Raw) -> Boolean = { true },
+                           adapter: (Raw) -> Actual?,
+                           block: AdaptableConfig<Raw, Actual>.() -> Unit):
+            ReadOnlyConfigProperty<Actual> =
+            ConfigDelegate(sourceTypeResolver, validator, adapter).apply(block)
 
     fun <Raw, Actual> from(sourceTypeResolver: SourceTypeResolver<Raw>,
                            validator: (Raw) -> Boolean = { true },
@@ -29,6 +48,7 @@ object ConfigPropertyFactory {
 private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeResolver<Raw>,
                                           private val validator: (Raw) -> Boolean)
     : ConfigProperty<Actual>,
+        ReadOnlyConfigProperty<Actual>,
         AdaptableConfig<Raw, Actual>,
         ConfigDelegateApi<Raw, Actual> {
 
@@ -39,6 +59,13 @@ private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeRe
             this(typeResolver, validator) {
         adapt(adapter)
         serialize(serializer)
+    }
+
+    constructor(typeResolver: SourceTypeResolver<Raw>,
+                validator: (Raw) -> Boolean,
+                adapter: (Raw) -> Actual?) :
+            this(typeResolver, validator) {
+        adapt(adapter)
     }
 
     override lateinit var key: String

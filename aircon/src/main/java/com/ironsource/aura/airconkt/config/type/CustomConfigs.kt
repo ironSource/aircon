@@ -11,7 +11,7 @@ import com.ironsource.aura.airconkt.utils.Success
 import com.ironsource.aura.airconkt.utils.getColorHex
 
 fun urlConfig(block: SimpleConfig<String>.() -> Unit) =
-        ConfigPropertyFactory.from(SourceTypeResolver.string(),
+        ConfigPropertyFactory.fromPrimitive(SourceTypeResolver.string(),
                 validator = { URLUtil.isValidUrl(it) },
                 block = block)
 

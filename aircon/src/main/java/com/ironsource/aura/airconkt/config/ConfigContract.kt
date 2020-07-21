@@ -19,6 +19,7 @@ import kotlin.reflect.KClass
 
 // TODO - Backlog
 // ----------
+// TODO - separate readonly config
 // TODO - solution for generic jsonConfig types
 // TODO - reintroduce support for identifiable config source
 // TODO - custom types - sealed class enum? (need to think about inheritors with constructor)

@@ -2,8 +2,8 @@ package com.ironsource.aura.airconkt.converter.gson
 
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
-import com.ironsource.aura.airconkt.JsonConverter
-import com.ironsource.aura.airconkt.JsonException
+import com.ironsource.aura.airconkt.config.type.util.JsonConverter
+import com.ironsource.aura.airconkt.config.type.util.JsonException
 import com.ironsource.aura.airconkt.utils.Fail
 import com.ironsource.aura.airconkt.utils.Response
 import com.ironsource.aura.airconkt.utils.Success

@@ -5,7 +5,7 @@ import com.ironsource.aura.airconkt.utils.getAny
 import com.ironsource.aura.airconkt.utils.getLong
 
 data class ResourcesResolver<T>(
-        val resourcesGetter: Resources.(kotlin.Int) -> T) {
+        val resourcesGetter: Resources.(Int) -> T) {
 
     companion object {
         val Int = ResourcesResolver(Resources::getInteger)

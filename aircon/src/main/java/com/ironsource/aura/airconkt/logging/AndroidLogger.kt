@@ -5,9 +5,10 @@ import android.util.Log
 private const val TAG = "AirConKt"
 
 /**
- * Default logger for the SDK, logs to logcat with "AirCon" tag.
+ * Default logger for the SDK, logs to logcat with "AirConKt" tag.
  */
 class AndroidLogger : Logger {
+
     override fun v(msg: String) {
         Log.v(TAG, msg)
     }
@@ -24,7 +25,8 @@ class AndroidLogger : Logger {
         Log.i(TAG, msg)
     }
 
-    override fun e(msg: String, e: Exception?) {
+    override fun e(msg: String,
+                   e: Exception?) {
         Log.e(TAG, msg)
         e?.printStackTrace()
     }

@@ -1,12 +1,12 @@
 package com.ironsource.aura.airconkt.configPropertyApi
 
 import android.graphics.Color
-import com.ironsource.aura.airconkt.FeatureRemoteConfig
+import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.common.airConTest
 import com.ironsource.aura.airconkt.common.mapConfig
 import com.ironsource.aura.airconkt.config.asConfigProperty
 import com.ironsource.aura.airconkt.config.type.*
-import com.ironsource.aura.airconkt.utils.ColorInt
+import com.ironsource.aura.airconkt.config.type.util.ColorInt
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
@@ -35,7 +35,8 @@ object ConfigPropertyApiGetDefaultValueTest : Spek(airConTest {
                 default = false
             }
             val someColor by colorConfig {
-                default = ColorInt(Color.WHITE)
+                default = ColorInt(
+                        Color.WHITE)
             }
         }
 
@@ -66,7 +67,8 @@ object ConfigPropertyApiGetDefaultValueTest : Spek(airConTest {
         }
 
         it("Should return default - colorConfig") {
-            assertEquals(ColorInt(Color.WHITE), Config::someColor.asConfigProperty(config).getDefaultValue())
+            assertEquals(ColorInt(
+                    Color.WHITE), Config::someColor.asConfigProperty(config).getDefaultValue())
         }
     }
 })

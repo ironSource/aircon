@@ -1,7 +1,6 @@
 package com.ironsource.aura.airconkt.config
 
-import com.ironsource.aura.airconkt.FeatureRemoteConfig
-import com.ironsource.aura.airconkt.config.constraint.ConstraintBuilder
+import com.ironsource.aura.airconkt.config.constraint.Constraint
 import com.ironsource.aura.airconkt.dsl.AirConDsl
 import com.ironsource.aura.airconkt.source.ConfigSource
 import kotlin.properties.ReadWriteProperty
@@ -37,7 +36,7 @@ interface Defaulted<T> {
 
 interface Constrained<Test, Fallback> {
     fun constraint(name: String? = null,
-                   block: ConstraintBuilder<Test, Fallback?>.() -> Unit)
+                   block: Constraint<Test, Fallback?>.() -> Unit)
 }
 
 interface Processable<T> {

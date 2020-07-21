@@ -16,12 +16,13 @@ interface ConfigSource {
 
     /**
      * Override the mapping to the provided key with the provided value.
-     * Any subsequent calls to [.getInteger] should return this value.
+     * Any subsequent calls to [.getInteger] will return this value.
      *
      * @param key   config key.
      * @param value override value.
      */
-    fun putInteger(key: String, value: Int?)
+    fun putInteger(key: String,
+                   value: Int?)
 
     /**
      * Return an Long using the provided key.
@@ -34,11 +35,12 @@ interface ConfigSource {
 
     /**
      * Override the mapping to the provided key with the provided value.
-     * Any subsequent calls to [.getLong] should return this value.
+     * Any subsequent calls to [.getLong] will return this value.
      *
      * @param key   config key.
      */
-    fun putLong(key: String, value: Long?)
+    fun putLong(key: String,
+                value: Long?)
 
     /**
      * Return a Float using the provided key.
@@ -51,12 +53,13 @@ interface ConfigSource {
 
     /**
      * Override the mapping to the provided key with the provided value.
-     * Any subsequent calls to [.getFloat] should return this value.
+     * Any subsequent calls to [.getFloat] will return this value.
      *
      * @param key   config key.
      * @param value override value.
      */
-    fun putFloat(key: String, value: Float?)
+    fun putFloat(key: String,
+                 value: Float?)
 
     /**
      * Return a Boolean using the provided key.
@@ -69,12 +72,13 @@ interface ConfigSource {
 
     /**
      * Override the mapping to the provided key with the provided value.
-     * Any subsequent calls to [.getBoolean] should return this value.
+     * Any subsequent calls to [.getBoolean] will return this value.
      *
      * @param key   config key.
      * @param value override value.
      */
-    fun putBoolean(key: String, value: Boolean?)
+    fun putBoolean(key: String,
+                   value: Boolean?)
 
     /**
      * Return a String using the provided key.
@@ -87,20 +91,30 @@ interface ConfigSource {
 
     /**
      * Override the mapping to the provided key with the provided value.
-     * Any subsequent calls to [.getString] should return this value.
+     * Any subsequent calls to [.getString] will return this value.
      *
      * @param key   config key.
      * @param value override value.
      */
-    fun putString(key: String, value: String?)
+    fun putString(key: String,
+                  value: String?)
 
     /**
-     * Experimental feature
+     * Return any value using the provided key.
+     * If no mapping exists for the key, return null.
+     *
+     * @param key          config key.
+     * @return the configured value for the key, null otherwise.
      */
     fun getAny(key: String): Any?
 
     /**
-     * Experimental feature
+     * Override the mapping to the provided key with the provided value.
+     * Any subsequent calls to [.getAny] will return this value.
+     *
+     * @param key   config key.
+     * @param value override value.
      */
-    fun putAny(key: String, value: Any?)
+    fun putAny(key: String,
+               value: Any?)
 }

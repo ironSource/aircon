@@ -3,6 +3,7 @@ package com.ironsource.aura.airconkt
 import com.ironsource.aura.airconkt.common.airConTest
 import com.ironsource.aura.airconkt.common.mapConfig
 import com.ironsource.aura.airconkt.common.withRemoteMap
+import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.config.type.intConfig
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe

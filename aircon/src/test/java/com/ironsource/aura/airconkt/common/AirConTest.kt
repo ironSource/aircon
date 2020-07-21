@@ -2,7 +2,7 @@ package com.ironsource.aura.airconkt.common
 
 import com.google.gson.Gson
 import com.ironsource.aura.airconkt.AirConKt
-import com.ironsource.aura.airconkt.FeatureRemoteConfig
+import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.converter.gson.GsonConverter
 import org.spekframework.spek2.dsl.Root
 

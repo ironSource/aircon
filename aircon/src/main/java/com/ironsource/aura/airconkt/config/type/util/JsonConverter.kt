@@ -1,4 +1,4 @@
-package com.ironsource.aura.airconkt
+package com.ironsource.aura.airconkt.config.type.util
 
 import com.ironsource.aura.airconkt.utils.Response
 import java.lang.reflect.Type

@@ -1,7 +1,7 @@
 package com.ironsource.aura.airconkt.config
 
 import com.ironsource.aura.airconkt.AirConKt
-import com.ironsource.aura.airconkt.FeatureRemoteConfig
+import com.ironsource.aura.airconkt.config.constraint.Constraint
 import com.ironsource.aura.airconkt.config.constraint.ConstraintBuilder
 import com.ironsource.aura.airconkt.source.ConfigSource
 import com.ironsource.aura.airconkt.utils.toCached
@@ -79,7 +79,7 @@ private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeRe
     }
 
     override fun constraint(name: String?,
-                            block: ConstraintBuilder<Raw, Actual?>.() -> Unit) {
+                            block: Constraint<Raw, Actual?>.() -> Unit) {
         constraints.add(ConstraintBuilder(name, adapter, block))
     }
 

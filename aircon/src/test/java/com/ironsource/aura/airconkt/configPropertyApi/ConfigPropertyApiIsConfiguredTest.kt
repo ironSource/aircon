@@ -1,6 +1,6 @@
 package com.ironsource.aura.airconkt.configPropertyApi
 
-import com.ironsource.aura.airconkt.FeatureRemoteConfig
+import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.common.mapConfig
 import com.ironsource.aura.airconkt.common.withRemoteMap
 import com.ironsource.aura.airconkt.config.asConfigProperty

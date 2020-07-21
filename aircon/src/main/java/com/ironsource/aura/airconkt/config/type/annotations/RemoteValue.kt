@@ -1,4 +1,4 @@
-package com.ironsource.aura.airconkt.config.annotations
+package com.ironsource.aura.airconkt.config.type.annotations
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.PROPERTY)

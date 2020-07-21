@@ -1,8 +1,8 @@
 package com.ironsource.aura.airconkt.sample.config
 
-import com.ironsource.aura.airconkt.FeatureRemoteConfig
-import com.ironsource.aura.airconkt.config.annotations.RemoteIntValue
-import com.ironsource.aura.airconkt.config.annotations.RemoteStringValue
+import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
+import com.ironsource.aura.airconkt.config.type.annotations.RemoteIntValue
+import com.ironsource.aura.airconkt.config.type.annotations.RemoteStringValue
 import com.ironsource.aura.airconkt.config.asConfigProperty
 import com.ironsource.aura.airconkt.config.type.*
 import com.ironsource.aura.airconkt.source.FireBaseConfigSource

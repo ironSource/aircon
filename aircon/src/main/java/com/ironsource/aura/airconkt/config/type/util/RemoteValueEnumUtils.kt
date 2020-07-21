@@ -1,28 +1,36 @@
-package com.ironsource.aura.airconkt.config.type
+package com.ironsource.aura.airconkt.config.type.util
 
-import com.ironsource.aura.airconkt.config.annotations.RemoteIntValue
-import com.ironsource.aura.airconkt.config.annotations.RemoteStringValue
+import com.ironsource.aura.airconkt.config.type.annotations.RemoteIntValue
+import com.ironsource.aura.airconkt.config.type.annotations.RemoteStringValue
 import kotlin.reflect.KClass
 
-object Utils {
+object RemoteValueEnumUtils {
 
-    fun <T : Enum<T>> getIntEnumConst(enumClass: KClass<T>, remoteValue: Int) =
-            getEnumConst(enumClass, RemoteIntValue::class.java, remoteValue) {
+    fun <T : Enum<T>> getIntEnumConst(enumClass: KClass<T>,
+                                      remoteValue: Int) =
+            getEnumConst(
+                    enumClass, RemoteIntValue::class.java, remoteValue) {
                 value
             }
 
-    fun <T : Enum<T>> getStringEnumConst(enumClass: KClass<T>, remoteValue: String) =
-            getEnumConst(enumClass, RemoteStringValue::class.java, remoteValue.toLowerCase()) {
+    fun <T : Enum<T>> getStringEnumConst(enumClass: KClass<T>,
+                                         remoteValue: String) =
+            getEnumConst(
+                    enumClass, RemoteStringValue::class.java, remoteValue.toLowerCase()) {
                 value.toLowerCase()
             }
 
-    fun <T : Enum<T>> getIntEnumRemoteValue(enumClass: KClass<T>, enumConstant: T) =
-            getEnumRemoteValue(enumClass, RemoteIntValue::class.java, enumConstant) {
+    fun <T : Enum<T>> getIntEnumRemoteValue(enumClass: KClass<T>,
+                                            enumConstant: T) =
+            getEnumRemoteValue(
+                    enumClass, RemoteIntValue::class.java, enumConstant) {
                 value
             }
 
-    fun <T : Enum<T>> getStringEnumRemoteValue(enumClass: KClass<T>, enumConstant: T) =
-            getEnumRemoteValue(enumClass, RemoteStringValue::class.java, enumConstant) {
+    fun <T : Enum<T>> getStringEnumRemoteValue(enumClass: KClass<T>,
+                                               enumConstant: T) =
+            getEnumRemoteValue(
+                    enumClass, RemoteStringValue::class.java, enumConstant) {
                 value
             }
 

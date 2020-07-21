@@ -4,10 +4,24 @@ import com.ironsource.aura.airconkt.dsl.AirConDsl
 import com.ironsource.aura.airconkt.utils.toCached
 
 @AirConDsl
-class ConstraintBuilder<Test, Fallback> private constructor(var name: String? = null,
-                                                            private var adapter: (Test) -> Fallback) {
+interface Constraint<Test, Fallback> {
+
+    var fallbackProvider: ((Test) -> Fallback)?
+    var fallbackToPrimitive: Test
+    var fallbackTo: Fallback
+
+    fun acceptIf(block: (Test) -> Boolean)
+    fun denyIf(block: (Test) -> Boolean)
+    fun fallbackToPrimitive(fallbackProvider: (Test) -> Test)
+    fun fallbackTo(cache: Boolean = true,
+                   fallbackProvider: (Test) -> Fallback)
+}
+
+internal class ConstraintBuilder<Test, Fallback> private constructor(var name: String? = null,
+                                                                     private var adapter: (Test) -> Fallback) : Constraint<Test, Fallback> {
+
     internal var verifiers: MutableList<(Test) -> Boolean> = mutableListOf()
-    internal var fallbackProvider: ((Test) -> Fallback)? = null
+    override var fallbackProvider: ((Test) -> Fallback)? = null
 
     companion object {
         internal operator fun <T, S> invoke(name: String? = null,
@@ -16,33 +30,34 @@ class ConstraintBuilder<Test, Fallback> private constructor(var name: String? = 
                 ConstraintBuilder(name, adapter).apply(block)
     }
 
-    fun acceptIf(block: (Test) -> Boolean) {
+    override fun acceptIf(block: (Test) -> Boolean) {
         verifiers.add(block)
     }
 
-    fun denyIf(block: (Test) -> Boolean) {
+    override fun denyIf(block: (Test) -> Boolean) {
         verifiers.add { !block(it) }
     }
 
-    var fallbackToPrimitive: Test
+    override var fallbackToPrimitive: Test
         @Deprecated("", level = DeprecationLevel.ERROR)
         get() = throw UnsupportedOperationException()
         set(value) {
             fallbackToPrimitive { value }
         }
 
-    fun fallbackToPrimitive(fallbackProvider: (Test) -> Test) {
+    override fun fallbackToPrimitive(fallbackProvider: (Test) -> Test) {
         fallbackTo { adapter(fallbackProvider(it)) }
     }
 
-    var fallbackTo: Fallback
+    override var fallbackTo: Fallback
         @Deprecated("", level = DeprecationLevel.ERROR)
         get() = throw UnsupportedOperationException()
         set(value) {
             fallbackTo { value }
         }
 
-    fun fallbackTo(cache: Boolean = true, fallbackProvider: (Test) -> Fallback) {
+    override fun fallbackTo(cache: Boolean,
+                            fallbackProvider: (Test) -> Fallback) {
         this.fallbackProvider = if (cache) fallbackProvider.toCached() else fallbackProvider
     }
 }

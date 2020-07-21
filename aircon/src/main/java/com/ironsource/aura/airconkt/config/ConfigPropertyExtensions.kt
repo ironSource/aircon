@@ -2,7 +2,6 @@
 
 package com.ironsource.aura.airconkt.config
 
-import com.ironsource.aura.airconkt.FeatureRemoteConfig
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.isAccessible

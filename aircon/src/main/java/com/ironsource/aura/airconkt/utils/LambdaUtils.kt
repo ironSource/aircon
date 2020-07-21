@@ -1,6 +1,6 @@
 package com.ironsource.aura.airconkt.utils
 
-fun <T> (() -> T).toCached(): () -> T {
+internal fun <T> (() -> T).toCached(): () -> T {
     var result: T? = null
     return {
         if (result != null) {
@@ -13,7 +13,7 @@ fun <T> (() -> T).toCached(): () -> T {
     }
 }
 
-fun <T, S> ((T) -> S).toCached(): (T) -> S {
+internal fun <T, S> ((T) -> S).toCached(): (T) -> S {
     var result: S? = null
     return {
         if (result != null) {

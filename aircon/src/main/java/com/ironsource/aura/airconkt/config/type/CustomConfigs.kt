@@ -5,8 +5,7 @@ import android.graphics.Color
 import android.webkit.URLUtil
 import com.ironsource.aura.airconkt.AirConKt
 import com.ironsource.aura.airconkt.config.*
-import com.ironsource.aura.airconkt.logging.Logger
-import com.ironsource.aura.airconkt.utils.ColorInt
+import com.ironsource.aura.airconkt.config.type.util.ColorInt
 import com.ironsource.aura.airconkt.utils.Fail
 import com.ironsource.aura.airconkt.utils.Success
 import com.ironsource.aura.airconkt.utils.getColorHex
@@ -27,7 +26,7 @@ inline fun <reified T> jsonConfig(noinline block: Config<String, T>.() -> Unit) 
                     when (res) {
                         is Success -> res.value
                         is Fail -> {
-                            log()?.e("Failed to parse json: $it", res.exception)
+                            AirConKt.logger?.e("Failed to parse json: $it", res.exception)
                             null
                         }
                     }
@@ -42,17 +41,13 @@ fun colorConfig(block: Config<String, ColorInt>.() -> Unit) =
                 validator = { it.isNotEmpty() },
                 adapter = {
                     try {
-                        ColorInt(Color.parseColor(it))
+                        ColorInt(
+                                Color.parseColor(it))
                     } catch (e: Exception) {
-                        log()?.e("Failed to parse color hex: $it", e)
+                        AirConKt.logger?.e("Failed to parse color hex: $it", e)
                         null
                     }
                 },
                 serializer = { "#" + Integer.toHexString(it.value) },
                 block = block
         )
-
-fun log(): Logger? {
-    return AirConKt
-            .logger
-}

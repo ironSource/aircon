@@ -77,15 +77,24 @@ object MinValueConstraintTest : Spek(airConTest {
         class RangeFallbackConfig : FeatureRemoteConfig by mapConfig() {
             val someInt by intConfig {
                 default = 3
-                minValue(2, FallbackPolicy.RANGE)
+                minValue {
+                    value = 2
+                    fallbackPolicy = FallbackPolicy.RANGE
+                }
             }
             val someLong by longConfig {
                 default = 3
-                minValue(2L, FallbackPolicy.RANGE)
+                minValue {
+                    value = 2L
+                    fallbackPolicy = FallbackPolicy.RANGE
+                }
             }
             val someFloat by floatConfig {
                 default = 3f
-                minValue(2f, FallbackPolicy.RANGE)
+                minValue {
+                    value = 2f
+                    fallbackPolicy = FallbackPolicy.RANGE
+                }
             }
         }
 

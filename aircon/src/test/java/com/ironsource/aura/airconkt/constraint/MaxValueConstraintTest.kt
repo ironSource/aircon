@@ -77,15 +77,24 @@ object MaxValueConstraintTest : Spek(airConTest {
         class RangeFallbackConfig : FeatureRemoteConfig by mapConfig() {
             val someInt by intConfig {
                 default = 1
-                maxValue(2, FallbackPolicy.RANGE)
+                maxValue {
+                    value = 2
+                    fallbackPolicy = FallbackPolicy.RANGE
+                }
             }
             val someLong by longConfig {
                 default = 1
-                maxValue(2L, FallbackPolicy.RANGE)
+                maxValue {
+                    value = 2L
+                    fallbackPolicy = FallbackPolicy.RANGE
+                }
             }
             val someFloat by floatConfig {
                 default = 1f
-                maxValue(2f, FallbackPolicy.RANGE)
+                maxValue {
+                    value = 2f
+                    fallbackPolicy = FallbackPolicy.RANGE
+                }
             }
         }
 

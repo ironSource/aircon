@@ -9,7 +9,6 @@ import kotlin.reflect.KClass
 
 // TODO - revise custom configs api
 // TODO - formatter
-// TODO - unitests (custom configs)
 // TODO - linter
 // TODO - missing documentation, README and CHANGELOG
 // TODO - benchmark vs old AirCon (runtime, compile-time, supported features..)

@@ -7,17 +7,23 @@ import com.ironsource.aura.airconkt.source.ConfigSource
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 
+// TODO - FIRST RELEASE
+// ----------
 // TODO - adapting custom configs (e.g enum to other)
+// ----------
 
 // TODO - DEPLOYMENT
+// ----------
 // TODO - fill documentation, README and CHANGELOG
 // TODO - benchmark vs old AirCon (runtime, compile-time, supported features..)
+// ----------
 
-// TODO - BONUS
+// TODO - Backlog
+// ----------
 // TODO - solution for generic jsonConfig types
 // TODO - reintroduce support for identifiable config source
 // TODO - custom types - sealed class enum? (need to think about inheritors with constructor)
-// TODO - revise DSL structure
+// ----------
 
 typealias SimpleConfig<T> = Config<T, T>
 

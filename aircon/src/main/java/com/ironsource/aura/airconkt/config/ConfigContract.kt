@@ -11,6 +11,9 @@ import kotlin.reflect.KClass
  * TODO - FIRST RELEASE
  * Adapting custom configs (e.g enum to other)
  * Think about repeatable configs
+ * StringSetConfig
+ * Rethink default and fallback values provider and property (maybe only one needed)
+ * adapt/serialize naming
  */
 
 /**
@@ -26,7 +29,6 @@ import kotlin.reflect.KClass
  * Support for identifiable config source.
  * Config mocks
  * TimeConfig
- * StringSetConfig.
  * Enum config randomizer.
  * XML injection.
  */
@@ -34,6 +36,7 @@ import kotlin.reflect.KClass
 /**
  * TODO - Backlog
  * Custom types - sealed class enum? (need to think about inheritors with constructor)
+ * Separate custom types to SDK extension module
  */
 
 typealias SimpleConfig<T> = Config<T, T>

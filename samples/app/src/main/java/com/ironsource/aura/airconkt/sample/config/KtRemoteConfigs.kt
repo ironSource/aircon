@@ -51,7 +51,9 @@ class CoolKtConfig : FeatureRemoteConfig {
     }
 
     val someTypedInt by typedIntConfig<String> {
-        adapt { "$it" }
+        adapt {
+            get { "$it" }
+        }
     }
 
     val someLabelConfig by labelConfig {

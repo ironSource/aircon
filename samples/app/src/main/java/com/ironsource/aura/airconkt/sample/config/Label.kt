@@ -9,7 +9,7 @@ data class Label(val value: String)
 fun labelConfig(block: Config<String, Label>.() -> Unit) =
         ConfigPropertyFactory.from(SourceTypeResolver.string(),
                 validator = { it.isNotEmpty() },
-                adapter = { Label(it) },
-                serializer = { it.value },
+                getterAdapter = { Label(it) },
+                setterAdapter = { it.value },
                 block = block
         )

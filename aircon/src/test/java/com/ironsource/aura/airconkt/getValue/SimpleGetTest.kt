@@ -25,8 +25,10 @@ object SimpleGetTest : Spek(airConTest {
             val someBoolean by booleanConfig {}
             val someTyped by typedConfig<Label> {}
             var someLabel by typedStringConfig<Label> {
-                adapt { Label(it) }
-                serialize { it.value }
+                adapt {
+                    get { Label(it) }
+                    set { it.value }
+                }
             }
             val someUrl by urlConfig { }
         }

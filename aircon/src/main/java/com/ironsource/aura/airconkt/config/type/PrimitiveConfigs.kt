@@ -40,6 +40,6 @@ fun booleanConfig(block: SimpleConfig<Boolean>.() -> Unit) =
 
 inline fun <reified T> typedConfig(noinline block: AdaptableConfig<Any, T>.() -> Unit) =
         ConfigPropertyFactory.from<Any, T>(SourceTypeResolver.any(),
-                adapter = { it as? T },
-                serializer = { it },
+                getterAdapter = { it as? T },
+                setterAdapter = { it },
                 block = block)

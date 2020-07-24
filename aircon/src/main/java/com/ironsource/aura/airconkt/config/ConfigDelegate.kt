@@ -3,6 +3,7 @@ package com.ironsource.aura.airconkt.config
 import com.ironsource.aura.airconkt.AirConKt
 import com.ironsource.aura.airconkt.config.constraint.Constraint
 import com.ironsource.aura.airconkt.config.constraint.ConstraintBuilder
+import com.ironsource.aura.airconkt.dsl.AirConDsl
 import com.ironsource.aura.airconkt.source.ConfigSource
 import com.ironsource.aura.airconkt.utils.toCached
 import kotlin.reflect.KClass
@@ -24,25 +25,25 @@ object ConfigPropertyFactory {
             ConfigDelegate<T, T>(sourceTypeResolver, validator, { it }, { it }).apply(block)
 
     fun <T> fromNullablePrimitive(sourceTypeResolver: SourceTypeResolver<T>,
-                          validator: (T) -> Boolean = { true },
-                          block: AdaptableConfig<T, T?>.() -> Unit):
+                                  validator: (T) -> Boolean = { true },
+                                  block: AdaptableConfig<T, T?>.() -> Unit):
             ConfigProperty<T?> =
             ConfigDelegate<T, T?>(sourceTypeResolver, validator, { it }, { it }).apply(block)
 
     fun <Raw, Actual> from(sourceTypeResolver: SourceTypeResolver<Raw>,
                            validator: (Raw) -> Boolean = { true },
-                           adapter: (Raw) -> Actual?,
+                           getterAdapter: (Raw) -> Actual?,
                            block: AdaptableConfig<Raw, Actual>.() -> Unit):
             ReadOnlyConfigProperty<Actual> =
-            ConfigDelegate(sourceTypeResolver, validator, adapter).apply(block)
+            ConfigDelegate(sourceTypeResolver, validator, getterAdapter).apply(block)
 
     fun <Raw, Actual> from(sourceTypeResolver: SourceTypeResolver<Raw>,
                            validator: (Raw) -> Boolean = { true },
-                           adapter: (Raw) -> Actual?,
-                           serializer: (Actual) -> Raw?,
+                           getterAdapter: (Raw) -> Actual?,
+                           setterAdapter: (Actual) -> Raw?,
                            block: AdaptableConfig<Raw, Actual>.() -> Unit):
             ConfigProperty<Actual> =
-            ConfigDelegate(sourceTypeResolver, validator, adapter, serializer).apply(block)
+            ConfigDelegate(sourceTypeResolver, validator, getterAdapter, setterAdapter).apply(block)
 }
 
 private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeResolver<Raw>,
@@ -54,18 +55,20 @@ private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeRe
 
     constructor(typeResolver: SourceTypeResolver<Raw>,
                 validator: (Raw) -> Boolean,
-                adapter: (Raw) -> Actual?,
-                serializer: (Actual) -> Raw?) :
+                getterAdapter: (Raw) -> Actual?,
+                setterAdapter: (Actual) -> Raw?) :
             this(typeResolver, validator) {
-        adapt(adapter)
-        serialize(serializer)
+        adapt {
+            get(getterAdapter)
+            set(setterAdapter)
+        }
     }
 
     constructor(typeResolver: SourceTypeResolver<Raw>,
                 validator: (Raw) -> Boolean,
-                adapter: (Raw) -> Actual?) :
+                getterAdapter: (Raw) -> Actual?) :
             this(typeResolver, validator) {
-        adapt(adapter)
+        adapt { get(getterAdapter) }
     }
 
     override lateinit var key: String
@@ -83,7 +86,7 @@ private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeRe
         get() = throw UnsupportedOperationException()
         set(value) {
             default {
-                val adapted = adapter(
+                val adapted = adapter.getBlock(
                         typeResolver.resourcesResolver.resourcesGetter(AirConKt.context.resources,
                                 value))
                 adapted ?: throw RuntimeException("Failed to adapt default resource value to type")
@@ -91,8 +94,7 @@ private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeRe
         }
 
     private lateinit var processor: ((Actual) -> Actual)
-    private lateinit var adapter: (Raw) -> Actual?
-    private lateinit var serializer: (Actual) -> Raw?
+    private lateinit var adapter: AdapterBuilder<Raw, Actual>
     private lateinit var defaultProvider: () -> Actual
 
     private var value: Actual? = null
@@ -107,15 +109,11 @@ private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeRe
 
     override fun constraint(name: String?,
                             block: Constraint<Raw, Actual?>.() -> Unit) {
-        constraints.add(ConstraintBuilder(name, adapter, block))
+        constraints.add(ConstraintBuilder(name, adapter.getBlock, block))
     }
 
-    override fun adapt(adapter: (Raw) -> Actual?) {
-        this.adapter = adapter
-    }
-
-    override fun serialize(serializer: (Actual) -> Raw?) {
-        this.serializer = serializer
+    override fun adapt(block: Adapter<Raw, Actual>.() -> Unit) {
+        adapter = AdapterBuilder<Raw, Actual>().apply(block)
     }
 
     override fun process(processor: (Actual) -> Actual) {
@@ -189,7 +187,7 @@ private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeRe
             throw IllegalStateException(
                     "Failed to get value - no adapter defined for adapted config \"$key\"")
         }
-        var adaptedValue = adapter(value)
+        var adaptedValue = adapter.getBlock(value)
         if (adaptedValue == null) {
             return null
         }
@@ -207,11 +205,6 @@ private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeRe
         val source = resolveSource(thisRef)
         val key = resolveKey(property)
 
-        if (!::serializer.isInitialized) {
-            throw IllegalStateException(
-                    "Failed to set value - no serializer defined for adapted config \"$key\"")
-        }
-
         if (cacheValue) {
             this.value = value
             isValueSet = true
@@ -219,7 +212,7 @@ private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeRe
 
         AirConKt.logger?.v("${source::class.simpleName}: Setting value \"$key\"=$value")
 
-        typeResolver.configSourceResolver.sourceSetter(source, key, serializer(value))
+        typeResolver.configSourceResolver.sourceSetter(source, key, adapter.setBlock(value))
     }
 
     private fun resolveKey(property: KProperty<*>) =
@@ -246,4 +239,29 @@ private fun <T, S> ConstraintBuilder<T, S>.verify(value: T): Boolean {
     }
 
     return true
+}
+
+@AirConDsl
+interface Adapter<Raw, Actual> {
+
+    fun get(block: (Raw) -> Actual?)
+    fun set(block: (Actual) -> Raw?)
+}
+
+private class AdapterBuilder<Raw, Actual> : Adapter<Raw, Actual> {
+    companion object {
+        operator fun <Raw, Actual> invoke(block: Adapter<Raw, Actual>.() -> Unit) =
+                AdapterBuilder<Raw, Actual>().apply(block)
+    }
+
+    lateinit var getBlock: (Raw) -> Actual?
+    lateinit var setBlock: (Actual) -> Raw?
+
+    override fun get(block: (Raw) -> Actual?) {
+        getBlock = block
+    }
+
+    override fun set(block: (Actual) -> Raw?) {
+        setBlock = block
+    }
 }

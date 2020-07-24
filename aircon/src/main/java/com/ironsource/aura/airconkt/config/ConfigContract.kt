@@ -13,7 +13,6 @@ import kotlin.reflect.KClass
  * Think about repeatable configs
  * StringSetConfig
  * Rethink default and fallback values provider and property (maybe only one needed)
- * adapt/serialize naming
  */
 
 /**
@@ -59,8 +58,7 @@ interface Processable<T> {
 }
 
 interface Adaptable<Raw, Actual> {
-    fun adapt(adapter: (Raw) -> Actual?)
-    fun serialize(serializer: (Actual) -> Raw?)
+    fun adapt(block: Adapter<Raw, Actual>.() -> Unit)
 }
 
 interface ConfigProperty<T> : ReadWriteProperty<FeatureRemoteConfig, T>

@@ -21,7 +21,7 @@ fun textConfig(block: SimpleConfig<String>.() -> Unit) =
 inline fun <reified T> jsonConfig(noinline block: Config<String, T>.() -> Unit) =
         ConfigPropertyFactory.from(SourceTypeResolver.string(),
                 validator = { it.isNotEmpty() },
-                adapter = {
+                getterAdapter = {
                     val res = AirConKt.jsonConverter!!.fromJson(it, T::class.java)
                     when (res) {
                         is Success -> res.value
@@ -31,7 +31,7 @@ inline fun <reified T> jsonConfig(noinline block: Config<String, T>.() -> Unit) 
                         }
                     }
                 },
-                serializer = { AirConKt.jsonConverter!!.toJson(it) },
+                setterAdapter = { AirConKt.jsonConverter!!.toJson(it) },
                 block = block
         )
 
@@ -39,7 +39,7 @@ fun colorConfig(block: Config<String, ColorInt>.() -> Unit) =
         ConfigPropertyFactory.from(SourceTypeResolver.string(
                 resourcesResolver = ResourcesResolver(Resources::getColorHex)),
                 validator = { it.isNotEmpty() },
-                adapter = {
+                getterAdapter = {
                     try {
                         ColorInt(
                                 Color.parseColor(it))
@@ -48,6 +48,6 @@ fun colorConfig(block: Config<String, ColorInt>.() -> Unit) =
                         null
                     }
                 },
-                serializer = { "#" + Integer.toHexString(it.value) },
+                setterAdapter = { "#" + Integer.toHexString(it.value) },
                 block = block
         )

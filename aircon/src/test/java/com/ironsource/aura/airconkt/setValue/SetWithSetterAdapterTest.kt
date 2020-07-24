@@ -1,22 +1,24 @@
 package com.ironsource.aura.airconkt.setValue
 
-import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.common.Label
 import com.ironsource.aura.airconkt.common.airConTest
 import com.ironsource.aura.airconkt.common.mapConfig
+import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.config.type.typedStringConfig
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
 
-object SetWithSerializerTest : Spek(airConTest {
+object SetWithSetterAdapterTest : Spek(airConTest {
 
     describe("Simple config field set should return set value") {
 
         class Config : FeatureRemoteConfig by mapConfig() {
             var someLabel by typedStringConfig<Label> {
-                adapt { Label(it) }
-                serialize { it.value }
+                adapt {
+                    get { Label(it) }
+                    set { it.value }
+                }
             }
         }
 

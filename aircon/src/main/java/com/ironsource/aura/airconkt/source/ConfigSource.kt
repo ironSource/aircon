@@ -100,6 +100,25 @@ interface ConfigSource {
                   value: String?)
 
     /**
+     * Return a String set using the provided key.
+     * If no mapping exists for the key or the key value is not a String, return null.
+     *
+     * @param key          config key.
+     * @return the configured String set for the key, null otherwise.
+     */
+    fun getStringSet(key: String): Set<String>?
+
+    /**
+     * Override the mapping to the provided key with the provided value.
+     * Any subsequent calls to [.getStringSet] will return this value.
+     *
+     * @param key   config key.
+     * @param value override value.
+     */
+    fun putStringSet(key: String,
+                     value: Set<String>?)
+
+    /**
      * Return any value using the provided key.
      * If no mapping exists for the key, return null.
      *

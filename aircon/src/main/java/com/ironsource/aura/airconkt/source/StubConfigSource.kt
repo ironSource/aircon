@@ -37,6 +37,13 @@ internal class StubConfigSource : ConfigSource {
         // No-op
     }
 
+    override fun getStringSet(key: String) = null
+
+    override fun putStringSet(key: String,
+                              value: Set<String>?) {
+        // No-op
+    }
+
     override fun getAny(key: String) = null
 
     override fun putAny(key: String,

@@ -1,14 +1,9 @@
 package com.ironsource.aura.airconkt.defaultValue
 
-import android.graphics.Color
-import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.common.airConTest
 import com.ironsource.aura.airconkt.common.mapConfig
-import com.ironsource.aura.airconkt.common.parseColor
+import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.config.type.*
-import com.ironsource.aura.airconkt.config.type.util.ColorInt
-import io.mockk.every
-import io.mockk.mockkStatic
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import kotlin.test.assertEquals
@@ -59,14 +54,6 @@ object DefaultResTest : Spek(airConTest {
 
         it("Should return default resource - booleanConfig") {
             assertEquals(false, config.someBoolean)
-        }
-
-        it("Should return default resource - colorConfig") {
-            mockkStatic(Color::class)
-            every { Color.parseColor(any()) } answers { parseColor(firstArg()) }
-
-            assertEquals(ColorInt(
-                    Color.WHITE), config.someColor)
         }
     }
 })

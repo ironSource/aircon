@@ -17,11 +17,17 @@ fun <T> typedFloatConfig(block: AdaptableConfig<Float, T>.() -> Unit) =
 fun <T> typedStringConfig(block: AdaptableConfig<String, T>.() -> Unit) =
         ConfigPropertyFactory.from(SourceTypeResolver.string(), block = block)
 
+fun <T> typedStringSetConfig(block: AdaptableConfig<Set<String>, T>.() -> Unit) =
+        ConfigPropertyFactory.from(SourceTypeResolver.stringSet(), block = block)
+
 fun <T> typedBooleanConfig(block: AdaptableConfig<Boolean, T>.() -> Unit) =
         ConfigPropertyFactory.from(SourceTypeResolver.boolean(), block = block)
 
 fun nullableStringConfig(block: AdaptableConfig<String, String?>.() -> Unit) =
         ConfigPropertyFactory.fromNullablePrimitive(SourceTypeResolver.string(), block = block)
+
+fun nullableStringSetConfig(block: AdaptableConfig<Set<String>, Set<String>?>.() -> Unit) =
+        ConfigPropertyFactory.fromNullablePrimitive(SourceTypeResolver.stringSet(), block = block)
 
 fun intConfig(block: SimpleConfig<Int>.() -> Unit) =
         ConfigPropertyFactory.fromPrimitive(SourceTypeResolver.int(), block = block)
@@ -34,6 +40,9 @@ fun floatConfig(block: SimpleConfig<Float>.() -> Unit) =
 
 fun stringConfig(block: SimpleConfig<String>.() -> Unit) =
         ConfigPropertyFactory.fromPrimitive(SourceTypeResolver.string(), block = block)
+
+fun stringSetConfig(block: SimpleConfig<Set<String>>.() -> Unit) =
+        ConfigPropertyFactory.fromPrimitive(SourceTypeResolver.stringSet(), block = block)
 
 fun booleanConfig(block: SimpleConfig<Boolean>.() -> Unit) =
         ConfigPropertyFactory.fromPrimitive(SourceTypeResolver.boolean(), block = block)

@@ -15,6 +15,9 @@ data class SourceTypeResolver<T>(val configSourceResolver: ConfigSourceResolver<
         fun string(resourcesResolver: ResourcesResolver<String> = ResourcesResolver.String) =
                 SourceTypeResolver(ConfigSourceResolver.String, resourcesResolver)
 
+        fun stringSet(resourcesResolver: ResourcesResolver<Set<String>> = ResourcesResolver.StringSet) =
+                SourceTypeResolver(ConfigSourceResolver.StringSet, resourcesResolver)
+
         fun boolean(resourcesResolver: ResourcesResolver<Boolean> = ResourcesResolver.Boolean) =
                 SourceTypeResolver(ConfigSourceResolver.Boolean, resourcesResolver)
 

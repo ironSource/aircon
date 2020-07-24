@@ -1,9 +1,9 @@
 package com.ironsource.aura.airconkt.setValue
 
-import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.common.Label
 import com.ironsource.aura.airconkt.common.airConTest
 import com.ironsource.aura.airconkt.common.mapConfig
+import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.config.type.*
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
@@ -18,6 +18,7 @@ object SimpleSetTest : Spek(airConTest {
             var someLong by longConfig {}
             var someFloat by floatConfig {}
             var someString by stringConfig {}
+            var someStringSet by stringSetConfig {}
             var someBoolean by booleanConfig {}
             var someTyped by typedConfig<Label> {}
         }
@@ -50,6 +51,13 @@ object SimpleSetTest : Spek(airConTest {
             assertEquals("", config.someString)
             config.someString = "new"
             assertEquals("new", config.someString)
+        }
+
+        it("Should return set value - stringSetConfig") {
+            config.someStringSet = setOf("")
+            assertEquals(setOf(""), config.someStringSet)
+            config.someStringSet = setOf("new")
+            assertEquals(setOf("new"), config.someStringSet)
         }
 
         it("Should return set value - booleanConfig") {

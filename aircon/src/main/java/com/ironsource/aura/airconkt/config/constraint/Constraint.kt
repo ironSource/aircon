@@ -6,7 +6,6 @@ import com.ironsource.aura.airconkt.utils.toCached
 @AirConDsl
 interface Constraint<Test, Fallback> {
 
-    var fallbackProvider: ((Test) -> Fallback)?
     var fallbackToPrimitive: Test
     var fallbackTo: Fallback
 
@@ -20,8 +19,8 @@ interface Constraint<Test, Fallback> {
 internal class ConstraintBuilder<Test, Fallback> private constructor(var name: String? = null,
                                                                      private var adapter: (Test) -> Fallback) : Constraint<Test, Fallback> {
 
-    internal var verifiers: MutableList<(Test) -> Boolean> = mutableListOf()
-    override var fallbackProvider: ((Test) -> Fallback)? = null
+    var verifiers: MutableList<(Test) -> Boolean> = mutableListOf()
+    var fallbackProvider: ((Test) -> Fallback)? = null
 
     companion object {
         internal operator fun <T, S> invoke(name: String? = null,

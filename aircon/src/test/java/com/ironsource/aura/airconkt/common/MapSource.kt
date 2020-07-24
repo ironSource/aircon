@@ -6,37 +6,50 @@ open class MapSource(private val map: MutableMap<String, Any?>) : ConfigSource {
 
     override fun getInteger(key: String) = testAndGet<Int>(key)
 
-    override fun putInteger(key: String, value: Int?) {
+    override fun putInteger(key: String,
+                            value: Int?) {
         map[key] = value
     }
 
     override fun getLong(key: String) = testAndGet<Long>(key)
 
-    override fun putLong(key: String, value: Long?) {
+    override fun putLong(key: String,
+                         value: Long?) {
         map[key] = value
     }
 
     override fun getFloat(key: String) = testAndGet<Float>(key)
 
-    override fun putFloat(key: String, value: Float?) {
+    override fun putFloat(key: String,
+                          value: Float?) {
         map[key] = value
     }
 
     override fun getBoolean(key: String) = testAndGet<Boolean>(key)
 
-    override fun putBoolean(key: String, value: Boolean?) {
+    override fun putBoolean(key: String,
+                            value: Boolean?) {
         map[key] = value
     }
 
     override fun getString(key: String) = testAndGet<String>(key)
 
-    override fun putString(key: String, value: String?) {
+    override fun putString(key: String,
+                           value: String?) {
+        map[key] = value
+    }
+
+    override fun getStringSet(key: String) = testAndGet<Set<String>>(key)
+
+    override fun putStringSet(key: String,
+                              value: Set<String>?) {
         map[key] = value
     }
 
     override fun getAny(key: String) = testAndGet<Any>(key)
 
-    override fun putAny(key: String, value: Any?) {
+    override fun putAny(key: String,
+                        value: Any?) {
         map[key] = value
     }
 

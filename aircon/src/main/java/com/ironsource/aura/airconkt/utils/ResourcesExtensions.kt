@@ -17,3 +17,6 @@ internal fun Resources.getAny(id: Int): Any {
 
 internal fun Resources.getColorHex(id: Int) =
         "#" + Integer.toHexString(getColor(id))
+
+internal fun Resources.getStringSet(id: Int): Set<String> =
+        getStringArray(id).toSet()

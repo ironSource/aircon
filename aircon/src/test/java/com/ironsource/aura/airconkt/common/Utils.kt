@@ -3,7 +3,6 @@ package com.ironsource.aura.airconkt.common
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
-import com.ironsource.aura.airconkt.AirConKt
 import io.mockk.every
 import io.mockk.mockk
 
@@ -22,8 +21,4 @@ fun mockResource(): Resources {
     every { mockk.getBoolean(any()) } returns false
     every { mockk.getColor(any()) } returns Color.WHITE
     return mockk
-}
-
-fun parseColor(str: String): Int {
-    return Color.WHITE
 }

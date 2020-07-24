@@ -1,10 +1,10 @@
 package com.ironsource.aura.airconkt.constraint
 
-import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.common.Label
 import com.ironsource.aura.airconkt.common.airConTest
 import com.ironsource.aura.airconkt.common.mapConfig
 import com.ironsource.aura.airconkt.common.withRemoteMap
+import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.config.type.intConfig
 import com.ironsource.aura.airconkt.config.type.typedConfig
 import org.spekframework.spek2.Spek

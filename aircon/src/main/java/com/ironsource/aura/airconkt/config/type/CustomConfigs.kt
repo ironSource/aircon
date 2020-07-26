@@ -10,15 +10,15 @@ import com.ironsource.aura.airconkt.utils.Fail
 import com.ironsource.aura.airconkt.utils.Success
 import com.ironsource.aura.airconkt.utils.getColorHex
 
-fun urlConfig(block: SimpleConfig<String>.() -> Unit) =
+fun FeatureRemoteConfig.urlConfig(block: SimpleConfig<String>.() -> Unit) =
         ConfigPropertyFactory.fromPrimitive(SourceTypeResolver.string(),
                 validator = { URLUtil.isValidUrl(it) },
                 block = block)
 
-fun textConfig(block: SimpleConfig<String>.() -> Unit) =
+fun FeatureRemoteConfig.textConfig(block: SimpleConfig<String>.() -> Unit) =
         stringConfig(block)
 
-inline fun <reified T> jsonConfig(noinline block: Config<String, T>.() -> Unit) =
+inline fun <reified T> FeatureRemoteConfig.jsonConfig(noinline block: Config<String, T>.() -> Unit) =
         ConfigPropertyFactory.from(SourceTypeResolver.string(),
                 validator = { it.isNotEmpty() },
                 getterAdapter = {
@@ -35,7 +35,7 @@ inline fun <reified T> jsonConfig(noinline block: Config<String, T>.() -> Unit) 
                 block = block
         )
 
-fun colorConfig(block: Config<String, ColorInt>.() -> Unit) =
+fun FeatureRemoteConfig.colorConfig(block: Config<String, ColorInt>.() -> Unit) =
         ConfigPropertyFactory.from(SourceTypeResolver.string(
                 resourcesResolver = ResourcesResolver(Resources::getColorHex)),
                 validator = { it.isNotEmpty() },

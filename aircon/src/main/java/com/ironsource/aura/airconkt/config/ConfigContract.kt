@@ -7,36 +7,6 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 
-/**
- * TODO - FIRST RELEASE
- *
- */
-
-/**
- * TODO - DEPLOYMENT
- * Fill documentation, README and CHANGELOG
- * Example on how to create custom config, custom constraint
- * Benchmark vs old AirCon (runtime, compile-time, sdk size, supported features..)
- */
-
-/**
- * TODO - Missing original AirCon features
- * Solution for generic jsonConfig types.
- * Support for identifiable config source.
- * Config mocks
- * TimeConfig
- * Enum config randomizer.
- * XML injection.
- */
-
-/**
- * TODO - Backlog
- * Think about repeatable configs
- * Custom types - sealed class enum? (need to think about inheritors with constructor)
- * Separate custom types to SDK extension module
- * Adapting custom configs (e.g enum to other)
- */
-
 typealias SimpleConfig<T> = Config<T, T>
 
 interface Defaulted<T> {
@@ -60,9 +30,6 @@ interface Adaptable<Raw, Actual> {
     fun adapt(block: Adapter<Raw, Actual>.() -> Unit)
 }
 
-interface ConfigProperty<T> : ReadWriteProperty<FeatureRemoteConfig, T>
-interface ReadOnlyConfigProperty<T> : ReadOnlyProperty<FeatureRemoteConfig, T>
-
 @AirConDsl
 interface Config<Raw, Actual> :
         Defaulted<Actual>,
@@ -78,3 +45,6 @@ interface Config<Raw, Actual> :
 interface AdaptableConfig<Raw, Actual> :
         Config<Raw, Actual>,
         Adaptable<Raw, Actual>
+
+interface ConfigProperty<T> : ReadWriteProperty<FeatureRemoteConfig, T>
+interface ReadOnlyConfigProperty<T> : ReadOnlyProperty<FeatureRemoteConfig, T>

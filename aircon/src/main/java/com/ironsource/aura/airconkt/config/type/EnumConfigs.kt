@@ -1,12 +1,9 @@
 package com.ironsource.aura.airconkt.config.type
 
-import com.ironsource.aura.airconkt.config.Config
-import com.ironsource.aura.airconkt.config.ConfigProperty
-import com.ironsource.aura.airconkt.config.ConfigPropertyFactory
-import com.ironsource.aura.airconkt.config.SourceTypeResolver
+import com.ironsource.aura.airconkt.config.*
 import com.ironsource.aura.airconkt.config.type.util.RemoteValueEnumUtils
 
-inline fun <reified T : Enum<T>> intEnumConfig(noinline block: Config<Int, T> .() -> Unit): ConfigProperty<T> {
+inline fun <reified T : Enum<T>> FeatureRemoteConfig.intEnumConfig(noinline block: Config<Int, T> .() -> Unit): ConfigProperty<T> {
     return ConfigPropertyFactory.from(SourceTypeResolver.int(),
             getterAdapter = { RemoteValueEnumUtils.getIntEnumConst(T::class, it) },
             setterAdapter = {
@@ -18,7 +15,7 @@ inline fun <reified T : Enum<T>> intEnumConfig(noinline block: Config<Int, T> .(
     )
 }
 
-inline fun <reified T : Enum<T>> stringEnumConfig(noinline block: Config<String, T> .() -> Unit): ConfigProperty<T> {
+inline fun <reified T : Enum<T>> FeatureRemoteConfig.stringEnumConfig(noinline block: Config<String, T> .() -> Unit): ConfigProperty<T> {
     return ConfigPropertyFactory.from(SourceTypeResolver.string(),
             getterAdapter = { RemoteValueEnumUtils.getStringEnumConst(T::class, it) },
             setterAdapter = {

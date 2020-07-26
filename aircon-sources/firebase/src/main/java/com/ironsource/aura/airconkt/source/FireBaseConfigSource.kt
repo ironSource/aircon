@@ -14,14 +14,17 @@ private const val PREF_OVERRIDES = "overrides"
 /**
  * Created on 4/25/2019.
  */
-class FireBaseConfigSource(context: Context, private val remoteConfig: FirebaseRemoteConfig) : ConfigSource {
+class FireBaseConfigSource(context: Context,
+                           private val remoteConfig: FirebaseRemoteConfig) : ConfigSource {
+
     private val overridePrefs = context.getSharedPreferences(PREF_OVERRIDES, Context.MODE_PRIVATE)
 
     override fun getInteger(key: String): Int? {
         return get(key, 0, ::parseInt, SharedPreferences::getInt)
     }
 
-    override fun putInteger(key: String, value: Int?) {
+    override fun putInteger(key: String,
+                            value: Int?) {
         val edit = overridePrefs.edit()
         if (value != null) {
             edit.putInt(key, value)
@@ -35,7 +38,8 @@ class FireBaseConfigSource(context: Context, private val remoteConfig: FirebaseR
         return get(key, 0, ::parseLong, SharedPreferences::getLong)
     }
 
-    override fun putLong(key: String, value: Long?) {
+    override fun putLong(key: String,
+                         value: Long?) {
         val edit = overridePrefs.edit()
         if (value != null) {
             edit.putLong(key, value)
@@ -49,7 +53,8 @@ class FireBaseConfigSource(context: Context, private val remoteConfig: FirebaseR
         return get(key, 0f, ::parseFloat, SharedPreferences::getFloat)
     }
 
-    override fun putFloat(key: String, value: Float?) {
+    override fun putFloat(key: String,
+                          value: Float?) {
         val edit = overridePrefs.edit()
         if (value != null) {
             edit.putFloat(key, value)
@@ -68,7 +73,8 @@ class FireBaseConfigSource(context: Context, private val remoteConfig: FirebaseR
         }, SharedPreferences::getBoolean)
     }
 
-    override fun putBoolean(key: String, value: Boolean?) {
+    override fun putBoolean(key: String,
+                            value: Boolean?) {
         val edit = overridePrefs.edit()
         if (value != null) {
             edit.putBoolean(key, value)
@@ -82,19 +88,35 @@ class FireBaseConfigSource(context: Context, private val remoteConfig: FirebaseR
         return get(key, null, { it }, SharedPreferences::getString)
     }
 
-    override fun putString(key: String, value: String?) {
+    override fun putString(key: String,
+                           value: String?) {
         overridePrefs.edit()
                 .putString(key, value)
                 .apply()
     }
 
+    override fun getStringSet(key: String): Set<String>? {
+        return getString(key)?.split(",")?.map { it.trim() }?.toSet()
+    }
+
+    override fun putStringSet(key: String,
+                              value: Set<String>?) {
+        overridePrefs.edit()
+                .putStringSet(key, value)
+                .apply()
+    }
+
     override fun getAny(key: String) = null
 
-    override fun putAny(key: String, value: Any?) {
+    override fun putAny(key: String,
+                        value: Any?) {
         // Not supported
     }
 
-    private operator fun <T> get(key: String, def: T, parser: (String) -> T?, prefsResolver: SharedPreferences.(String, T) -> T): T? {
+    private operator fun <T> get(key: String,
+                                 def: T,
+                                 parser: (String) -> T?,
+                                 prefsResolver: SharedPreferences.(String, T) -> T): T? {
         if (overridePrefs.contains(key)) {
             val overrideValue = overridePrefs.prefsResolver(key, def)
             if (overrideValue != null) {

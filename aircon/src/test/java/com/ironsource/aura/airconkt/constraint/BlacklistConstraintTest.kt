@@ -17,7 +17,7 @@ object BlacklistConstraintTest : Spek(airConTest {
         class Config : FeatureRemoteConfig by mapConfig() {
             val someInt by intConfig {
                 default = 2
-                cacheValue=false
+                cached=false
                 blacklist = listOf(1, 3, 5)
             }
         }

@@ -38,7 +38,7 @@ interface Config<Raw, Actual> :
 
     var key: String
     var source: KClass<out ConfigSource>
-    var cacheValue: Boolean
+    var cached: Boolean
 }
 
 @AirConDsl

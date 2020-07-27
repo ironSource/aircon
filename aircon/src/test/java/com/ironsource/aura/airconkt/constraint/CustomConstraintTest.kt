@@ -18,7 +18,7 @@ object CustomConstraintTest : Spek(airConTest {
         class Config : FeatureRemoteConfig by mapConfig() {
             val someEvenOnlyInt by intConfig {
                 default = 2
-                cacheValue = false
+                cached = false
                 constraint {
                     acceptIf { it % 2 == 0 }
                     fallbackTo { it + 1 }
@@ -26,7 +26,7 @@ object CustomConstraintTest : Spek(airConTest {
             }
 
             val someNotEmptyLabel by typedConfig<Label> {
-                cacheValue = false
+                cached = false
                 constraint {
                     acceptIf { (it as Label).value.isNotEmpty() }
                     fallbackTo { Label("fallback") }

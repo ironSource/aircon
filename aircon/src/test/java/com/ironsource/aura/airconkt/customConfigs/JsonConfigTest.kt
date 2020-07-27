@@ -16,7 +16,7 @@ object JsonConfigTest : Spek(airConTest {
 
     class Config : FeatureRemoteConfig by mapConfig() {
         var someJson by jsonConfig<LabelList> {
-            cacheValue = false
+            cached = false
             default = LabelList().apply { add(Label("default")) }
         }
     }

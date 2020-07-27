@@ -32,12 +32,12 @@ object EnumConfigTest : Spek(airConTest {
 
     class Config : FeatureRemoteConfig by mapConfig() {
         var someIntEnum by intEnumConfig<Location> {
-            cacheValue = false
+            cached = false
             default = Location.TOP
         }
 
         var someStringEnum by stringEnumConfig<Size> {
-            cacheValue = false
+            cached = false
             default = Size.SMALL
         }
     }

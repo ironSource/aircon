@@ -17,7 +17,7 @@ object WhitelistConstraintTest : Spek(airConTest {
         class Config : FeatureRemoteConfig by mapConfig() {
             val someInt by intConfig {
                 default = 1
-                cacheValue = false
+                cached = false
                 whitelist = listOf(1, 3, 5)
             }
         }

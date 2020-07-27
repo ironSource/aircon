@@ -65,12 +65,12 @@ object GetCache : Spek(airConTest {
     describe("Non cached config should resolve value on every field read") {
 
         class NoCacheConfig : FeatureRemoteConfig by mapConfig() {
-            val someInt by intConfig { cacheValue = false }
-            val someLong by longConfig { cacheValue = false }
-            val someFloat by floatConfig { cacheValue = false }
-            val someString by stringConfig { cacheValue = false }
-            val someBoolean by booleanConfig { cacheValue = false }
-            val someTyped by typedConfig<Label> { cacheValue = false }
+            val someInt by intConfig { cached = false }
+            val someLong by longConfig { cached = false }
+            val someFloat by floatConfig { cached = false }
+            val someString by stringConfig { cached = false }
+            val someBoolean by booleanConfig { cached = false }
+            val someTyped by typedConfig<Label> { cached = false }
         }
 
         val nonCacheConfig = NoCacheConfig()

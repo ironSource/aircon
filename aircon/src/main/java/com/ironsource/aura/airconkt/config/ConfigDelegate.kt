@@ -73,7 +73,7 @@ private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeRe
 
     override lateinit var key: String
     override lateinit var source: KClass<out ConfigSource>
-    override var cacheValue: Boolean = true
+    override var cached: Boolean = true
 
     override var default: Actual
         get() = defaultProvider()
@@ -165,7 +165,7 @@ private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeRe
                     "Failed to adapt remote value $value")
         }
 
-        if (cacheValue) {
+        if (cached) {
             this.value = adaptedValue
         }
 
@@ -205,7 +205,7 @@ private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeRe
         val source = resolveSource(thisRef)
         val key = resolveKey(property)
 
-        if (cacheValue) {
+        if (cached) {
             this.value = value
             isValueSet = true
         }

@@ -1,3 +1,6 @@
+plugins {
+    id 'jacoco'
+}
 apply plugin: 'com.android.library'
 apply from: '../versions.gradle'
 apply plugin: 'kotlin-android'

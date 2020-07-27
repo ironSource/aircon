@@ -1,7 +1,6 @@
 package com.ironsource.aura.airconkt.sample.config
 
 import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
-import com.ironsource.aura.airconkt.config.asConfigProperty
 import com.ironsource.aura.airconkt.config.type.*
 import com.ironsource.aura.airconkt.config.type.annotations.RemoteIntValue
 import com.ironsource.aura.airconkt.config.type.annotations.RemoteStringValue
@@ -59,13 +58,6 @@ class CoolKtConfig : FeatureRemoteConfig {
     val someLabelConfig by labelConfig {
         default = Label("Default")
     }
-}
-
-fun auxMethods() {
-    val instance = CoolKtConfig()
-    val defaultValue = CoolKtConfig::someInt.asConfigProperty(instance).getDefaultValue()
-    val rawValue: Int? = CoolKtConfig::someInt.asConfigProperty(instance).getIntRawValue()
-    val configured = CoolKtConfig::someInt.asConfigProperty(instance).isConfigured()
 }
 
 enum class Location {

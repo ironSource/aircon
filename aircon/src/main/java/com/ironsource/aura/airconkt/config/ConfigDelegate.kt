@@ -46,12 +46,13 @@ object ConfigPropertyFactory {
             ConfigDelegate(sourceTypeResolver, validator, getterAdapter, setterAdapter).apply(block)
 }
 
-private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeResolver<Raw>,
-                                          private val validator: (Raw) -> Boolean)
+private class ConfigDelegate<Raw, Actual> internal constructor(private val typeResolver: SourceTypeResolver<Raw>,
+                                                               private val validator: (Raw) -> Boolean)
     : ConfigProperty<Actual>,
         ReadOnlyConfigProperty<Actual>,
-        AdaptableConfig<Raw, Actual>,
-        ConfigDelegateApi<Raw, Actual> {
+        AdaptableConfig<Raw, Actual>
+//        ,ConfigDelegateApi<Raw, Actual>
+{
 
     constructor(typeResolver: SourceTypeResolver<Raw>,
                 validator: (Raw) -> Boolean,
@@ -223,12 +224,12 @@ private class ConfigDelegate<Raw, Actual>(private val typeResolver: SourceTypeRe
         return AirConKt.configSourceRepository.getSource(sourceClass)
     }
 
-    override fun getRawValue(thisRef: FeatureRemoteConfig,
-                             property: KProperty<*>): Raw? {
-        val key = resolveKey(property)
-        val source = resolveSource(thisRef)
-        return typeResolver.configSourceResolver.sourceGetter(source, key)
-    }
+//    override fun getRawValue(thisRef: FeatureRemoteConfig,
+//                             property: KProperty<*>): Raw? {
+//        val key = resolveKey(property)
+//        val source = resolveSource(thisRef)
+//        return typeResolver.configSourceResolver.sourceGetter(source, key)
+//    }
 }
 
 private fun <T, S> ConstraintBuilder<T, S>.verify(value: T): Boolean {

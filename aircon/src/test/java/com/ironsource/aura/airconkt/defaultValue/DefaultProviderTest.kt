@@ -26,6 +26,7 @@ object DefaultProviderTest : Spek(airConTest {
 
         val someIntWithoutCache by intConfig {
             default(cache = false) { Random().nextInt() }
+            cached = false
         }
 
         val someLong by longConfig {

@@ -16,24 +16,31 @@ object GetWithProcessorTest : Spek(airConTest {
 
         class Config : FeatureRemoteConfig by mapConfig() {
             val someInt by intConfig {
+                default = 1
                 process { it + 1 }
             }
             val someLong by longConfig {
+                default = 1
                 process { it + 1 }
             }
             val someFloat by floatConfig {
+                default = 1f
                 process { it + 1 }
             }
             val someString by stringConfig {
+                default = ""
                 process { "remote" + 1 }
             }
             val someStringSet by stringSetConfig {
+                default = setOf()
                 process { HashSet<String>(it).apply { add("remote2") } }
             }
             val someBoolean by booleanConfig {
+                default = false
                 process { !it }
             }
             val someTyped by typedConfig<Label> {
+                default = Label("default")
                 process { Label(it.value + "Processed") }
             }
         }

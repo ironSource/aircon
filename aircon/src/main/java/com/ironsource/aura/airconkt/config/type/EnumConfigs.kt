@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.ironsource.aura.airconkt.config.type
 
 import com.ironsource.aura.airconkt.config.*
@@ -9,7 +11,8 @@ inline fun <reified T : Enum<T>> FeatureRemoteConfig.intEnumConfig(noinline bloc
             setterAdapter = {
                 val remoteValue = RemoteValueEnumUtils.getIntEnumRemoteValue(T::class, it)
                 remoteValue
-                        ?: throw IllegalArgumentException("No remote value annotation defined for ${T::class}.$it")
+                        ?: throw IllegalArgumentException(
+                                "No remote value annotation defined for ${T::class}.$it")
             },
             block = block
     )
@@ -21,7 +24,8 @@ inline fun <reified T : Enum<T>> FeatureRemoteConfig.stringEnumConfig(noinline b
             setterAdapter = {
                 val remoteValue = RemoteValueEnumUtils.getStringEnumRemoteValue(T::class, it)
                 remoteValue
-                        ?: throw IllegalArgumentException("No remote value annotation defined for ${T::class}.$it")
+                        ?: throw IllegalArgumentException(
+                                "No remote value annotation defined for ${T::class}.$it")
             },
             block = block
     )

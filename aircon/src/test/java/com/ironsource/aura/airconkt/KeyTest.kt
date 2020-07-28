@@ -15,10 +15,12 @@ object KeyTest : Spek(airConTest {
 
         class Config : FeatureRemoteConfig by mapConfig() {
             val someInt by intConfig {
+                default = 1
             }
 
             val someIntWithKey by intConfig {
                 key = "someInt"
+                default = 1
             }
         }
 

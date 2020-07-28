@@ -1,9 +1,9 @@
 package com.ironsource.aura.airconkt.constraint
 
-import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.common.airConTest
 import com.ironsource.aura.airconkt.common.mapConfig
 import com.ironsource.aura.airconkt.common.withRemoteMap
+import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.config.constraint.FallbackPolicy
 import com.ironsource.aura.airconkt.config.constraint.maxValue
 import com.ironsource.aura.airconkt.config.type.floatConfig
@@ -20,14 +20,17 @@ object MaxValueConstraintTest : Spek(airConTest {
         val someInt by intConfig {
             default = 1
             maxValue = 2
+            cached = false
         }
         val someLong by longConfig {
             default = 1
             maxValue = 2
+            cached = false
         }
         val someFloat by floatConfig {
             default = 1f
             maxValue = 2f
+            cached = false
         }
     }
 

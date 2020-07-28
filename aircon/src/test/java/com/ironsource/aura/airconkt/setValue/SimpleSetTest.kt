@@ -14,13 +14,13 @@ object SimpleSetTest : Spek(airConTest {
     describe("Simple config field set should return set value") {
 
         class Config : FeatureRemoteConfig by mapConfig() {
-            var someInt by intConfig {}
-            var someLong by longConfig {}
-            var someFloat by floatConfig {}
-            var someString by stringConfig {}
-            var someStringSet by stringSetConfig {}
-            var someBoolean by booleanConfig {}
-            var someTyped by typedConfig<Label> {}
+            var someInt by intConfig { default = 1 }
+            var someLong by longConfig { default = 1 }
+            var someFloat by floatConfig { default = 1f }
+            var someString by stringConfig { default = "" }
+            var someStringSet by stringSetConfig { default = setOf() }
+            var someBoolean by booleanConfig { default = false }
+            var someTyped by typedConfig<Label> { default = Label("default") }
         }
 
         val config = Config()

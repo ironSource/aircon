@@ -1,10 +1,10 @@
 package com.ironsource.aura.airconkt.getValue
 
-import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.common.Label
 import com.ironsource.aura.airconkt.common.airConTest
 import com.ironsource.aura.airconkt.common.mapConfig
 import com.ironsource.aura.airconkt.common.withRemoteMap
+import com.ironsource.aura.airconkt.config.FeatureRemoteConfig
 import com.ironsource.aura.airconkt.config.type.*
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
@@ -17,12 +17,12 @@ object GetCache : Spek(airConTest {
     describe("Cached config should calculate value only once") {
 
         class CacheConfig : FeatureRemoteConfig by mapConfig() {
-            val someInt by intConfig { }
-            val someLong by longConfig { }
-            val someFloat by floatConfig { }
-            val someString by stringConfig { }
-            val someBoolean by booleanConfig { }
-            val someTyped by typedConfig<Label> {}
+            val someInt by intConfig { default = 1 }
+            val someLong by longConfig { default = 1 }
+            val someFloat by floatConfig { default = 1f }
+            val someString by stringConfig { default = "" }
+            val someBoolean by booleanConfig { default = false }
+            val someTyped by typedConfig<Label> { default = Label("default") }
         }
 
         val cacheConfig = CacheConfig()
@@ -65,12 +65,30 @@ object GetCache : Spek(airConTest {
     describe("Non cached config should resolve value on every field read") {
 
         class NoCacheConfig : FeatureRemoteConfig by mapConfig() {
-            val someInt by intConfig { cached = false }
-            val someLong by longConfig { cached = false }
-            val someFloat by floatConfig { cached = false }
-            val someString by stringConfig { cached = false }
-            val someBoolean by booleanConfig { cached = false }
-            val someTyped by typedConfig<Label> { cached = false }
+            val someInt by intConfig {
+                default = 1
+                cached = false
+            }
+            val someLong by longConfig {
+                default = 1
+                cached = false
+            }
+            val someFloat by floatConfig {
+                default = 1f
+                cached = false
+            }
+            val someString by stringConfig {
+                default = ""
+                cached = false
+            }
+            val someBoolean by booleanConfig {
+                default = false
+                cached = false
+            }
+            val someTyped by typedConfig<Label> {
+                default = Label("")
+                cached = false
+            }
         }
 
         val nonCacheConfig = NoCacheConfig()

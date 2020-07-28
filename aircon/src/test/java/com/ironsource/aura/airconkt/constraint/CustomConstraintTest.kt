@@ -27,6 +27,7 @@ object CustomConstraintTest : Spek(airConTest {
 
             val someNotEmptyLabel by typedConfig<Label> {
                 cached = false
+                default = Label("default")
                 constraint {
                     acceptIf { (it as Label).value.isNotEmpty() }
                     fallbackTo { Label("fallback") }

@@ -14,11 +14,13 @@ object SourceTest : Spek(airConTest {
         class Config : FeatureRemoteConfig by mapConfig() {
             val classSourceInt by intConfig {
                 key = "someInt"
+                default = 1
             }
 
             val specificSourceInt by intConfig {
                 key = "someInt"
                 source = MapSource2::class
+                default = 1
             }
         }
 

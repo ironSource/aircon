@@ -18,20 +18,21 @@ object SimpleGetTest : Spek(airConTest {
     describe("Simple config field get should return remote value") {
 
         class Config : FeatureRemoteConfig by mapConfig() {
-            val someInt by intConfig {}
-            val someLong by longConfig {}
-            val someFloat by floatConfig {}
-            val someString by stringConfig {}
-            val someStringSet by stringSetConfig {}
-            val someBoolean by booleanConfig {}
-            val someTyped by typedConfig<Label> {}
+            val someInt by intConfig { default = 1 }
+            val someLong by longConfig { default = 1 }
+            val someFloat by floatConfig { default = 1f }
+            val someString by stringConfig { default = "" }
+            val someStringSet by stringSetConfig { default = setOf() }
+            val someBoolean by booleanConfig { default = false }
+            val someTyped by typedConfig<Label> { default = Label("default") }
             var someLabel by typedStringConfig<Label> {
+                default = Label("default")
                 adapt {
                     get { Label(it) }
                     set { it.value }
                 }
             }
-            val someUrl by urlConfig { }
+            val someUrl by urlConfig { default = "" }
         }
 
         val config = Config()

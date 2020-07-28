@@ -15,6 +15,7 @@ object SetWithSetterAdapterTest : Spek(airConTest {
 
         class Config : FeatureRemoteConfig by mapConfig() {
             var someLabel by typedStringConfig<Label> {
+                default = Label("default")
                 adapt {
                     get { Label(it) }
                     set { it.value }

@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.ironsource.aura.airconkt.config.type
 
 import android.content.res.Resources

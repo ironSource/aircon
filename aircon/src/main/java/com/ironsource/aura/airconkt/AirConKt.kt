@@ -2,11 +2,11 @@ package com.ironsource.aura.airconkt
 
 import android.content.Context
 import com.ironsource.aura.airconkt.config.type.util.JsonConverter
-import com.ironsource.aura.airconkt.dsl.AirConDsl
 import com.ironsource.aura.airconkt.logging.AndroidLogger
 import com.ironsource.aura.airconkt.logging.Logger
 import com.ironsource.aura.airconkt.source.ConfigSource
 import com.ironsource.aura.airconkt.source.ConfigSourceRepository
+import com.ironsource.aura.dslint.annotations.DSLint
 
 /**
  * AirCon SDK entry point.
@@ -69,7 +69,7 @@ object AirConKt {
  *
  * @see AirConKt.init
  */
-@AirConDsl
+@DSLint
 interface Options {
 
     /**
@@ -113,7 +113,7 @@ private class OptionsBuilder : Options {
     }
 }
 
-@AirConDsl
+@DSLint
 interface LoggingOptions {
 
     /**

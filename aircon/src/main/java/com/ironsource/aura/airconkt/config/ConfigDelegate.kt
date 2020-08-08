@@ -3,9 +3,9 @@ package com.ironsource.aura.airconkt.config
 import com.ironsource.aura.airconkt.AirConKt
 import com.ironsource.aura.airconkt.config.constraint.Constraint
 import com.ironsource.aura.airconkt.config.constraint.ConstraintBuilder
-import com.ironsource.aura.airconkt.dsl.AirConDsl
 import com.ironsource.aura.airconkt.source.ConfigSource
 import com.ironsource.aura.airconkt.utils.toCached
+import com.ironsource.aura.dslint.annotations.DSLint
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
@@ -304,7 +304,7 @@ private fun <T, S> ConstraintBuilder<T, S>.verify(value: T): Boolean {
     return true
 }
 
-@AirConDsl
+@DSLint
 interface Adapter<Raw, Actual> {
 
     fun get(block: (Raw) -> Actual?)

@@ -1,19 +1,25 @@
 package com.ironsource.aura.airconkt.config
 
 import com.ironsource.aura.airconkt.config.constraint.Constraint
-import com.ironsource.aura.airconkt.dsl.AirConDsl
 import com.ironsource.aura.airconkt.source.ConfigSource
+import com.ironsource.aura.dslint.annotations.DSLint
+import com.ironsource.aura.dslint.annotations.DslMandatory
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 
 typealias SimpleConfig<T> = Config<T, T>
 
+@DSLint
 interface Defaulted<T> {
+
     fun default(cache: Boolean = true,
                 provider: () -> T)
 
+    @set:DslMandatory(group = "default")
     var default: T
+
+    @set:DslMandatory(group = "default")
     var defaultRes: Int
 }
 
@@ -30,18 +36,20 @@ interface Adaptable<Raw, Actual> {
     fun adapt(block: Adapter<Raw, Actual>.() -> Unit)
 }
 
-@AirConDsl
+@DSLint
 interface Config<Raw, Actual> :
         Defaulted<Actual>,
         Constrained<Raw, Actual>,
         Processable<Actual> {
 
+    @set:DslMandatory
     var key: String
+
     var source: KClass<out ConfigSource>
     var cached: Boolean
 }
 
-@AirConDsl
+@DSLint
 interface AdaptableConfig<Raw, Actual> :
         Config<Raw, Actual>,
         Adaptable<Raw, Actual>

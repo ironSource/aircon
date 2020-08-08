@@ -99,7 +99,7 @@ class DslMandatoryDetector : Detector(),
                     DslMandatoryProperty(getPropertyName(it.name), group)
                 }
                 .groupBy {
-                    it.group ?: it.name
+                    if (!it.group.isNullOrEmpty()) it.group else it.name
                 }
     }
 

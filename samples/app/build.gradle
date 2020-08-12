@@ -41,7 +41,6 @@ dependencies {
     implementation project(':aircon')
     implementation project(':aircon-sources:firebase')
     implementation project(':aircon-converters:gson')
-    lintChecks project(':dslint')
 }
 
 configurations.all {

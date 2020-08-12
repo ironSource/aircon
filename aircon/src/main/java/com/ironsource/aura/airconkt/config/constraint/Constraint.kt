@@ -1,9 +1,7 @@
 package com.ironsource.aura.airconkt.config.constraint
 
 import com.ironsource.aura.airconkt.utils.toCached
-import com.ironsource.aura.dslint.annotations.DSLint
 
-@DSLint
 interface Constraint<Test, Fallback> {
 
     var fallbackToPrimitive: Test

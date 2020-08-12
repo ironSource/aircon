@@ -6,7 +6,6 @@ import com.ironsource.aura.airconkt.logging.AndroidLogger
 import com.ironsource.aura.airconkt.logging.Logger
 import com.ironsource.aura.airconkt.source.ConfigSource
 import com.ironsource.aura.airconkt.source.ConfigSourceRepository
-import com.ironsource.aura.dslint.annotations.DSLint
 
 /**
  * AirCon SDK entry point.
@@ -69,7 +68,6 @@ object AirConKt {
  *
  * @see AirConKt.init
  */
-@DSLint
 interface Options {
 
     /**
@@ -113,7 +111,6 @@ private class OptionsBuilder : Options {
     }
 }
 
-@DSLint
 interface LoggingOptions {
 
     /**

@@ -33,14 +33,12 @@ dependencies {
     implementation project(':firebase-source')
     implementation project(':gson-converter')
     lintChecks project(':aircon-lint')
-
     annotationProcessor project(':aircon-compiler')
 
-//    implementation 'com.ironsource.aura.aircon:aircon:1.4.0'
-//    implementation 'com.ironsource.aura.aircon:firebase-source:1.4.0'
-//    implementation 'com.ironsource.aura.aircon:gson-converter:1.4.0'
-//
-//    annotationProcessor 'com.ironsource.aura.aircon:aircon-compiler:1.4.0'
+//    implementation 'com.github.ironSource:aircon:1.7.0'
+//    implementation 'com.github.ironSource.aircon:source-firebase:1.7.0'
+//    implementation 'com.github.ironSource.aircon:converter-gson:1.7.0'
+//    annotationProcessor 'com.github.ironSource.aircon:aircon-compiler:1.7.0'
 }
 
 configurations.all {

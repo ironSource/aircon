@@ -26,7 +26,7 @@ android {
     }
 }
 
-apply from: rootProject.file('gradle/android_mvn_push.gradle')
+//apply from: rootProject.file('gradle/android_mvn_push.gradle')
 
 dependencies {
     implementation project(':aircon')

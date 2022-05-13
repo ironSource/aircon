@@ -26,11 +26,11 @@ android {
     }
 }
 
-apply from: rootProject.file('gradle/android_mvn_push.gradle')
+//apply from: rootProject.file('gradle/android_mvn_push.gradle')
 
-afterEvaluate {
-    javadoc.classpath += project.android.libraryVariants.toList().first().javaCompile.classpath
-}
+//afterEvaluate {
+//    javadoc.classpath += project.android.libraryVariants.toList().first().javaCompile.classpath
+//}
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')

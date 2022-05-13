@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply from: '../versions.gradle'
 
+apply from: rootProject.file('gradle/mvn_push_java.gradle')
+
 sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
-
-//apply from: rootProject.file('gradle/java_mvn_push.gradle')

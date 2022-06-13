@@ -9,6 +9,7 @@ import com.ironsource.aura.aircon.common.annotations.config.LongConfig;
 import com.ironsource.aura.aircon.common.annotations.config.StringConfig;
 import com.ironsource.aura.aircon.common.annotations.config.StringEnumConfig;
 import com.ironsource.aura.aircon.common.annotations.config.StringSetConfig;
+import com.ironsource.aura.aircon.common.annotations.config.StyledTextConfig;
 import com.ironsource.aura.aircon.common.annotations.config.TextConfig;
 import com.ironsource.aura.aircon.common.annotations.config.TimeConfig;
 import com.ironsource.aura.aircon.common.annotations.config.UrlConfig;
@@ -68,6 +69,9 @@ public class LibraryConfigAnnotationParser
 		}
 		if (mConfigAnnotation instanceof StringSetConfig) {
 			return ConfigKind.STRING_SET;
+		}
+		if (mConfigAnnotation instanceof StyledTextConfig) {
+			return ConfigKind.STYLED_TEXT;
 		}
 
 		return ConfigKind.PRIMITIVE;

@@ -11,5 +11,6 @@ public enum ConfigKind {
 	STRING_SET,
 	NUMBER,
 	CUSTOM,
-	PRIMITIVE
+	PRIMITIVE,
+	STYLED_TEXT
 }

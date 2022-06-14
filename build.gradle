@@ -7,7 +7,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.0'
+        classpath 'com.android.tools.build:gradle:4.2.0'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
 
@@ -23,21 +23,10 @@ allprojects {
         google()
         jcenter()
 
-        maven {
-            url  "https://dl.bintray.com/ironsource-aura/AirCon"
-        }
+        maven { url 'https://jitpack.io' }
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-task publishSdk {
-    dependsOn 'clean'
-    dependsOn 'aircon-common:bintrayUpload'
-    dependsOn 'aircon-compiler:bintrayUpload'
-    dependsOn 'aircon:bintrayUpload'
-    dependsOn 'firebase-source:bintrayUpload'
-    dependsOn 'gson-converter:bintrayUpload'
 }

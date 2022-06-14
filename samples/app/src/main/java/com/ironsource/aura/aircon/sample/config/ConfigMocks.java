@@ -17,6 +17,11 @@ public class ConfigMocks {
         return EnumsProvider.getRemoteValue(TextLocation.CENTER);
     }
 
+	@ConfigMock(RemoteConfigs.SomeCoolFeature.SOME_HTML)
+	public static String mockHtml() {
+		return "MaybeThis&#160;WillMakeMore&#8203;SenseIfWeCanSeeTheWordsForRealCheckOkayCheck";
+	}
+
 //	@ConfigMock(RemoteConfigs.SomeCoolFeature.SOME_CUSTOM_MAP)
 //	public static String mockSomeCustomMap() {
 //		return "{\"hello\":\"world\"}";

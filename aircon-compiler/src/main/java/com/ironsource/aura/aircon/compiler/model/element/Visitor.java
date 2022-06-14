@@ -27,5 +27,5 @@ public interface Visitor <T, S> {
 
 	S visit(CustomConfigElement configElement, T arg);
 
-	S visit(StyledTextConfigElement configElement, T arg);
+	S visit(HtmlConfigElement configElement, T arg);
 }

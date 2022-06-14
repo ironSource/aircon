@@ -62,7 +62,7 @@ public abstract class SimpleVisitor <T, S>
 	}
 
 	@Override
-	public S visit(StyledTextConfigElement configElement, T arg) {
+	public S visit(HtmlConfigElement configElement, T arg) {
 		return defaultVisit(configElement, arg);
 	}
 

@@ -71,7 +71,7 @@ public class LibraryConfigAnnotationParser
 			return ConfigKind.STRING_SET;
 		}
 		if (mConfigAnnotation instanceof HtmlConfig) {
-			return ConfigKind.STYLED_TEXT;
+			return ConfigKind.HTML;
 		}
 
 		return ConfigKind.PRIMITIVE;

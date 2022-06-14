@@ -12,5 +12,5 @@ public enum ConfigKind {
 	NUMBER,
 	CUSTOM,
 	PRIMITIVE,
-	STYLED_TEXT
+	HTML
 }

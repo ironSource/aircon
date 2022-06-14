@@ -62,7 +62,7 @@ public abstract class SimpleVisitor <T, S>
 	}
 
 	@Override
-	public S visit(HtmlConfigElement configElement, T arg) {
+	public S visit(final HtmlConfigElement configElement, final T arg) {
 		return defaultVisit(configElement, arg);
 	}
 

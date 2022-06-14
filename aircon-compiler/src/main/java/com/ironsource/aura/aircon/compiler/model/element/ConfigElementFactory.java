@@ -82,7 +82,7 @@ public class ConfigElementFactory {
 			case CUSTOM:
 				return new CustomConfigElement(properties, parser.getAnnotationType());
 			case STYLED_TEXT:
-				return new StyledTextConfigElement(properties, parser.isEnforceNonEmpty());
+				return new HtmlConfigElement(properties, parser.isEnforceNonEmpty());
 			case PRIMITIVE:
 			default:
 				return new PrimitiveConfigElement(properties);

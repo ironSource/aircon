@@ -10,7 +10,7 @@ import com.ironsource.aura.aircon.compiler.model.element.NumberConfigElement;
 import com.ironsource.aura.aircon.compiler.model.element.PrimitiveConfigElement;
 import com.ironsource.aura.aircon.compiler.model.element.StringConfigElement;
 import com.ironsource.aura.aircon.compiler.model.element.StringSetConfigElement;
-import com.ironsource.aura.aircon.compiler.model.element.StyledTextConfigElement;
+import com.ironsource.aura.aircon.compiler.model.element.HtmlConfigElement;
 import com.ironsource.aura.aircon.compiler.model.element.TextConfigElement;
 import com.ironsource.aura.aircon.compiler.model.element.TimeConfigElement;
 import com.ironsource.aura.aircon.compiler.model.element.UrlConfigElement;
@@ -79,8 +79,8 @@ public class ConfigProviderGeneratorFactory {
 			}
 
 			@Override
-			public ConfigProviderGenerator visit(final StyledTextConfigElement configElement, final Void arg) {
-				return new StyledTextConfigProviderGenerator(configElement);
+			public ConfigProviderGenerator visit(final HtmlConfigElement configElement, final Void arg) {
+				return new HtmlConfigProviderGenerator(configElement);
 			}
 		}, null);
 	}

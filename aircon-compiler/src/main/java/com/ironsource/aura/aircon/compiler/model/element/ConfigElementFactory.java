@@ -81,7 +81,7 @@ public class ConfigElementFactory {
 				return new NumberConfigElement(properties, minValue, maxValue, minValueFallbackPolicy, maxValueFallbackPolicy);
 			case CUSTOM:
 				return new CustomConfigElement(properties, parser.getAnnotationType());
-			case STYLED_TEXT:
+			case HTML:
 				return new HtmlConfigElement(properties, parser.isEnforceNonEmpty());
 			case PRIMITIVE:
 			default:

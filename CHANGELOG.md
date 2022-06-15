@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Version 1.9.0
+----------------------------
+   * Added support for HTML text config.
+
 Version 1.4.8
 ----------------------------
    * Bug fixes.

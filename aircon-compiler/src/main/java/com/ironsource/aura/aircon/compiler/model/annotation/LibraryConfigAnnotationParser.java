@@ -2,6 +2,7 @@ package com.ironsource.aura.aircon.compiler.model.annotation;
 
 import com.ironsource.aura.aircon.common.annotations.config.ColorConfig;
 import com.ironsource.aura.aircon.common.annotations.config.FloatConfig;
+import com.ironsource.aura.aircon.common.annotations.config.HtmlConfig;
 import com.ironsource.aura.aircon.common.annotations.config.IntConfig;
 import com.ironsource.aura.aircon.common.annotations.config.IntEnumConfig;
 import com.ironsource.aura.aircon.common.annotations.config.JsonConfig;
@@ -68,6 +69,9 @@ public class LibraryConfigAnnotationParser
 		}
 		if (mConfigAnnotation instanceof StringSetConfig) {
 			return ConfigKind.STRING_SET;
+		}
+		if (mConfigAnnotation instanceof HtmlConfig) {
+			return ConfigKind.HTML;
 		}
 
 		return ConfigKind.PRIMITIVE;

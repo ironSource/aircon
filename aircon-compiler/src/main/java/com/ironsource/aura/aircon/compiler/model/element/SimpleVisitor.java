@@ -61,5 +61,10 @@ public abstract class SimpleVisitor <T, S>
 		return defaultVisit(configElement, arg);
 	}
 
+	@Override
+	public S visit(final HtmlConfigElement configElement, final T arg) {
+		return defaultVisit(configElement, arg);
+	}
+
 	protected abstract S defaultVisit(final ConfigElement configElement, final T arg);
 }

@@ -26,11 +26,7 @@ android {
     }
 }
 
-apply from: rootProject.file('gradle/android_mvn_push.gradle')
-
-afterEvaluate {
-    javadoc.classpath += project.android.libraryVariants.toList().first().javaCompile.classpath
-}
+apply from: rootProject.file('gradle/mvn_push.gradle')
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -38,5 +34,5 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$SUPPORT_VERSION"
 
     api project(':aircon-common')
-    lintChecks project(':aircon-lint')
+    lintPublish project(':aircon-lint')
 }

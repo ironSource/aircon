@@ -13,7 +13,7 @@ public interface Configs {
 
 	List<Class<? extends Annotation>> PRIMITIVES = Arrays.asList(BooleanConfig.class, IntConfig.class, LongConfig.class, FloatConfig.class, StringConfig.class, StringSetConfig.class);
 	List<Class<? extends Annotation>> ENUM       = Arrays.asList(IntEnumConfig.class, StringEnumConfig.class);
-	List<Class<? extends Annotation>> COMPLEX    = Arrays.asList(TimeConfig.class, JsonConfig.class, ColorConfig.class, UrlConfig.class, TextConfig.class);
+	List<Class<? extends Annotation>> COMPLEX    = Arrays.asList(TimeConfig.class, JsonConfig.class, ColorConfig.class, UrlConfig.class, TextConfig.class, HtmlConfig.class);
 
 	List<Class<? extends Annotation>> ALL = Utils.concatLists(PRIMITIVES, ENUM, COMPLEX);
 }

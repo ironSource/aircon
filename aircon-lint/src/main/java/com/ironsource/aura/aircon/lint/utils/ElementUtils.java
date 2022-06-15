@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiJavaCodeReferenceElement;
 import com.intellij.psi.PsiMember;
+import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.PsiReferenceExpression;
 import com.intellij.psi.PsiType;
@@ -55,18 +56,25 @@ public class ElementUtils {
 		return referenced instanceof PsiField ? (PsiField) referenced : null;
 	}
 
-	public static JvmModifier getVisibilityModifier(UMethod method) {
-		for (JvmModifier jvmModifier : method.getModifiers()) {
-			switch (jvmModifier) {
-				case PUBLIC:
-				case PACKAGE_LOCAL:
-				case PROTECTED:
-				case PRIVATE:
-					return jvmModifier;
-			}
+	public static String getVisibilityModifier(UMethod method) {
+		if (method.hasModifierProperty(PsiModifier.PUBLIC)){
+			return PsiModifier.PUBLIC;
 		}
+
+		if (method.hasModifierProperty(PsiModifier.PROTECTED)){
+			return PsiModifier.PROTECTED;
+		}
+
+		if (method.hasModifierProperty(PsiModifier.PACKAGE_LOCAL)){
+			return PsiModifier.PACKAGE_LOCAL;
+		}
+
+		if (method.hasModifierProperty(PsiModifier.PRIVATE)){
+			return PsiModifier.PRIVATE;
+		}
+
 		return method.getContainingClass()
-		             .isInterface() ? JvmModifier.PUBLIC : JvmModifier.PACKAGE_LOCAL;
+		             .isInterface() ? PsiModifier.PUBLIC : PsiModifier.PACKAGE_LOCAL;
 	}
 
 	public static boolean isOfType(final PsiAnnotation annotation, final Class<? extends Annotation> configClass) {

@@ -80,6 +80,7 @@ Supported config types
 * `@TimeConfig`
 * `@TextConfig`
 * `@UrlConfig`
+* `@HtmlConfig`
 
 Mutable configs
 --------

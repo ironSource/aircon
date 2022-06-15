@@ -4,6 +4,8 @@ import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
 import com.android.tools.lint.detector.api.LintFix;
 import com.intellij.lang.jvm.JvmModifier;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiModifier;
 import com.ironsource.aura.aircon.lint.fix.MethodFixBuilder;
 import com.ironsource.aura.aircon.lint.utils.ElementUtils;
 
@@ -23,9 +25,9 @@ public class AuxMethodInvalidSignatureDetector
 
 	@Override
 	protected void visitAuxMethod(final UMethod node) {
-		final JvmModifier visibilityModifier = ElementUtils.getVisibilityModifier(node);
+		final String visibilityModifier = ElementUtils.getVisibilityModifier(node);
 		final boolean staticMethod = ElementUtils.isStatic(node);
-		if (visibilityModifier.equals(JvmModifier.PRIVATE) || !staticMethod) {
+		if (visibilityModifier.equals(PsiModifier.PRIVATE) || !staticMethod) {
 			report(node, getFix(node, staticMethod));
 		}
 	}

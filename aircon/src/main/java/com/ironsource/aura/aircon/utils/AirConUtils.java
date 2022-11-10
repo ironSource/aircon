@@ -31,7 +31,7 @@ public class AirConUtils {
         return validUrl;
     }
 
-    public static ColorInt hexToColorInt(String colorInHex) {
+    public static ColorInt hexToColorInt(String colorInHex, @NonNull String defaultValue) {
         if (!TextUtils.isEmpty(colorInHex)) {
             try {
                 return new ColorInt(Color.parseColor(colorInHex));
@@ -41,7 +41,14 @@ public class AirConUtils {
             }
         }
 
-        return null;
+	    try {
+			log().e("Parsing default color hex: " + defaultValue);
+		    return new ColorInt(Color.parseColor(defaultValue));
+	    } catch (Exception e) {
+		    log().e("Failed to parse default color hex: " + defaultValue);
+		    log().logException(e);
+	    }
+	    return null;
     }
 
     public static String getColorResAsHex(Resources resources, int colorRes) {

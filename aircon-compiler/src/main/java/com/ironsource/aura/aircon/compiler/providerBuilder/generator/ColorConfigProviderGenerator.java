@@ -23,7 +23,7 @@ class ColorConfigProviderGenerator
 
 	@Override
 	public CodeBlock getConversionToTypeExpression(final Object varDefaultValue, final Object varValue) {
-		return AirConUtilsClassDescriptor.hexToColorInt(varValue, varDefaultValue)
+		return AirConUtilsClassDescriptor.hexToColorInt(varDefaultValue, varValue)
 		                                 .build();
 	}
 

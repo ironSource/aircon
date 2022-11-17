@@ -31,7 +31,7 @@ public class AirConUtils {
         return validUrl;
     }
 
-    public static ColorInt hexToColorInt(String colorInHex, String defaultValue) {
+    public static ColorInt hexToColorInt(String defaultValue, String colorInHex) {
         ColorInt valueColorInt = getColorInt(colorInHex);
         return valueColorInt == null ? getColorInt(defaultValue) : valueColorInt;
     }

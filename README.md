@@ -383,22 +383,20 @@ Download
 --------
 ```groovy
 dependencies {
-    implementation 'com.github.ironSource.aircon:aircon:1.9.0'
-    annotationProcessor 'com.github.ironSource.aircon:aircon-compiler:1.9.0'
+    implementation 'com.github.ironSource.aircon:aircon:1.10.0'
+    annotationProcessor 'com.github.ironSource.aircon:aircon-compiler:1.10.0'
 }
 ```
-
 For using Firebase config source:
 ```groovy
 dependencies {
     implementation 'com.ironsource.aura.aircon:firebase-source:1.4.6'
 }
 ```
-
 For using `Gson` to parse `@JsonConfig`:
 ```groovy
 dependencies {
-    implementation 'com.github.ironSource.aircon:converter-gson:1.9.0'
+    implementation 'com.github.ironSource.aircon:converter-gson:1.10.0'
 }
 ```
 

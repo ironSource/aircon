@@ -35,8 +35,8 @@ public class AirConUtilsClassDescriptor
 		return staticMethod(StaticMethods.IS_VALID_URL, url);
 	}
 
-	public static StubClassDescriptor hexToColorInt(Object hex) {
-		return staticMethod(StaticMethods.HEX_TO_COLOR, hex);
+	public static StubClassDescriptor hexToColorInt(Object varDefaultValue, Object hex) {
+		return staticMethod(StaticMethods.HEX_TO_COLOR, varDefaultValue, hex);
 	}
 
 	public static StubClassDescriptor colorIntToHex(Object color) {

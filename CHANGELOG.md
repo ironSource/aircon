@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Version 1.10.0
+----------------------------
+   * Added fallback to default value for colors in case unsuccessful parsing
+
 Version 1.9.0
 ----------------------------
    * Added support for HTML text config.

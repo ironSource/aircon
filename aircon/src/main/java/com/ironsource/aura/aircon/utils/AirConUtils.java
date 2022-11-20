@@ -31,16 +31,23 @@ public class AirConUtils {
         return validUrl;
     }
 
-    public static ColorInt hexToColorInt(String colorInHex) {
-        if (!TextUtils.isEmpty(colorInHex)) {
-            try {
-                return new ColorInt(Color.parseColor(colorInHex));
-            } catch (Exception e) {
-                log().e("Failed to parse color hex: " + colorInHex);
-                log().logException(e);
-            }
-        }
+    public static ColorInt hexToColorInt(String defaultValue, String colorInHex) {
+        ColorInt valueColorInt = getColorInt(colorInHex);
+        return valueColorInt == null ? getColorInt(defaultValue) : valueColorInt;
+    }
 
+    private static ColorInt getColorInt(String colorInHex) {
+	    if (TextUtils.isEmpty(colorInHex)) {
+		    return null;
+	    }
+
+        try {
+            log().e("Parsing color hex: " + colorInHex);
+            return new ColorInt(Color.parseColor(colorInHex));
+        } catch (Exception e) {
+            log().e("Failed to parse color hex: " + colorInHex);
+            log().logException(e);
+        }
         return null;
     }
 
